@@ -7,7 +7,23 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
     </head>
     <body>
-        <div id="header">{% block header %}{% endblock %}</div>
-        <div id="body">{% block body %}{% endblock %}</div>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1>Kevin Cuzner's Personal Technical blog</h1>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    {% block content %}{% endblock %}
+                </div>
+                <div class="col">
+                    <h4>Recent posts</h4>
+                    <h4>Tags</h4>
+                    <h4>Date</h4>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

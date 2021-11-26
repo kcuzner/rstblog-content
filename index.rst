@@ -3,7 +3,7 @@ Test
 
 I really like testing stuff. This is an attempt at making a restructured text blog.
 
-.. code: python
+.. code-block: python
 
    import test
 

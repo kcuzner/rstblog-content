@@ -3,11 +3,11 @@ Test
 
 I really like testing stuff. This is an attempt at making a restructured text blog.
 
-.. code-block: python
+.. code-block:: python
 
    import test
 
-.. meta:
+.. meta::
    :url: testing-stuff
    :date: 2 July 2021
 

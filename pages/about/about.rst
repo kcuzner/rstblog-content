@@ -25,3 +25,6 @@ My linux setup consists of `Arch Linux`_  with the `i3`_ window manager. I'm a
 .. _i3: https://i3wm.org/
 .. _vim: https://www.vim.org/
 .. _blog of my own design: https://github.com/kcuzner/rstblog
+
+.. rstblog-settings::
+   :title: About

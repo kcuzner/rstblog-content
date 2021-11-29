@@ -28,3 +28,5 @@ My linux setup consists of `Arch Linux`_  with the `i3`_ window manager. I'm a
 
 .. rstblog-settings::
    :title: About
+   :url: about
+   :date: 2021/11/28

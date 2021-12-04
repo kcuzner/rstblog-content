@@ -1,5 +1,7 @@
 {% extends "base.j2" %}
-{% block title %}Testing{% endblock %}
+{% block title %}{{ index_name }}{% endblock %}
 {% block content %}
-    I have a lot of content
+    {% for page in index_posts %}
+        <h3><a href="{{ page.url }}">{{ page.title }}</a></h3>
+    {% endfor %}
 {% endblock %}

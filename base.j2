@@ -25,6 +25,9 @@
                     <h4>Recent posts</h4>
                     <h4>Tags</h4>
                     <h4>Date</h4>
+                    {% for month, _ in posts_by_month %}
+                        <a href="/{{ month }}">{{ month }}</a>
+                    {% endfor %}
                 </div>
             </div>
         </div>

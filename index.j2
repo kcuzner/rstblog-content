@@ -1,7 +1,30 @@
 {% extends "base.j2" %}
 {% block title %}{{ index_name }}{% endblock %}
+{% block heading %}{% endblock %}
 {% block content %}
     {% for page in index_posts %}
         <h3><a href="{{ page.url }}">{{ page.title }}</a></h3>
     {% endfor %}
+    <div class="clearfix">
+    {% if index_number %}
+        <div class="float-left">
+            {% if index_number > 1 %}
+                <a href="/index{{ index_number - 1 }}.html">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Previous
+                </a>
+            {% else %}
+                <a href="/index.html">
+                    Next
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if index_number < index_count - 1 %}
+        <div class="float-right">
+            <a href="/index{{ index_number + 1 }}.html"></a>
+        </div>
+    {% endif %}
+    </div>
 {% endblock %}

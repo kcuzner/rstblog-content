@@ -3,7 +3,7 @@
 {% block heading %}{% endblock %}
 {% block content %}
     {% for page in index_posts %}
-        <h3><a href="{{ page.url }}">{{ page.title }}</a></h3>
+        <h3><a href="/{{ page.url }}">{{ page.title }}</a></h3>
     {% endfor %}
     <div class="clearfix">
     {% if index_number %}

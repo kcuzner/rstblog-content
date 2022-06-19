@@ -44,16 +44,26 @@ class Item:
 
         return wrapper
 
+    @classmethod
+    def from_xml(cls, el):
+        post_type = el.find("wp:post_type", XML_NAMESPACES).text
+        return cls.HANDLERS[post_type](el)
+
     def __init__(self, el):
         self.title = el.find("title").text
         self.link = el.find("link").text
         self.post_type = el.find("wp:post_type", XML_NAMESPACES).text
-        self.post = self.HANDLERS[self.post_type](el)
+        self.status = el.find("wp:status", XML_NAMESPACES).text
+
+    @property
+    def discard(self):
+        return self.status != "publish"
 
 
 @Item.register_post_type("attachment")
-class Attachment:
+class Attachment(Item):
     def __init__(self, el):
+        super().__init__(el)
         self.attachment_url = el.find("wp:attachment_url", XML_NAMESPACES).text
         self.meta = dict(
             [
@@ -64,21 +74,55 @@ class Attachment:
         self.upload_path = self.meta["_wp_attached_file"]
 
 
-@Item.register_post_type("post")
-class Post:
+class Content(Item):
     def __init__(self, el):
+        super().__init__(el)
+
+    @property
+    def repo_path(self):
+        raise NotImplementedError
+
+    def process(self, attachments):
+        print(self.repo_path)
+
+
+@Item.register_post_type("post")
+class Post(Content):
+    def __init__(self, el):
+        super().__init__(el)
         from dateutil import parser
 
         self.content = el.find("content:encoded", XML_NAMESPACES).text
         self.date = parser.parse(el.find("wp:post_date", XML_NAMESPACES).text)
+        self.name = el.find("wp:post_name", XML_NAMESPACES).text
+
+    @Content.repo_path.getter
+    def repo_path(self):
+        date = self.date.strftime("%Y/%m/%d")
+        # WIP here:
+        return f"posts/{date}/{self.name}"
 
 
 @Item.register_post_type("page")
-class Page:
+class Page(Content):
     def __init__(self, el):
+        super().__init__(el)
         from dateutil import parser
 
         self.content = el.find("content:encoded", XML_NAMESPACES).text
+        self.date = parser.parse(el.find("wp:post_date", XML_NAMESPACES).text)
+        self.name = el.find("wp:post_name", XML_NAMESPACES).text
+
+    @Content.repo_path.getter
+    def repo_path(self):
+        return f"pages/{self.name}"
+
+class AttachmentRegistry:
+    def __init__(self, items):
+        self.registry = dict(((i.link, i) for i in items if isinstance(i, Attachment)))
+
+    def find(self, link):
+        return self.registry.get(link, None)
 
 
 def load_rss(file):
@@ -86,9 +130,11 @@ def load_rss(file):
     root = tree.getroot()
     channel = root.find("channel")
     categories = [Category(el) for el in channel.findall("wp:category", XML_NAMESPACES)]
-    items = [Item(el) for el in channel.findall("item")]
-    for i in items:
-        print(f"Title: {i.title}, Link: {i.link}, Type: {i.post_type}")
+    items = [Item.from_xml(el) for el in channel.findall("item")]
+    items = [i for i in items if not i.discard]
+    attachments = AttachmentRegistry(items)
+    for i in (i for i in items if isinstance(i, Content)):
+        i.process(attachments)
 
 
 def main():

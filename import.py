@@ -5,7 +5,12 @@ Imports and updates pages and posts from an RSS export file produced by
 wordpress
 """
 
+from abc import ABC, abstractmethod
 import argparse
+from collections import deque
+from html.parser import HTMLParser
+import pathlib
+import textwrap
 
 from xml.etree import ElementTree as ET
 
@@ -33,7 +38,7 @@ class Tag:
         self.name = el.find("wp:tag_name", XML_NAMESPACES).text
 
 
-class Item:
+class Item(ABC):
     HANDLERS = {}
 
     @classmethod
@@ -57,13 +62,14 @@ class Item:
 
     @property
     def discard(self):
-        return self.status != "publish"
+        return self.status not in ("publish", "inherit")
 
 
 @Item.register_post_type("attachment")
 class Attachment(Item):
     def __init__(self, el):
         super().__init__(el)
+        self.guid = el.find("guid").text
         self.attachment_url = el.find("wp:attachment_url", XML_NAMESPACES).text
         self.meta = dict(
             [
@@ -73,17 +79,493 @@ class Attachment(Item):
         )
         self.upload_path = self.meta["_wp_attached_file"]
 
+    @property
+    def keys(self):
+        return (self.link, self.guid)
+
+
+class TextBody:
+    def __init__(self, text, pos):
+        self.text = text
+        self.line = pos[0]
+        self.offset = pos[1]
+
+    def to_rst(self):
+        return self.text
+
+
+class TagHandler(ABC):
+    HANDLERS = {}
+
+    @classmethod
+    def register_tag(cls, tag):
+        def wrapper(fn):
+            cls.HANDLERS[tag] = fn
+            return fn
+
+        return wrapper
+
+    @classmethod
+    def from_tag(cls, *args, **kwargs):
+        tag = args[0]
+        pos = args[2]
+        handler = cls.HANDLERS.get(tag, None)
+        if handler is None:
+            raise ValueError(
+                (
+                    f"No handle registered for tag {tag} at line "
+                    f"{pos[0]} column {pos[1]}"
+                )
+            )
+        return handler(*args, **kwargs)
+
+    def __init__(self, tag, attrs, pos):
+        self.tag = tag
+        self.attrs = dict(attrs)
+        self.line = pos[0]
+        self.offset = pos[1]
+
+    @abstractmethod
+    def to_rst(self):
+        pass
+
+    @property
+    def pos_str(self):
+        return f"line {self.line} column {self.offset}"
+
+
+@TagHandler.register_tag("a")
+class LinkTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.href = self.attrs.get("href", None)
+        self.name = self.attrs.get("name", None)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        if len(self.content) == 0:
+            if self.name is None:
+                # Silently drop empty link tags
+                return ""
+            if self.href is not None:
+                raise ValueError(
+                    f"Hyperlink without text is not supported at {self.pos_str}"
+                )
+            # Internal hyperlink target without text
+            return f".. _{self.name}:\n"
+        elif self.name is not None:
+            if self.href is not None:
+                raise ValueError(
+                    f"Ambiguous link tag: Contains both name and href at {self.pos_str}"
+                )
+            # This is a hyperlink target
+            content = "".join([c.to_rst() for c in self.content])
+            return f".. _{self.name}:\n" + content
+        else:
+            if self.href is not None:
+                # Silently drop empty links
+                return ""
+            content = "".join([c.to_rst() for c in self.content]).strip()
+            if not content:
+                raise ValueError(f"Empty hyperlink is not supported at {self.pos_str}")
+            return f"`{content} <self.href>`_"
+
+
+@TagHandler.register_tag("img")
+class ImgTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.src = self.attrs.get("src")
+
+    def to_rst(self):
+        if self.src is None:
+            # Silently drop empty images
+            return ""
+        return f".. image:: {self.src}\n"
+
+
+@TagHandler.register_tag("h1")
+@TagHandler.register_tag("h2")
+@TagHandler.register_tag("h3")
+class HeaderTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        content = "".join([c.to_rst() for c in self.content]).strip()
+        if content.count("\n") > 1:
+            raise ValueError(
+                f"Multiple newlines in a header is not supported at {self.pos_str}"
+            )
+        char = "=" if self.tag == "h1" else "-" if self.tag == "h2" else "~"
+        line = char * len(content)
+        return f"{content}\n{line}\n"
+
+
+@TagHandler.register_tag("em")
+@TagHandler.register_tag("i")
+class ItalicsTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        content = "".join([c.to_rst() for c in self.content])
+        return f"*{content}*"
+
+
+@TagHandler.register_tag("strong")
+@TagHandler.register_tag("b")
+class BoldTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        content = "".join([c.to_rst() for c in self.content])
+        return "**{content}**"
+
+
+@TagHandler.register_tag("li")
+class ListItemTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        return "".join([c.to_rst() for c in self.content])
+
+
+class ListTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        if not isinstance(tag, ListItemTag):
+            # Silently drop anything that's not a list item
+            return
+        self.content.append(tag)
+
+    @abstractmethod
+    def prefix(self, i):
+        pass
+
+    def to_rst(self):
+        def process(i, rst):
+            lines = rst.split("\n")
+            prefix = self.prefix(i)
+            lines[0] = prefix + lines[0]
+            rest = textwrap.indent("\n".join(lines[1:]), " " * len(prefix)).strip()
+            return lines[0] + "\n" + rest
+
+        items = [process(i, c.to_rst()) for i, c in enumerate(self.content)]
+        return "\n".join(items) + "\n"
+
+
+@TagHandler.register_tag("ol")
+class OrderedListTag(ListTag):
+    def prefix(self, i):
+        return f"{i}. "
+
+
+@TagHandler.register_tag("ul")
+class UnorderedLastTag(ListTag):
+    def prefix(self, i):
+        return f"* "
+
+
+@TagHandler.register_tag("sub")
+class SubscriptTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        content = "".join([c.to_rst() for c in self.content])
+        return r"\ :sub:`{content}`\ "
+
+
+@TagHandler.register_tag("blockquote")
+class BlockquoteTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        content = "".join([c.to_rst() for c in self.content])
+        return textwrap.indent(content, " " * 4)
+
+
+@TagHandler.register_tag("span")
+class SpanTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # TODO support attributes
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        # Just a passthrough
+        return "".join([c.to_rst() for c in self.content])
+
+
+@TagHandler.register_tag("div")
+@TagHandler.register_tag("p")
+class ParagraphTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # TODO support attributes
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        # Passthrough with a newline before and after
+        return "\n" + "".join([c.to_rst() for c in self.content]) + "\n"
+
+
+@TagHandler.register_tag("code")
+@TagHandler.register_tag("pre")
+class CodeTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        return (
+            "::\n"
+            + textwrap.indent("".join([c.to_rst() for c in self.content]), " " * 4)
+            + "\n"
+        )
+
+
+@TagHandler.register_tag("tt")
+class InlineLiteralTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        return "``" + "".join([c.to_rst() for c in self.content]) + "``"
+
+
+@TagHandler.register_tag("del")
+class StrikethroughTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        return (
+            r"\ :raw-html:`<del>`\ "
+            + "".join([c.to_rst() for c in self.content])
+            + r"\ :raw-html:`</del>`\ "
+        )
+
+
+@TagHandler.register_tag("td")
+@TagHandler.register_tag("th")
+class ColumnTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content = []
+
+    @property
+    def is_header(self):
+        return self.tag == "th"
+
+    def append(self, tag):
+        self.content.append(tag)
+
+    def to_rst(self):
+        return "".join([c.to_rst() for c in self.content])
+
+
+@TagHandler.register_tag("tr")
+class RowTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.columns = []
+        self.is_header = False
+
+    def append(self, tag):
+        if isinstance(tag, ColumnTag):
+            self.columns.append(tag)
+            if tag.is_header:
+                self.is_header = True
+        # All other silently dropped
+
+    def to_rst(self):
+        raise NotImplementedError(
+            f"Table rows cannot be directly rendered at {self.pos_str}"
+        )
+
+
+@TagHandler.register_tag("thead")
+@TagHandler.register_tag("tbody")
+@TagHandler.register_tag("tfoot")
+class RowGroupTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.rows = []
+
+    def append(self, tag):
+        if not isinstance(tag, RowTag):
+            # Silently drop non-rows
+            return
+        if self.tag == "thead":
+            tag.is_header = True
+        self.rows.append(tag)
+
+    def to_rst(self):
+        raise NotImplementedError(
+            f"Table row groups cannot be directly rendered at {self.pos_str}"
+        )
+
+
+@TagHandler.register_tag("table")
+class TableTag(TagHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.rows = []
+
+    def append(self, tag):
+        if isinstance(tag, RowTag):
+            self.rows.append(tag)
+        elif isinstance(tag, RowGroupTag):
+            self.rows.extend(tag.rows)
+        if not isinstance(tag, RowTag) and not isinstance(tag, RowGroupTag):
+            # Silently drop anything that's not a row
+            return
+        self.rows.append(tag)
+
+    def to_rst(self):
+        width = 120  # arbitrary
+        # TODO implement
+        return ""
+
+
+@TagHandler.register_tag("object")
+@TagHandler.register_tag("param")
+@TagHandler.register_tag("embed")
+@TagHandler.register_tag("iframe")
+class DropMeTag(TagHandler):
+    """
+    These HTML tags appear in my blog when I embedded a youtube video over a
+    decade ago. I'm just going to drop them, they're referencing flash required
+    flash or something else.
+
+    Eventually I might implement these.
+    """
+
+    def append(self, tag):
+        pass
+
+    def to_rst(self):
+        return ""
+
+
+class WordpressToRst(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.stack = deque()
+        self.content = []
+
+    def handle_starttag(self, tag, attrs):
+        self.stack.append(TagHandler.from_tag(tag, attrs, self.getpos()))
+
+    def handle_startendtag(self, tag, attrs):
+        if len(self.stack):
+            self.stack[-1].append(TagHandler.from_tag(tag, attrs, self.getpos()))
+        else:
+            self.content.append(TagHandler.from_tag(tag, attrs, self.getpos()))
+
+    def handle_endtag(self, tag):
+        while True:
+            # Consume our stack until we encouter this tag. HTML allows tags to
+            # never be closed, so we resolve that by inferring a close as we
+            # search for this tag in the stack
+            completed = self.stack.pop()
+            if len(self.stack):
+                self.stack[-1].append(completed)
+            else:
+                self.content.append(completed)
+            if completed.tag == tag:
+                break
+            elif not len(self.stack):
+                raise ValueError(f"Unable to locate tag {tag} in the stack")
+
+    def handle_data(self, data):
+        if len(self.stack):
+            self.stack[-1].append(TextBody(data, self.getpos()))
+        else:
+            self.content.append(TextBody(data, self.getpos()))
+
+    def close(self):
+        super().close()
+        if len(self.stack):
+            raise ValueError("Unclosed tags remain at the end of HTML")
+        return "".join([t.to_rst() for t in self.content])
+
 
 class Content(Item):
     def __init__(self, el):
         super().__init__(el)
+        self.content_raw = el.find("content:encoded", XML_NAMESPACES).text
 
     @property
+    @abstractmethod
     def repo_path(self):
-        raise NotImplementedError
+        pass
 
     def process(self, attachments):
-        print(self.repo_path)
+        # small worry here about path traversal...but whatever, this script
+        # isn't ran automatically
+        base_dir = pathlib.Path.cwd()
+        output_dir = base_dir / pathlib.Path(self.repo_path)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        index_path = output_dir / "index.rst"
+        # Process the HTML content into RST
+        content = WordpressToRst()
+        content.feed(self.content_raw)
+        rst = content.close()
+        with open(index_path, "w") as f:
+            f.write(rst)
 
 
 @Item.register_post_type("post")
@@ -117,9 +599,11 @@ class Page(Content):
     def repo_path(self):
         return f"pages/{self.name}"
 
+
 class AttachmentRegistry:
     def __init__(self, items):
-        self.registry = dict(((i.link, i) for i in items if isinstance(i, Attachment)))
+        attachments = (i for i in items if isinstance(i, Attachment))
+        self.registry = dict(((k, a) for a in attachments for k in a.keys))
 
     def find(self, link):
         return self.registry.get(link, None)
@@ -134,6 +618,7 @@ def load_rss(file):
     items = [i for i in items if not i.discard]
     attachments = AttachmentRegistry(items)
     for i in (i for i in items if isinstance(i, Content)):
+        print(f"Processing {i.name}")
         i.process(attachments)
 
 

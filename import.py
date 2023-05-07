@@ -91,8 +91,11 @@ class TextBody:
         self.line = pos[0]
         self.offset = pos[1]
 
-    def to_rst(self):
-        return self.text
+    def to_rst(self, *args, escape=":`*", **kwargs):
+        text = self.text
+        for c in escape:
+            text = text.replace(c, f"\\{c}")
+        return text
 
 
 class TagHandler(ABC):
@@ -127,7 +130,7 @@ class TagHandler(ABC):
         self.offset = pos[1]
 
     @abstractmethod
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         pass
 
     @property
@@ -146,7 +149,7 @@ class LinkTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         if len(self.content) == 0:
             if self.name is None:
                 # Silently drop empty link tags
@@ -163,13 +166,13 @@ class LinkTag(TagHandler):
                     f"Ambiguous link tag: Contains both name and href at {self.pos_str}"
                 )
             # This is a hyperlink target
-            content = "".join([c.to_rst() for c in self.content])
+            content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
             return f".. _{self.name}:\n" + content
         else:
             if self.href is not None:
                 # Silently drop empty links
                 return ""
-            content = "".join([c.to_rst() for c in self.content]).strip()
+            content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
             if not content:
                 raise ValueError(f"Empty hyperlink is not supported at {self.pos_str}")
             return f"`{content} <self.href>`_"
@@ -181,7 +184,7 @@ class ImgTag(TagHandler):
         super().__init__(*args, **kwargs)
         self.src = self.attrs.get("src")
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         if self.src is None:
             # Silently drop empty images
             return ""
@@ -199,8 +202,8 @@ class HeaderTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        content = "".join([c.to_rst() for c in self.content]).strip()
+    def to_rst(self, *args, **kwargs):
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
         if content.count("\n") > 1:
             raise ValueError(
                 f"Multiple newlines in a header is not supported at {self.pos_str}"
@@ -220,8 +223,8 @@ class ItalicsTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        content = "".join([c.to_rst() for c in self.content])
+    def to_rst(self, *args, **kwargs):
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
         return f"*{content}*"
 
 
@@ -235,8 +238,8 @@ class BoldTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        content = "".join([c.to_rst() for c in self.content])
+    def to_rst(self, *args, **kwargs):
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
         return f"**{content}**"
 
 
@@ -249,8 +252,8 @@ class ListItemTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        return "".join([c.to_rst() for c in self.content])
+    def to_rst(self, *args, **kwargs):
+        return "".join([c.to_rst(*args, **kwargs) for c in self.content])
 
 
 class ListTag(TagHandler):
@@ -268,7 +271,7 @@ class ListTag(TagHandler):
     def prefix(self, i):
         pass
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         def process(i, rst):
             lines = rst.split("\n")
             prefix = self.prefix(i)
@@ -276,7 +279,9 @@ class ListTag(TagHandler):
             rest = textwrap.indent("\n".join(lines[1:]), " " * len(prefix)).strip()
             return lines[0] + "\n" + rest
 
-        items = [process(i, c.to_rst()) for i, c in enumerate(self.content)]
+        items = [
+            process(i, c.to_rst(*args, **kwargs)) for i, c in enumerate(self.content)
+        ]
         return "\n".join(items) + "\n"
 
 
@@ -301,8 +306,8 @@ class SubscriptTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        content = "".join([c.to_rst() for c in self.content])
+    def to_rst(self, *args, **kwargs):
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
         return r"\ :sub:`{content}`\ "
 
 
@@ -315,8 +320,8 @@ class BlockquoteTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        content = "".join([c.to_rst() for c in self.content])
+    def to_rst(self, *args, **kwargs):
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
         return textwrap.indent(content, " " * 4)
 
 
@@ -330,9 +335,9 @@ class SpanTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         # Just a passthrough
-        return "".join([c.to_rst() for c in self.content])
+        return "".join([c.to_rst(*args, **kwargs) for c in self.content])
 
 
 @TagHandler.register_tag("div")
@@ -346,9 +351,9 @@ class ParagraphTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         # Passthrough with a newline before and after
-        return "\n" + "".join([c.to_rst() for c in self.content]) + "\n"
+        return "\n" + "".join([c.to_rst(*args, **kwargs) for c in self.content]) + "\n"
 
 
 @TagHandler.register_tag("code")
@@ -361,10 +366,13 @@ class CodeTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
+        kwargs["escape"] = ""  # All chars allowed without escaping
         return (
-            "\n::\n"
-            + textwrap.indent("".join([c.to_rst() for c in self.content]), " " * 4)
+            "\ncode-block::\n\n"
+            + textwrap.indent(
+                "".join([c.to_rst(*args, **kwargs) for c in self.content]), " " * 4
+            )
             + "\n"
         )
 
@@ -378,8 +386,11 @@ class InlineLiteralTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
-        return "``" + "".join([c.to_rst() for c in self.content]) + "``"
+    def to_rst(self, *args, **kwargs):
+        kwargs[
+            "escape"
+        ] = "`"  # Most chars are allowed, but backticks still need escaping
+        return "``" + "".join([c.to_rst(*args, **kwargs) for c in self.content]) + "``"
 
 
 @TagHandler.register_tag("del")
@@ -391,10 +402,10 @@ class StrikethroughTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         return (
             r"\ :raw-html:`<del>`\ "
-            + "".join([c.to_rst() for c in self.content])
+            + "".join([c.to_rst(*args, **kwargs) for c in self.content])
             + r"\ :raw-html:`</del>`\ "
         )
 
@@ -437,7 +448,7 @@ class ColumnTag(TagHandler):
         wrapped = self.wrapped(width - 3)
         return "\n".join(["| " + l.ljust(width - 2) for l in wrapped.splitlines()])
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         raise NotImplementedError(
             f"Table columns cannot be directly rendered at {self.pos_str}"
         )
@@ -478,7 +489,7 @@ class RowTag(TagHandler):
             c.extend(["| " + " " * (w - 2) for _ in range(height - len(c))])
         return "\n".join(["".join(t) + "|" for t in zip(*cells)]) + "\n"
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         raise NotImplementedError(
             f"Table rows cannot be directly rendered at {self.pos_str}"
         )
@@ -504,7 +515,7 @@ class RowGroupTag(TagHandler):
             tag.is_header = True
         self.rows.append(tag)
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         raise NotImplementedError(
             f"Table row groups cannot be directly rendered at {self.pos_str}"
         )
@@ -528,7 +539,7 @@ class TableTag(TagHandler):
             # Silently drop anything that's not a row
             return
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         all_rows = list(chain.from_iterable([r.rows for r in self.rows]))
         if not len(all_rows):
             return ""
@@ -583,7 +594,7 @@ class DropMeTag(TagHandler):
     def append(self, tag):
         pass
 
-    def to_rst(self):
+    def to_rst(self, *args, **kwargs):
         return ""
 
 

@@ -8,6 +8,7 @@ wordpress
 from abc import ABC, abstractmethod
 import argparse
 from collections import deque
+from itertools import chain
 from html.parser import HTMLParser
 import pathlib
 import textwrap
@@ -236,7 +237,7 @@ class BoldTag(TagHandler):
 
     def to_rst(self):
         content = "".join([c.to_rst() for c in self.content])
-        return "**{content}**"
+        return f"**{content}**"
 
 
 @TagHandler.register_tag("li")
@@ -362,7 +363,7 @@ class CodeTag(TagHandler):
 
     def to_rst(self):
         return (
-            "::\n"
+            "\n::\n"
             + textwrap.indent("".join([c.to_rst() for c in self.content]), " " * 4)
             + "\n"
         )
@@ -412,8 +413,37 @@ class ColumnTag(TagHandler):
     def append(self, tag):
         self.content.append(tag)
 
+    @property
+    def _content(self):
+        return "\n\n".join([c.to_rst() for c in self.content])
+
+    def __len__(self):
+        return len(self._content)
+
+    @property
+    def min_width(self):
+        # The minimum width of a column is the length of the longest word, plus
+        # 3 for the column separator and terminating spaces.
+        words = self._content.split()
+        return max([len(w) + 3 for w in words]) if len(words) else 0
+
+    def wrapped(self, width):
+        content = "\n\n".join([c.to_rst() for c in self.content])
+        return "\n\n".join(
+            ["\n".join(textwrap.wrap(p, width=width)) for p in content.split("\n\n")]
+        )
+
+    def cell(self, width):
+        wrapped = self.wrapped(width - 3)
+        return "\n".join(["| " + l.ljust(width - 2) for l in wrapped.splitlines()])
+
     def to_rst(self):
-        return "".join([c.to_rst() for c in self.content])
+        raise NotImplementedError(
+            f"Table columns cannot be directly rendered at {self.pos_str}"
+        )
+
+    def __repr__(self):
+        return f'<Column: "{self._content}">'
 
 
 @TagHandler.register_tag("tr")
@@ -430,10 +460,32 @@ class RowTag(TagHandler):
                 self.is_header = True
         # All other silently dropped
 
+    def column(self, index):
+        return (
+            self.columns[index]
+            if index < len(self.columns)
+            else ColumnTag("td", {}, (self.line, self.offset))
+        )
+
+    @property
+    def rows(self):
+        return [self]
+
+    def render(self, widths):
+        cells = [c.cell(w).splitlines() for c, w in zip(self.columns, widths)]
+        height = max([len(c) for c in cells])
+        for c, w in zip(cells, widths):
+            c.extend(["| " + " " * (w - 2) for _ in range(height - len(c))])
+        return "\n".join(["".join(t) + "|" for t in zip(*cells)]) + "\n"
+
     def to_rst(self):
         raise NotImplementedError(
             f"Table rows cannot be directly rendered at {self.pos_str}"
         )
+
+    def __repr__(self):
+        name = "Row (header)" if self.is_header else "Row"
+        return f"<{name}: {self.columns}>"
 
 
 @TagHandler.register_tag("thead")
@@ -457,6 +509,9 @@ class RowGroupTag(TagHandler):
             f"Table row groups cannot be directly rendered at {self.pos_str}"
         )
 
+    def __repr__(self):
+        return f"<RowGroup: {self.rows}>"
+
 
 @TagHandler.register_tag("table")
 class TableTag(TagHandler):
@@ -472,12 +527,44 @@ class TableTag(TagHandler):
         if not isinstance(tag, RowTag) and not isinstance(tag, RowGroupTag):
             # Silently drop anything that's not a row
             return
-        self.rows.append(tag)
 
     def to_rst(self):
-        width = 120  # arbitrary
-        # TODO implement
-        return ""
+        all_rows = list(chain.from_iterable([r.rows for r in self.rows]))
+        if not len(all_rows):
+            return ""
+        column_count = max([len(r.columns) for r in all_rows])
+        if not column_count:
+            return ""
+        # first entry is width, 2nd is min width
+        # NOTE: Rows return an empty cell if a column is requested that isn't
+        # present on the row
+        column_widths = [
+            (
+                max([len(r.column(i)) for r in all_rows]),
+                max([r.column(i).min_width for r in all_rows]),
+            )
+            for i in range(column_count)
+        ]
+        # Nominally, we'll allow a width of 20 (arbitrary) per column to compute the full
+        # table width, capping the width to 120 (arbitrary) characters. The columns will
+        # then be scaled according to their relative proportions, though they will not be made
+        # smaller than the column's minimum width.
+        total_width = sum([w for w, _ in column_widths])
+        width_fractions = [w / total_width for w, _ in column_widths]
+        width = w if (w := 20 * column_count) < 120 else 120
+        widths = [
+            max(min_width, int(w * f))
+            for f, (w, min_width) in zip(width_fractions, column_widths)
+        ]
+        separator_hdr = "".join(["+" + "=" * (w - 1) for w in widths]) + "+" + "\n"
+        separator = "".join(["+" + "-" * (w - 1) for w in widths]) + "+" + "\n"
+        return (
+            separator
+            + separator.join([r.render(widths) for r in all_rows if r.is_header])
+            + separator_hdr
+            + separator.join([r.render(widths) for r in all_rows if not r.is_header])
+            + separator
+        )
 
 
 @TagHandler.register_tag("object")

@@ -179,7 +179,25 @@ class LinkTag(TagHandler):
                 return ""
             # Strip leading #'s, local page links are easy
             ref = self.href.lstrip("#")
-            content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
+            # We support text or images, nothing else, and content can't be mixed
+            types = [ImgTag, TextBody, BoldTag, ItalicsTag]
+            text = []
+            images = []
+            for c in self.content:
+                if any(isinstance(c, t) for t in [TextBody, BoldTag, ItalicsTag]):
+                    text.append(c)
+                elif isinstance(c, ImgTag):
+                    images.append(c)
+                else:
+                    raise ValueError(f"Content {c} is not supported in a link")
+            if len(images):
+                if len(text):
+                    raise ValueError("Mixed images and text in links are not supporteD")
+                if len(images) > 1:
+                    raise ValueError("Multiple images cannot be in a link")
+                image = images[0].to_rst(*args, **kwargs).strip()
+                return f"{image}\n   :target: {ref}\n\n"
+            content = "".join([c.to_rst(*args, **kwargs) for c in text]).strip()
             if not content:
                 # Links without content are silently dropped
                 return f""
@@ -196,7 +214,7 @@ class ImgTag(TagHandler):
         if self.src is None:
             # Silently drop empty images
             return ""
-        return f".. image:: {self.src}\n"
+        return f".. image:: {self.src}\n\n"
 
 
 @TagHandler.register_tag("h1")
@@ -220,7 +238,7 @@ class HeaderTag(TagHandler):
             )
         char = "=" if self.tag == "h1" else "-" if self.tag == "h2" else "~"
         line = char * len(content)
-        return f"{link}{content}\n{line}\n"
+        return f"\n{link}{content}\n{line}\n"
 
 
 @TagHandler.register_tag("em")

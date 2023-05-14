@@ -97,6 +97,12 @@ class TextBody:
             text = text.replace(c, f"\\{c}")
         return text
 
+    def __repr__(self):
+        text = self.text[:10]
+        if len(self.text) > 10:
+            text += ".."
+        return f'<{type(self)} "{text}">'
+
 
 class TagHandler(ABC):
     HANDLERS = {}
@@ -155,9 +161,8 @@ class LinkTag(TagHandler):
                 # Silently drop empty link tags
                 return ""
             if self.href is not None:
-                raise ValueError(
-                    f"Hyperlink without text is not supported at {self.pos_str}"
-                )
+                # Slently drop hyperlinks without text
+                return ""
             # Internal hyperlink target without text
             return f".. _{self.name}:\n"
         elif self.name is not None:
@@ -169,13 +174,16 @@ class LinkTag(TagHandler):
             content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
             return f".. _{self.name}:\n" + content
         else:
-            if self.href is not None:
-                # Silently drop empty links
+            if self.href is None:
+                # Silently drop links to nowhere
                 return ""
+            # Strip leading #'s, local page links are easy
+            ref = self.href.lstrip("#")
             content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
             if not content:
-                raise ValueError(f"Empty hyperlink is not supported at {self.pos_str}")
-            return f"`{content} <self.href>`_"
+                # Links without content are silently dropped
+                return f""
+            return f"`{content} <{ref}>`_"
 
 
 @TagHandler.register_tag("img")
@@ -198,11 +206,13 @@ class HeaderTag(TagHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.content = []
+        self.id = self.attrs.get("id", None)
 
     def append(self, tag):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
+        link = f".. _{self.id}::\n\n" if self.id else ""
         content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
         if content.count("\n") > 1:
             raise ValueError(
@@ -210,7 +220,7 @@ class HeaderTag(TagHandler):
             )
         char = "=" if self.tag == "h1" else "-" if self.tag == "h2" else "~"
         line = char * len(content)
-        return f"{content}\n{line}\n"
+        return f"{link}{content}\n{line}\n"
 
 
 @TagHandler.register_tag("em")
@@ -282,13 +292,13 @@ class ListTag(TagHandler):
         items = [
             process(i, c.to_rst(*args, **kwargs)) for i, c in enumerate(self.content)
         ]
-        return "\n".join(items) + "\n"
+        return "\n\n".join(items) + "\n\n"
 
 
 @TagHandler.register_tag("ol")
 class OrderedListTag(ListTag):
     def prefix(self, i):
-        return f"{i}. "
+        return f"#. "
 
 
 @TagHandler.register_tag("ul")

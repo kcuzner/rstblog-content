@@ -16,7 +16,7 @@ I have learned some interesting things about multiprocessing with Python\:
 
 So the new model for operation is as follows\:
 
-[caption id="attachment_194" align="aligncenter" width="300"].. image:: /wp-content/uploads/2012/06/WebSocketServer_diagram2-300x267.png
+[caption id="attachment_194" align="aligncenter" width="300"].. image:: WebSocketServer_diagram2.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/06/WebSocketServer_diagram2.png
 
  WebSocketServer Diagram[/caption]

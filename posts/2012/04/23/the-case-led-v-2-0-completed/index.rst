@@ -48,7 +48,7 @@ Pursuant to the V-USB licence, I am releasing my hardware schematics and the sof
 
 The schematic is as follows\:
 
-[caption id="attachment_170" align="aligncenter" width="300" caption="Schematic (click to open full size)"].. image:: /wp-content/uploads/2012/04/schematic-300x195.png
+[caption id="attachment_170" align="aligncenter" width="300" caption="Schematic (click to open full size)"].. image:: schematic.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/schematic.png
 
 [/caption]
@@ -128,17 +128,17 @@ So, here are pictures of the finished product\:
 
 [/caption]
 
-[caption id="attachment_176" align="alignleft" width="300" caption="With its guts hanging out"].. image:: /wp-content/uploads/2012/04/HPIM1968-300x225.jpg
+[caption id="attachment_176" align="alignleft" width="300" caption="With its guts hanging out"].. image:: HPIM1968.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968.jpg
 
 [/caption]
 
-[caption id="attachment_175" align="alignleft" width="300" caption="The mounting viewed from the outside"].. image:: /wp-content/uploads/2012/04/HPIM1966-300x225.jpg
+[caption id="attachment_175" align="alignleft" width="300" caption="The mounting viewed from the outside"].. image:: HPIM1966.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966.jpg
 
 [/caption]
 
-[caption id="attachment_174" align="alignleft" width="300" caption="Mounted onto the front fan grille"].. image:: /wp-content/uploads/2012/04/HPIM1967-300x225.jpg
+[caption id="attachment_174" align="alignleft" width="300" caption="Mounted onto the front fan grille"].. image:: HPIM1967.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1967.jpg
 
 [/caption]

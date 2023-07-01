@@ -6,7 +6,7 @@ A complete tutorial for using an STM32 without a dev board
 Introduction
 ------------
 
-[caption id="attachment_524" align="alignright" width="320"].. image:: /wp-content/uploads/2016/05/IMG_20160521_213623.jpg
+[caption id="attachment_524" align="alignright" width="320"].. image:: IMG_20160521_213623.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213623.jpg
 
  STM32F103C8 Tray from eBay[/caption]
@@ -114,7 +114,7 @@ Find the STM32F103C8 datasheet and family reference manual here (datasheet is at
 Step 2\: Figure out where to solder and do it
 =============================================
 
-[caption id="attachment_522" align="alignright" width="241"].. image:: /wp-content/uploads/2016/05/STM32F103Pins-1.png
+[caption id="attachment_522" align="alignright" width="241"].. image:: STM32F103Pins-1.png
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/STM32F103Pins-1.png
 
  STM32F103C8 Pins of interest[/caption]
@@ -134,7 +134,7 @@ On the pin diagram posted here you will find the highlighted pins of interest f
 
 Below you will find a picture of my breakout board. I soldered a couple extra pins since I want to experiment with USB.
 
-[caption id="attachment_523" align="aligncenter" width="480"].. image:: /wp-content/uploads/2016/05/IMG_20160521_211614.jpg
+[caption id="attachment_523" align="aligncenter" width="480"].. image:: IMG_20160521_211614.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211614.jpg
 
  STM32F103C8 Breakout[/caption]
@@ -144,7 +144,7 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
 Step 3\: Connect the breadboard and programmer
 ==============================================
 
-[caption id="attachment_525" align="alignright" width="320"].. image:: /wp-content/uploads/2016/05/IMG_20160521_213137.jpg
+[caption id="attachment_525" align="alignright" width="320"].. image:: IMG_20160521_213137.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213137.jpg
 
  Cheap STLinkV2 Clone[/caption]
@@ -186,7 +186,7 @@ Next, we need to connect the following pins on the breadboard\:
 
 Here is my breadboard setup\:
 
-[caption id="attachment_527" align="aligncenter" width="480"].. image:: /wp-content/uploads/2016/05/IMG_20160521_211048-1.jpg
+[caption id="attachment_527" align="aligncenter" width="480"].. image:: IMG_20160521_211048-1.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211048-1.jpg
 
  STM32F103C8 Breadboard Setup[/caption]
@@ -486,7 +486,7 @@ code-block::
 
 After doing that I saw the following awesomeness\:
 
-[caption id="attachment_528" align="aligncenter" width="480"].. image:: /wp-content/uploads/2016/05/IMG_20160521_212615.jpg
+[caption id="attachment_528" align="aligncenter" width="480"].. image:: IMG_20160521_212615.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_212615.jpg
 
  STM32F103C8 with LED turned on[/caption]

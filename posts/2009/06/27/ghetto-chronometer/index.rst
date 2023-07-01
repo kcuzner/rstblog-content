@@ -60,7 +60,7 @@ These instructions assume enough knowledge to construct a circuit on a breadboar
 
 
 #. Heatshrink or tape each lead coming off of the emitters and detectors individually and then per device. This is so that no short circuits happen and so that the device is easier to insert and remove from the PVC.
-[caption id="attachment_57" align="alignright" width="614" caption="Chronometer Schematic"].. image:: /wp-content/uploads/2009/06/chronometer-1024x575.png
+[caption id="attachment_57" align="alignright" width="614" caption="Chronometer Schematic"].. image:: chronometer.png
 
    [/caption]
 

@@ -19,10 +19,10 @@ In this post I'm going to go over my general design, some things I was happy wit
 
 `https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`_
 
-.. image:: /wp-content/uploads/2017/04/IMG_20170409_222521.jpg
+.. image:: IMG_20170409_222521.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170409_222521.jpg
 
-  .. image:: /wp-content/uploads/2017/04/IMG_20170415_194157.jpg
+  .. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
 
 
@@ -44,7 +44,7 @@ There are three main parts to the watch circuit\:
 The Power Supply & Battery Charger
 ----------------------------------
 
-.. image:: /wp-content/uploads/2017/04/WristwatchPowersupply.png
+.. image:: WristwatchPowersupply.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchPowersupply.png
 
 The key constraint for the power supply (shown on the right with mistakes, see further down for explanation and fixes) was quiescent current. Last year I did a little experiment with a buck converter I had selected for its small size and low part count. I connected it to my battery and waited to see how long my battery would last (I posted a little about the experiment `here <http://kevincuzner.com/2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1/>`_) when powering that regulator. It barely lasted a day. This was very disappointing since my expectation was for this thing to last me at least 4-5 days between charges. I looked deeper in the datasheet and saw that the buck controller I had selected actually had a fairly high quiescent current compared to my load. It claimed very high efficiency, but its load was meant to be somewhere in the several hundred milliamps. My load was going to live in the microamp range most of the time and I needed a buck controller that would also have a quiescent current in that same range.
@@ -58,7 +58,7 @@ Now, if you were to look at the schematic you would see that I have several diod
 The Microcontroller & Accelerometer
 -----------------------------------
 
-.. image:: /wp-content/uploads/2017/04/WristwatchMicrocontroller.png
+.. image:: WristwatchMicrocontroller.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchMicrocontroller.png
 
 This is one area where the design kept changing. I started out with an ATMega48A, changed it to a Kinetis KL26-series, and settled finally on the STM32L052C8 once I had found that STM32s were obscenely easy to program.
@@ -76,14 +76,14 @@ The only real mistake here was in the USB part\: I did not fully read the microc
 The LEDs
 --------
 
-.. image:: /wp-content/uploads/2017/04/Wristwatch-LEDs.png
+.. image:: Wristwatch-LEDs.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LEDs.png
 
 As the main part of the watch that people see, the LEDs needed to be bright enough and work well while still maintaining my target PCB form factor. This part of the design presented some unexpected challenges, some realized while I was still designing, and some realized after I had assembled everything and was scratching my head wondering why things didn't work as planned.
 
 The LEDs I chose are all 0603 form factor, including the central RGB LED which is 0606. This allowed me to create a board about 32mm in diameter, if I went to four layers and sacrificed the edges of the internal layers for some additional routing. Considering how tiny the board was going to be, paying twice as much per square inch of the board wasn't a huge deal.
 
-.. image:: /wp-content/uploads/2017/04/Wristwatch-LED-Wiring.png
+.. image:: Wristwatch-LED-Wiring.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LED-Wiring.png
 
 The first challenge I am going to talk about is routing. There are 73 LEDs in total, with 60 on the outer "minutes/seconds" ring, 12 on an inner hour ring, and a central RGB LED. They are multiplexed using a 74HC154 line decoder (16 active-low output lines) On the right you can see that I arranged the LEDs in a circle (look for the footprint silksceen in cyan; I turned off pads and copper pours so that the inner layers could be seen) around the edge, with very little clearance. This allowed for the smallest board space possible (the inner pads of the LEDs are as close as I could make them while maintaining solderability), at the expense of routing area. The ring LEDs are arranged in the circuit into 12 groups of 6 LEDs apiece\: 5 minute LEDs and the one hour LED. This means that if I were to arrange these LEDs in a circle, I would need to have 6 concentric ring traces running around the edge of the board with 72 connection traces running off from those rings to the individual LEDs. That created a problem\: I didn't have room for the 72 connection traces if I wanted to have a microcontroller living in the middle of the board. After thinking about it for a while, I actually reversed the order of the odd-numbered minute LED segments. So, the wiring pattern for the LEDs goes 0-1-2-3-4-4-3-2-1-0-0-1-2-3-4... rather than the more expected 0-1-2-3-4-0-1-2-3-4-0-1-2-3-4... pattern. It's more clear in the schematic how this works (look at the ordering of the net names on the LEDs). This allowed me to wire the whole thing without needing to create connection traces crosscrossing everywhere. Instead, I could use two routing layers to make two sets of 6 concentric hexagonal routing shapes which both go around the board and end very near the pad of the LED they are destined for. I used the internal layers for these hexagons, leaving the external layers for the component pads and support circuitry. The cost of this decision was in software, as it requires the bitmap for the odd-numbered segments to be reversed in order to display a pattern on the outer ring.

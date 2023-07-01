@@ -4,7 +4,7 @@ The Problem
 
 I am working on a project that involves a Li-Ion battery charger. I've never built one of these circuits before and I wanted to test the battery over its entire charge-discharge cycle to make sure it wasn't going to burst into flame because I set some resistor wrong. The battery itself is very tiny (100mAH, 2.5mm thick) and is going to be powering an extremely low-power circuit, hopefully over the course of many weeks between charges.
 
-[caption id="attachment_541" align="aligncenter" width="640"].. image:: /wp-content/uploads/2016/07/Battery-Charger.jpg
+[caption id="attachment_541" align="aligncenter" width="640"].. image:: Battery-Charger.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger.jpg
 
  Battery charger breadboard[/caption]
@@ -202,7 +202,7 @@ This process highlights an issue with using standard resistors. Unless the resis
 Conclusion
 ==========
 
-[caption id="attachment_542" align="aligncenter" width="640"].. image:: /wp-content/uploads/2016/07/Battery-Charger-with-EZDAQ.jpg
+[caption id="attachment_542" align="aligncenter" width="640"].. image:: Battery-Charger-with-EZDAQ.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger-with-EZDAQ.jpg
 
  Battery Charger with EZDAQ Attached (don't mind the O-Scope probes...those are for another test)[/caption]

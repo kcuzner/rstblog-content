@@ -13,7 +13,7 @@ For this Christmas I decided to do something fun with my Christmas tree\: Hook i
 
 
 
-[caption id="attachment_649" align="alignright" width="1125"].. image:: /wp-content/uploads/2018/12/Christmas-Tree-in-Action-Cropped.png
+[caption id="attachment_649" align="alignright" width="1125"].. image:: Christmas-Tree-in-Action-Cropped.png
    :target: http://kevincuzner.com/wp-content/uploads/2018/12/Christmas-Tree-in-Action-Cropped.png
 
  The IoTree[/caption]

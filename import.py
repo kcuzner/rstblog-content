@@ -105,7 +105,14 @@ class TextBody:
         self.text = text
         self.line = pos[0]
         self.offset = pos[1]
-        self.attachments = []
+        self._attachments = []
+
+    @property
+    def attachments(self):
+        yield from self._attachments
+
+    def add_attachment(self, attachment):
+        self._attachments.append(attachment)
 
     def to_rst(self, *args, escape=":`*", **kwargs):
         text = self.text
@@ -150,7 +157,17 @@ class TagHandler(ABC):
         self.attrs = dict(attrs)
         self.line = pos[0]
         self.offset = pos[1]
-        self.attachments = []
+        self._attachments = []
+
+    @property
+    def attachments(self):
+        yield from self._attachments
+        content = getattr(self, "content", [])
+        for c in content:
+            yield from c.attachments
+
+    def add_attachment(self, attachment):
+        self._attachments.append(attachment)
 
     @abstractmethod
     def to_rst(self, *args, **kwargs):
@@ -226,7 +243,7 @@ class ImgTag(TagHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.src = self.attrs.get("src")
-        self.attachments.append(self)
+        self.add_attachment(self)
 
     @property
     def src(self):
@@ -803,6 +820,9 @@ class AttachmentRegistry:
         for a in attachments:
             if attachment := self.find(a.src):
                 name = attachment.download(output_dir)
+                _log.debug(
+                    f"Downloaded attachment {attachment.guid} to {output_dir / name}"
+                )
                 a.src = name
 
     def find(self, link):
@@ -835,12 +855,14 @@ def load_rss(file):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("rss", help="Path to RSS XML file")
 
     args = parser.parse_args()
 
+    level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig()
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(level)
 
     load_rss(args.rss)
 

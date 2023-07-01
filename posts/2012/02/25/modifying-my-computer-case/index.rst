@@ -39,7 +39,7 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 
-[caption id="attachment_132" align="alignright" width="150" caption="The spider wires"].. image:: /wp-content/uploads/2012/02/HPIM1946-150x150.jpg
+[caption id="attachment_132" align="alignright" width="150" caption="The spider wires"].. image:: HPIM1946.jpg
 
 [/caption]
 

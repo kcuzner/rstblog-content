@@ -17,3 +17,8 @@ Simulations are to be stored in an XML format which is going to be more or less 
 As for the GUI, I plan on using Qt since it seems the most cross-platform (sorry GTK...Windows needs too much help to load you and PyDev in eclipse doesn't like the whole introspection thing). I plan on releasing the project under the Apache License (but don't yet quote me on that or hold me to it...I may choose a different license later once I get more of a feel for how the project would be used). Either way, I plan on publishing the source code on github since it looks like nothing like this really exists in a simple form. Sure, there are clones of Simulink to work with Octave and things like that, but it doesn't look like there are few, if any, stand-alone applications that do this (except perhaps a paid program called `logic.ly <http://logic.ly/>`_, but this should be able to duplicate the functionality of that program as well). I guess it is kind of a niche market since the only people who do this kind of thing usually can afford Simulink and Matlab.
 
 For the record, I do have access to Simulink and Matlab through the University I am attending, but where would the fun be in that?
+
+.. rstblog-settings::
+   :title: Cloning Simulink...in Python
+   :date: 2012/09/24
+   :url: 2012/09/24/cloning-simulink-in-python

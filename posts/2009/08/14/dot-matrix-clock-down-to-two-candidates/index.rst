@@ -9,3 +9,8 @@ Well, just a short update here. I think I will probably be at home for another m
 
     I don't have enough experience with this sort of thing to answer it myself and I really can't afford to buy two versions of this board. Is using a crystal this small really worth it?
 Well, hopefully I will have that problem solved before the end of the month so I can place my order as soon as Olimex comes out of their summer break (for some reason, Europeans take a month long vacation from work in the summer...how odd...).
+
+.. rstblog-settings::
+   :title: Dot Matrix Clock: Down to two candidates
+   :date: 2009/08/14
+   :url: 2009/08/14/dot-matrix-clock-down-to-two-candidates

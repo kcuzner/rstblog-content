@@ -3,3 +3,8 @@ As I was working to get my led case lights ready to install (tutorial and videos
 In short, I don't think windows will be supported for my case lights just yet.
 
 EDIT\: Yay for system restore! Apparently when I installed Assassins Creed it created a nice system restore point. Now everything works great again. However, I still won't be messing with the drivers again for a while. I have to make sure I have plenty of time on my hands before I do that again just in case system restore isn't as awesome.
+
+.. rstblog-settings::
+   :title: Yay for driver signing!
+   :date: 2012/04/22
+   :url: 2012/04/22/yay-for-driver-signing

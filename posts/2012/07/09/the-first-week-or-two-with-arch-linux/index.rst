@@ -35,3 +35,8 @@ Here is my desktop as it stands\:
    :target: http://kevincuzner.com/wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931.png
 
  Arch Linux with Gnome 3[/caption]
+
+.. rstblog-settings::
+   :title: The first week or two with Arch Linux
+   :date: 2012/07/09
+   :url: 2012/07/09/the-first-week-or-two-with-arch-linux

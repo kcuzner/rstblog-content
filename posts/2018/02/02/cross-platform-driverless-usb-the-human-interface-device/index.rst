@@ -624,3 +624,8 @@ Conclusion
 At this point, I hope that I've armed you with enough information that you can implement a human interface device with any microcontroller that you have a working USB implementation for. We've gone through modifying the configuration descriptor, writing a report descriptor, sending and receiving reports, and briefly touched on writing host software to talk to the HID devices.
 
 As always, if you have any suggestions, ideas, or questions feel free to comment below.
+
+.. rstblog-settings::
+   :title: Cross-platform driverless USB: The Human Interface Device
+   :date: 2018/02/02
+   :url: 2018/02/02/cross-platform-driverless-usb-the-human-interface-device

@@ -18,3 +18,8 @@ A few things I plan on adding to the server eventually are\:
 
 
 Currently, the repository includes a demo chatroom service for which I should have the client side application done soon and uploaded. Currently it supports multiple chatrooms and multiple users, but there is no authentication really and there are a few features I would like to add (such as being able to see who is in the chatroom).
+
+.. rstblog-settings::
+   :title: Making a WebSocket server
+   :date: 2012/06/17
+   :url: 2012/06/17/making-a-websocket-server

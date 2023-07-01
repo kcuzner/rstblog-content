@@ -1065,3 +1065,8 @@ Conclusion
 Wow that was long. TLDR of people who look at this will be rampant and that's fine. The point here was describe how I ended up building my device-side driver so that I could easily extend it without needing to modify too many files while still managing to save code space.
 
 I've posted this hoping its useful to someone, even with all its shortcomings. I love doing this kind of stuff and writing a HAL for the USB peripheral is one of my favorite parts of getting started on a new microcontroller. If you have any comments or questions, leave them down below and I'll do my best to respond.
+
+.. rstblog-settings::
+   :title: Bare metal STM32: Writing a USB driver
+   :date: 2018/01/29
+   :url: 2018/01/29/bare-metal-stm32-writing-a-usb-driver

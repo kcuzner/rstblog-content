@@ -5,3 +5,8 @@ The host side driver only works on linux at the moment due to the usage of /proc
 Anyway, the file is here\: `LED CPU Monitor Software <http://kevincuzner.com/wp-content/uploads/2012/04/ledcpu.tar.gz>`_
 
 Here is the original post detailing the hardware along with a video tour/tutorial/demonstration\: `The Case LEDs 2.0 Completed <http://cuznersoft.com/wordpress/?p=164>`_
+
+.. rstblog-settings::
+   :title: Case LEDs Software
+   :date: 2012/04/24
+   :url: 2012/04/24/case-leds-software-2

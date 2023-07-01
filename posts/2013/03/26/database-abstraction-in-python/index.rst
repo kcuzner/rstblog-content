@@ -738,3 +738,8 @@ DbObjects require that the inheriting classes define two properties\: dbo_tablen
 To select records from the database, the select() function can be called from the class. This sets up a DbSelectQuery which will return an array of the DbObject that it is called for when the query is executed.
 
 One fallacy of this structure is that at the moment it assumes that the primary key won't be None if it has been set. In other words, the way I did it right now does not allow for null primary keys. The reason it does this is because it says that if the primary key hasn't been set, it needs to generate a DbInsertQuery for the object when save() is called instead of a DbUpdateQuery. Both insert and update queries do not include every field. Immutable fields are always excluded and then later selected or inferred from the cursor object.
+
+.. rstblog-settings::
+   :title: Database Abstraction in Python
+   :date: 2013/03/26
+   :url: 2013/03/26/database-abstraction-in-python

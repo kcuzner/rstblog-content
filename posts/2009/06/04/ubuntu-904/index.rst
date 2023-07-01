@@ -3,3 +3,8 @@ I have just installed Ubuntu 9.04 Netbook Remix on my Acer Aspire One and I have
 [caption id="attachment_45" align="alignright" width="687" caption="Ubuntu 9.04 Netbook Remix"].. image:: screenshot.png
 
 [/caption]
+
+.. rstblog-settings::
+   :title: Ubuntu 9.04
+   :date: 2009/06/04
+   :url: 2009/06/04/ubuntu-904

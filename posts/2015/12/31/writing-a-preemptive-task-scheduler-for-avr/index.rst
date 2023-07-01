@@ -778,3 +778,8 @@ So, now that I've told you some of what's wrong with the above, here are two RTO
 
 
 Anyway, I hope that this article is useful and as usual, any suggestions and such can be left in the comments. As mentioned before, the code for this article can be found on github here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`_
+
+.. rstblog-settings::
+   :title: Writing a preemptive task scheduler for AVR
+   :date: 2015/12/31
+   :url: 2015/12/31/writing-a-preemptive-task-scheduler-for-avr

@@ -215,3 +215,8 @@ code-block::
 
 
 This will dump the output of my program into the charge.csv file (which is measuring the charge cycle on the battery). I will get samples every 5 seconds. Later, I can use this data to make sure my circuit is working properly and observe its behavior over long periods of time. While crude, this quick and dirty DAQ solution works quite well for my purposes.
+
+.. rstblog-settings::
+   :title: Quick-n-dirty data acquisition with a Teensy 3.1
+   :date: 2016/07/05
+   :url: 2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1

@@ -98,3 +98,8 @@ Conclusion
 ----------
 
 I eventually will put up this Tetris implementation as a gist or repository on github (probably just a gist unless it gets huge...which it could). So far I have learned a great deal about game design and structure, so this should get interesting as I explore other things like networking and such.
+
+.. rstblog-settings::
+   :title: Lessons in game design...in a car!
+   :date: 2013/05/03
+   :url: 2013/05/03/lessons-in-game-design-in-a-car

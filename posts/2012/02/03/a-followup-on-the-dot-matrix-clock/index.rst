@@ -12,3 +12,8 @@ So, in summary, if I were to do a re-design I would change the following\:
 
 
 Now all that is left for me to do is to figure out how I can modify the boards I have so that I wouldn't have to drop $70 again...
+
+.. rstblog-settings::
+   :title: A followup on the Dot Matrix Clock
+   :date: 2012/02/03
+   :url: 2012/02/03/a-followup-on-the-dot-matrix-clock

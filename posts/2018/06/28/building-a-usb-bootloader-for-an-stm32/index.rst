@@ -414,3 +414,8 @@ Conclusion
 This is my first bootloader that I've written for one of my projects. There were challenges getting it to work at first, but I hope that I've shown it isn't an incredibly complex thing to write. I actually got better performance flashing over USB than over SWD, so that is an additional win for writing this and if I didn't use the SWD for debugging so much I would probably always use a bootloader like this on my projects.
 
 I hope this has been a useful read and I do encourage actually checking out the source code, since I've been pretty brief about some parts of the bootloader.
+
+.. rstblog-settings::
+   :title: Building a USB bootloader for an STM32
+   :date: 2018/06/28
+   :url: 2018/06/28/building-a-usb-bootloader-for-an-stm32

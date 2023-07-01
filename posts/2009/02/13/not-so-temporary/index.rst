@@ -24,3 +24,9 @@ Additional features of the new smith-marsden site\:
 * More to come as I think of them and make them...
 
 
+
+
+.. rstblog-settings::
+   :title: Not so temporary...
+   :date: 2009/02/13
+   :url: 2009/02/13/not-so-temporary

@@ -32,3 +32,8 @@ So now, the plan to proceed is as follows\:
 
 
 As always, the source is available at `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`_
+
+.. rstblog-settings::
+   :title: Multiprocessing with the WebSocketServer
+   :date: 2012/06/20
+   :url: 2012/06/20/multiprocessing-with-the-websocketserver

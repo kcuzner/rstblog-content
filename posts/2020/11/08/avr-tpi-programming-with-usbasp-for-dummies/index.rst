@@ -139,3 +139,8 @@ Conclusion
 ==========
 
 The intention in this post was to communicate how to program TPI-based AVRs without too much hassle using the usbasp. If I've got a detail missing, something wrong, or this post helped you out, feel free to drop a comment!
+
+.. rstblog-settings::
+   :title: AVR  TPI Programming With usbasp For Dummies
+   :date: 2020/11/08
+   :url: 2020/11/08/avr-tpi-programming-with-usbasp-for-dummies

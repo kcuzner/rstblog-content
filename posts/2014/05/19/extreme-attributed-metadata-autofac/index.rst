@@ -356,3 +356,8 @@ Conclusion
 ==========
 
 I probably use Metadata more than I should in Autofac. With the addition of the IMetadataProvider I feel like its quite easy to define complex metadata and use it with Autofac's natural constructor injection system. Overall, the usage of metadata & reflection in my programs has made them quite a bit more flexible and extendable and I feel like Autofac and its metadata system complement the built in reflection system of C# quite well.
+
+.. rstblog-settings::
+   :title: Extreme Attributed Metadata with Autofac
+   :date: 2014/05/19
+   :url: 2014/05/19/extreme-attributed-metadata-autofac

@@ -90,3 +90,8 @@ Conclusion
 ==========
 
 So, with the controller in the box and everything assembled, it seems that all will be well with the controller. It doesn't seem to miss keypresses or freeze and is able to play the game without too many hiccups (the audio makes it difficult, but that's just a emulator tweaking issue). The best part about this project is that in terms of total work time, it probably took only about 16 hours. Considering that most of my projects take months to finish, this easily takes the cake as one of my quickest projects start to finish.
+
+.. rstblog-settings::
+   :title: Pop 'n Music controller...AVR style
+   :date: 2013/08/17
+   :url: 2013/08/17/pop-n-music-controller-avr-style

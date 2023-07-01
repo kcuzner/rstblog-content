@@ -40,3 +40,8 @@ Conclusion
 ----------
 
 Although the Teensy is for a specific contest project right now, at the price of $19.80 for the amount of power that it gives, I believe I will buy one for myself to mess around with. I am looking forward to getting more familiar with this processor and although I resent the IDE I have to work with at the moment, I hope that I will be able to move along to better compilation options that will let me move away from the arduino IDE.
+
+.. rstblog-settings::
+   :title: First thoughts on the Teensy 3.1
+   :date: 2014/01/27
+   :url: 2014/01/27/first-thoughts-on-the-teensy-3-1

@@ -123,3 +123,8 @@ Conclusion
 As always, do not take my ideas without asking me first or crediting me somehow. Feel free to use this as a resource for your own projects, but if I see an exact duplicate of my clock out there somewhere that I didn't know about previously it could be bad. The point of this clock is to be unique, so if you end up making a clock based off of information you found here then try to make it unique enough so that it could be distinguished from mine easily.
 
 I am not sure how often I will be able to actually work on this clock, but I will post updates when I reach milestones and such.
+
+.. rstblog-settings::
+   :title: Resurrecting the Dot Matrix Clock
+   :date: 2009/04/15
+   :url: 2009/04/15/resurrecting-the-dot-matrix-clock

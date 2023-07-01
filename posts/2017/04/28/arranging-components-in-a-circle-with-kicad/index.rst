@@ -80,3 +80,8 @@ Now, pcbnew may not recognize that your PCB has changed and enable the save butt
 **Conclusion**
 
 Hopefully this brief tutorial will either help you to place components in circles in Kicad/pcbnew or will help you to write your own scripts for easing PCB layout. Kicad can be a very capable tool and with its new expanded scripting functionality, the sky seems to be the limit.
+
+.. rstblog-settings::
+   :title: Arranging components in a circle with Kicad
+   :date: 2017/04/28
+   :url: 2017/04/28/arranging-components-in-a-circle-with-kicad

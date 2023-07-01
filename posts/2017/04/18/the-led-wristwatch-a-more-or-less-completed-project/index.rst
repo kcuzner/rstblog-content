@@ -102,3 +102,8 @@ This project was especially satisfying to me because I managed to actually bring
 In summary, I was happy that even with my errors the watch worked fairly well. There were zero problems programming the microcontroller and parts that I was reluctant about (I'm talking about you, DFN packages) soldered well and worked just fine. I still need to improve my diligence in part selection, however, as the whole blue LED fiasco could have been avoided by just reading a datasheet thoroughly.
 
 Oh, and the parts cost? ~$50. Not bad, though it makes a very impractical timepiece as it's fragile and not water or splash resistant in the slightest.
+
+.. rstblog-settings::
+   :title: The LED Wristwatch: A (more or less) completed project!
+   :date: 2017/04/18
+   :url: 2017/04/18/the-led-wristwatch-a-more-or-less-completed-project

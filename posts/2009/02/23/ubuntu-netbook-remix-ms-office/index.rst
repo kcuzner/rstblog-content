@@ -17,3 +17,8 @@ There isn't very many things I can really see wrong with this except for one bug
 **Microsoft Office\:**
 
 The screenshot above shows my Microsoft Office installation. This took two-ish days to get working. For the longest time I was trying to use WINE to install it, but to no avail. The rpcrt4 dll would never replace properly and the whole thing would hang up on pipe_wait status with a fatal dll error. I eventually decided to use crossover linux and install it that way. It installed on the first try within 45 minutes. So far the only problem I am having with it is microsoft word crashing when it starts up. This isn't too much of a problem because I only plan on using OneNote on Ubuntu and switching into windows to write papers and stuff if I need to on this computer (I would prefer to use my larger computer for those).
+
+.. rstblog-settings::
+   :title: Ubuntu Netbook Remix & MS Office
+   :date: 2009/02/23
+   :url: 2009/02/23/ubuntu-netbook-remix-ms-office

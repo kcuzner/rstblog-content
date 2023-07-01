@@ -11,3 +11,8 @@ A gist of how a simple simulation can be set up and run\:
 [gist id="4391549" file="simulate_basic_test.cpp"]
 
 The next thing on the docket before I start off on creating all of the system blocks (basically, trying to clone the functionality of the blocks listed for Simulink) and making the GUI is to create a set of interfaces for describing the model in files. This is so that I can create an interface to a generic loader allowing for multiple file formats to be loaded (XML, JSON, BSON, something binary, etc) for describing simulations.
+
+.. rstblog-settings::
+   :title: Simulation in C++ finally works
+   :date: 2012/12/27
+   :url: 2012/12/27/simulation-in-c-finally-works

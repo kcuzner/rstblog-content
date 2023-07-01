@@ -122,3 +122,8 @@ Conclusion
 This project was a lot of fun. Once all the parts were running, seeing my Christmas Tree change in response to the commands of the internet mob turned into a great time for me. I have skipped some stuff (like figuring out a good-enough way to describe LED patterns programmatically, learning Vue for the first time, and other things), but that's what the github repository is for. I am going to shut down the tree in a week or two, since the AWS bandwidth charges per day with multiple simultaneous video streams are somewhat higher than what I am used to with this website and the holiday season will have ended, but I hope that the internet can have some fun with it while it's here.
 
 If you have remarks or questions, feel free to leave them below in the comments.
+
+.. rstblog-settings::
+   :title: The IoTree: An internet-connected tree
+   :date: 2018/12/21
+   :url: 2018/12/21/the-iotree-an-internet-connected-tree

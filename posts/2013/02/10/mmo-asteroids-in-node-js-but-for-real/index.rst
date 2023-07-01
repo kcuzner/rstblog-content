@@ -5,3 +5,8 @@ For physics I am using `Box2Dweb <http://code.google.com/p/box2dweb/>`_ in a No
 I have made the source available on github here\: `https\://github.com/kcuzner/mmo-asteroids <https://github.com/kcuzner/mmo-asteroids>`_
 
 The MMO itself can be viewed here\: `http\://kevincuzner.com\:8080/ <http://kevincuzner.com:8080/>`_. Note that at times it may be down since I am messing with my firewall right now and I might accidentally close the port. Just leave me a note in the comments and I'll try to get it working.
+
+.. rstblog-settings::
+   :title: MMO Asteroids in Node.js...but for real.
+   :date: 2013/02/10
+   :url: 2013/02/10/mmo-asteroids-in-node-js-but-for-real

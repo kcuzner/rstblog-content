@@ -24,3 +24,8 @@ Fabrication
 -----------
 
 I am now thinking of how to get this board fabricated. I have found one company, olimex, who will do it for around $40 per board (no minimum quantity) which is really quite cheap. The also allow panelizing and will cut your boards for you if you want, so I might wait until I have the entire clock finished before sending it off for fabbing. The only problem so far is that my board is .3" too wide for their smaller double sided panel. The upgrade is over $100 and adds about 6" on every side to the space which I don't need unless I decided to make two clocks and panelize all the parts into one board. Hopefully it isn't too hard to get these fabricated since I kind of need them to be fabricated before I can do serious testing on my software.
+
+.. rstblog-settings::
+   :title: Revision two
+   :date: 2009/04/18
+   :url: 2009/04/18/revision-two

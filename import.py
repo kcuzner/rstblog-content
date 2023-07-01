@@ -712,6 +712,26 @@ class Content(Item):
     def repo_path(self):
         pass
 
+    @property
+    @abstractmethod
+    def rst_url(self):
+        pass
+
+    @property
+    def rst_date(self):
+        return self.date.strftime("%Y/%m/%d")
+
+    @property
+    def rstblog_directive(self):
+        return "\n".join(
+            [
+                f".. rstblog-settings::",
+                f"   :title: {self.title}",
+                f"   :date: {self.rst_date}",
+                f"   :url: {self.rst_url}",
+            ]
+        )
+
     def process(self, attachments):
         # small worry here about path traversal...but whatever, this script
         # isn't ran automatically
@@ -726,6 +746,8 @@ class Content(Item):
         rst = content.close()
         with open(index_path, "w") as f:
             f.write(rst)
+            f.write("\n\n")
+            f.write(self.rstblog_directive)
 
 
 @Item.register_post_type("post")
@@ -737,12 +759,15 @@ class Post(Content):
         self.content = el.find("content:encoded", XML_NAMESPACES).text
         self.date = parser.parse(el.find("wp:post_date", XML_NAMESPACES).text)
         self.name = el.find("wp:post_name", XML_NAMESPACES).text
+        self.title = el.find("title", XML_NAMESPACES).text
+
+    @Content.rst_url.getter
+    def rst_url(self):
+        return f"{self.rst_date}/{self.name}"
 
     @Content.repo_path.getter
     def repo_path(self):
-        date = self.date.strftime("%Y/%m/%d")
-        # WIP here:
-        return f"posts/{date}/{self.name}"
+        return f"posts/{self.rst_url}"
 
 
 @Item.register_post_type("page")
@@ -754,6 +779,11 @@ class Page(Content):
         self.content = el.find("content:encoded", XML_NAMESPACES).text
         self.date = parser.parse(el.find("wp:post_date", XML_NAMESPACES).text)
         self.name = el.find("wp:post_name", XML_NAMESPACES).text
+        self.title = el.find("title", XML_NAMESPACES).text
+
+    @Content.rst_url.getter
+    def rst_url(self):
+        return f"{self.name}"
 
     @Content.repo_path.getter
     def repo_path(self):

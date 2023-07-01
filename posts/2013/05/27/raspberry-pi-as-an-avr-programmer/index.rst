@@ -162,3 +162,8 @@ Future
 As issues crop up, I hope to add improvements like changing the clock frequency and maybe someday adding TPI support (not sure if necessary since this is using the dedicated SPI and as far as I know, TPI doesn't use SPI).
 
 I hope that those using this can find it helpful in their fun and games with the Raspberry Pi. If there are any issues compiling and stuff, either open an issue on github or mention it in the comments here.
+
+.. rstblog-settings::
+   :title: Raspberry Pi as an AVR Programmer
+   :date: 2013/05/27
+   :url: 2013/05/27/raspberry-pi-as-an-avr-programmer

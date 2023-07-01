@@ -98,3 +98,9 @@ Video and Pictures
 
 [/caption]
 
+
+
+.. rstblog-settings::
+   :title: Weekend Project: Smoke Bombs
+   :date: 2009/07/05
+   :url: 2009/07/05/weekend-project-smoke-bombs

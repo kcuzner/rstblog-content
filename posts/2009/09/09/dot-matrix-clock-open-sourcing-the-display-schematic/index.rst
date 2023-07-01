@@ -50,3 +50,8 @@ Now for the schematic. Here you go\:
 [/caption]
 
 Now, before someone goes on yelling about how much the BSS138 sucks as a MOSFET I guess I should say that I have replaced it with a much better one that can actually source the current I need it to. The BSS138 has a couple ohms of Rds\ :sub:`{content}`\ , so I replaced it with a MOSFET that has around 0.25Ω Rds\ :sub:`{content}`\ . Enjoy.
+
+.. rstblog-settings::
+   :title: Dot Matrix Clock: Open sourcing the display schematic
+   :date: 2009/09/09
+   :url: 2009/09/09/dot-matrix-clock-open-sourcing-the-display-schematic

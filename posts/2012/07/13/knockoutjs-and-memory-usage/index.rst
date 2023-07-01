@@ -181,3 +181,9 @@ In summary, to reduce KnockoutJS memory usage consider the following\:
 * Consider pagination or something. If you don't need 1000 objects displayed at the same time, don't display 1000 objects at the same time. There is a server there to store the information for a reason.
 
 
+
+
+.. rstblog-settings::
+   :title: KnockoutJS and Memory Usage
+   :date: 2012/07/13
+   :url: 2012/07/13/knockoutjs-and-memory-usage

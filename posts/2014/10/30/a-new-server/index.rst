@@ -3,4 +3,4 @@ So for the past couple months my server has been going on and off due to the fac
 .. rstblog-settings::
    :title: A new server
    :date: 2014/10/30
-   :url: 2014/10/30/a-new-server
+   :url: /2014/10/30/a-new-server

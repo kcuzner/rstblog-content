@@ -106,4 +106,4 @@ Industry regulatory disclosure requirements
 .. rstblog-settings::
    :title: Privacy Policy
    :date: 2018/05/25
-   :url: privacy-policy
+   :url: /privacy-policy

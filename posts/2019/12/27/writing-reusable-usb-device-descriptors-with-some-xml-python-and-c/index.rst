@@ -935,4 +935,4 @@ I expect the most useful thing here for others is probably the USB device descri
 .. rstblog-settings::
    :title: Writing reusable USB device descriptors with some XML, Python, and C
    :date: 2019/12/27
-   :url: 2019/12/27/writing-reusable-usb-device-descriptors-with-some-xml-python-and-c
+   :url: /2019/12/27/writing-reusable-usb-device-descriptors-with-some-xml-python-and-c

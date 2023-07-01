@@ -127,4 +127,4 @@ I am not sure how often I will be able to actually work on this clock, but I wil
 .. rstblog-settings::
    :title: Resurrecting the Dot Matrix Clock
    :date: 2009/04/15
-   :url: 2009/04/15/resurrecting-the-dot-matrix-clock
+   :url: /2009/04/15/resurrecting-the-dot-matrix-clock

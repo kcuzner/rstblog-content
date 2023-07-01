@@ -43,4 +43,4 @@ I have also had many ideas relating to future projects which I will post here wh
 .. rstblog-settings::
    :title: Back again
    :date: 2012/01/07
-   :url: 2012/01/07/back-again
+   :url: /2012/01/07/back-again

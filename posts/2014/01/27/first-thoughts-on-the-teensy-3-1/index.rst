@@ -44,4 +44,4 @@ Although the Teensy is for a specific contest project right now, at the price of
 .. rstblog-settings::
    :title: First thoughts on the Teensy 3.1
    :date: 2014/01/27
-   :url: 2014/01/27/first-thoughts-on-the-teensy-3-1
+   :url: /2014/01/27/first-thoughts-on-the-teensy-3-1

@@ -36,4 +36,4 @@ As always, the source is available at `https\://github.com/kcuzner/python-webso
 .. rstblog-settings::
    :title: Multiprocessing with the WebSocketServer
    :date: 2012/06/20
-   :url: 2012/06/20/multiprocessing-with-the-websocketserver
+   :url: /2012/06/20/multiprocessing-with-the-websocketserver

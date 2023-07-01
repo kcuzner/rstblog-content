@@ -219,4 +219,4 @@ This will dump the output of my program into the charge.csv file (which is measu
 .. rstblog-settings::
    :title: Quick-n-dirty data acquisition with a Teensy 3.1
    :date: 2016/07/05
-   :url: 2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1
+   :url: /2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1

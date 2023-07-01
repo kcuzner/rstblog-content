@@ -166,4 +166,4 @@ I hope that those using this can find it helpful in their fun and games with the
 .. rstblog-settings::
    :title: Raspberry Pi as an AVR Programmer
    :date: 2013/05/27
-   :url: 2013/05/27/raspberry-pi-as-an-avr-programmer
+   :url: /2013/05/27/raspberry-pi-as-an-avr-programmer

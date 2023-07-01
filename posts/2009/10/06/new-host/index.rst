@@ -5,4 +5,4 @@ Anyway, hopefully this works out...and I am sure glad to be off my grandma's web
 .. rstblog-settings::
    :title: New Host!
    :date: 2009/10/06
-   :url: 2009/10/06/new-host
+   :url: /2009/10/06/new-host

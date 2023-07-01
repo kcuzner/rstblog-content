@@ -9,4 +9,4 @@ The only way in my mind that people redeem themselves from falling into the band
 .. rstblog-settings::
    :title: What is this with premade stuff??
    :date: 2009/07/27
-   :url: 2009/07/27/what-is-this-with-premade-stuff
+   :url: /2009/07/27/what-is-this-with-premade-stuff

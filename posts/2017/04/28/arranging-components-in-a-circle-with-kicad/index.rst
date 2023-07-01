@@ -84,4 +84,4 @@ Hopefully this brief tutorial will either help you to place components in circle
 .. rstblog-settings::
    :title: Arranging components in a circle with Kicad
    :date: 2017/04/28
-   :url: 2017/04/28/arranging-components-in-a-circle-with-kicad
+   :url: /2017/04/28/arranging-components-in-a-circle-with-kicad

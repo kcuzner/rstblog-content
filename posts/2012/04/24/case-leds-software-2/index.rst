@@ -9,4 +9,4 @@ Here is the original post detailing the hardware along with a video tour/tutoria
 .. rstblog-settings::
    :title: Case LEDs Software
    :date: 2012/04/24
-   :url: 2012/04/24/case-leds-software-2
+   :url: /2012/04/24/case-leds-software-2

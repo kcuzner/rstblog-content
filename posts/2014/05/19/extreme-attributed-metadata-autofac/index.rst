@@ -360,4 +360,4 @@ I probably use Metadata more than I should in Autofac. With the addition of the 
 .. rstblog-settings::
    :title: Extreme Attributed Metadata with Autofac
    :date: 2014/05/19
-   :url: 2014/05/19/extreme-attributed-metadata-autofac
+   :url: /2014/05/19/extreme-attributed-metadata-autofac

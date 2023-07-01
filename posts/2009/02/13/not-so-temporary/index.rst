@@ -29,4 +29,4 @@ Additional features of the new smith-marsden site\:
 .. rstblog-settings::
    :title: Not so temporary...
    :date: 2009/02/13
-   :url: 2009/02/13/not-so-temporary
+   :url: /2009/02/13/not-so-temporary

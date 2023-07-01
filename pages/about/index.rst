@@ -9,4 +9,4 @@ Everything you see here will be developed primary on Linux using mostly free and
 .. rstblog-settings::
    :title: About
    :date: 2009/02/13
-   :url: about
+   :url: /about

@@ -782,4 +782,4 @@ Anyway, I hope that this article is useful and as usual, any suggestions and suc
 .. rstblog-settings::
    :title: Writing a preemptive task scheduler for AVR
    :date: 2015/12/31
-   :url: 2015/12/31/writing-a-preemptive-task-scheduler-for-avr
+   :url: /2015/12/31/writing-a-preemptive-task-scheduler-for-avr

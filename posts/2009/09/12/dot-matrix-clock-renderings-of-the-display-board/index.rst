@@ -25,4 +25,4 @@ I created these images in blender by exporting images of the various pcb layers 
 .. rstblog-settings::
    :title: Dot Matrix Clock: Renderings of the display board
    :date: 2009/09/12
-   :url: 2009/09/12/dot-matrix-clock-renderings-of-the-display-board
+   :url: /2009/09/12/dot-matrix-clock-renderings-of-the-display-board

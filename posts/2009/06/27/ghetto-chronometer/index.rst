@@ -132,4 +132,4 @@ Obviously, there are some things that could be done with this to make it even co
 .. rstblog-settings::
    :title: Ghetto Chronometer
    :date: 2009/06/27
-   :url: 2009/06/27/ghetto-chronometer
+   :url: /2009/06/27/ghetto-chronometer

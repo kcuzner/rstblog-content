@@ -146,4 +146,4 @@ So, here are pictures of the finished product\:
 .. rstblog-settings::
    :title: The Case LED v. 2.0: Completed
    :date: 2012/04/23
-   :url: 2012/04/23/the-case-led-v-2-0-completed
+   :url: /2012/04/23/the-case-led-v-2-0-completed

@@ -9,4 +9,4 @@ I do pay for the hosting for this, 1.5 cents per hour per 256Mb of RAM with extr
 .. rstblog-settings::
    :title: 256Mb doesn't do what it used to...
    :date: 2013/02/26
-   :url: 2013/02/26/256mb-doesnt-do-what-it-used-to
+   :url: /2013/02/26/256mb-doesnt-do-what-it-used-to

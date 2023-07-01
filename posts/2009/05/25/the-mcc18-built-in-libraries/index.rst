@@ -3,4 +3,4 @@ They suck. While waiting for my parts for the clock to come in I have been tryin
 .. rstblog-settings::
    :title: The MCC18 built-in libraries
    :date: 2009/05/25
-   :url: 2009/05/25/the-mcc18-built-in-libraries
+   :url: /2009/05/25/the-mcc18-built-in-libraries

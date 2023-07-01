@@ -39,4 +39,4 @@ Here is my desktop as it stands\:
 .. rstblog-settings::
    :title: The first week or two with Arch Linux
    :date: 2012/07/09
-   :url: 2012/07/09/the-first-week-or-two-with-arch-linux
+   :url: /2012/07/09/the-first-week-or-two-with-arch-linux

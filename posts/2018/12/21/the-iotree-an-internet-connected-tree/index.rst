@@ -126,4 +126,4 @@ If you have remarks or questions, feel free to leave them below in the comments.
 .. rstblog-settings::
    :title: The IoTree: An internet-connected tree
    :date: 2018/12/21
-   :url: 2018/12/21/the-iotree-an-internet-connected-tree
+   :url: /2018/12/21/the-iotree-an-internet-connected-tree

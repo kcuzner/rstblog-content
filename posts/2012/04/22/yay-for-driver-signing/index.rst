@@ -7,4 +7,4 @@ EDIT\: Yay for system restore! Apparently when I installed Assassins Creed it cr
 .. rstblog-settings::
    :title: Yay for driver signing!
    :date: 2012/04/22
-   :url: 2012/04/22/yay-for-driver-signing
+   :url: /2012/04/22/yay-for-driver-signing

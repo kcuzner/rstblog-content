@@ -106,4 +106,4 @@ Oh, and the parts cost? ~$50. Not bad, though it makes a very impractical timepi
 .. rstblog-settings::
    :title: The LED Wristwatch: A (more or less) completed project!
    :date: 2017/04/18
-   :url: 2017/04/18/the-led-wristwatch-a-more-or-less-completed-project
+   :url: /2017/04/18/the-led-wristwatch-a-more-or-less-completed-project

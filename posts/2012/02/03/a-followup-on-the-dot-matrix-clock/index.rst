@@ -16,4 +16,4 @@ Now all that is left for me to do is to figure out how I can modify the boards I
 .. rstblog-settings::
    :title: A followup on the Dot Matrix Clock
    :date: 2012/02/03
-   :url: 2012/02/03/a-followup-on-the-dot-matrix-clock
+   :url: /2012/02/03/a-followup-on-the-dot-matrix-clock

@@ -143,4 +143,4 @@ The intention in this post was to communicate how to program TPI-based AVRs with
 .. rstblog-settings::
    :title: AVR  TPI Programming With usbasp For Dummies
    :date: 2020/11/08
-   :url: 2020/11/08/avr-tpi-programming-with-usbasp-for-dummies
+   :url: /2020/11/08/avr-tpi-programming-with-usbasp-for-dummies

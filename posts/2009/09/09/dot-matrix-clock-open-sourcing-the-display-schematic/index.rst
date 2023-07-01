@@ -54,4 +54,4 @@ Now, before someone goes on yelling about how much the BSS138 sucks as a MOSFET 
 .. rstblog-settings::
    :title: Dot Matrix Clock: Open sourcing the display schematic
    :date: 2009/09/09
-   :url: 2009/09/09/dot-matrix-clock-open-sourcing-the-display-schematic
+   :url: /2009/09/09/dot-matrix-clock-open-sourcing-the-display-schematic

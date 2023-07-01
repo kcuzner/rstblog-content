@@ -15,4 +15,4 @@ Anyway...I plan on making a tutorial video of sorts along with pictures and sche
 .. rstblog-settings::
    :title: Case LEDs version 2.0
    :date: 2012/03/19
-   :url: 2012/03/19/case-leds-version-2-0
+   :url: /2012/03/19/case-leds-version-2-0

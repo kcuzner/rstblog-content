@@ -15,4 +15,4 @@ From a coding standpoint I think I grossly overestimated how hard it would be to
 .. rstblog-settings::
    :title: Eureka! The Dot Matrix Displays Work!
    :date: 2009/05/29
-   :url: 2009/05/29/eureka-the-dot-matrix-displays-work
+   :url: /2009/05/29/eureka-the-dot-matrix-displays-work

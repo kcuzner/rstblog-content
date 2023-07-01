@@ -13,4 +13,4 @@ Well, hopefully I will have that problem solved before the end of the month so I
 .. rstblog-settings::
    :title: Dot Matrix Clock: Down to two candidates
    :date: 2009/08/14
-   :url: 2009/08/14/dot-matrix-clock-down-to-two-candidates
+   :url: /2009/08/14/dot-matrix-clock-down-to-two-candidates

@@ -96,4 +96,4 @@ All in all my specs are as follows\:
 .. rstblog-settings::
    :title: Modifying my computer case
    :date: 2012/02/25
-   :url: 2012/02/25/modifying-my-computer-case
+   :url: /2012/02/25/modifying-my-computer-case

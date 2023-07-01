@@ -9,4 +9,4 @@ The MMO itself can be viewed here\: `http\://kevincuzner.com\:8080/ <http://kev
 .. rstblog-settings::
    :title: MMO Asteroids in Node.js...but for real.
    :date: 2013/02/10
-   :url: 2013/02/10/mmo-asteroids-in-node-js-but-for-real
+   :url: /2013/02/10/mmo-asteroids-in-node-js-but-for-real

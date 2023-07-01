@@ -15,4 +15,4 @@ The next thing on the docket before I start off on creating all of the system bl
 .. rstblog-settings::
    :title: Simulation in C++ finally works
    :date: 2012/12/27
-   :url: 2012/12/27/simulation-in-c-finally-works
+   :url: /2012/12/27/simulation-in-c-finally-works

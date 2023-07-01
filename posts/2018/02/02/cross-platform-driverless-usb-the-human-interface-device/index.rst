@@ -628,4 +628,4 @@ As always, if you have any suggestions, ideas, or questions feel free to comment
 .. rstblog-settings::
    :title: Cross-platform driverless USB: The Human Interface Device
    :date: 2018/02/02
-   :url: 2018/02/02/cross-platform-driverless-usb-the-human-interface-device
+   :url: /2018/02/02/cross-platform-driverless-usb-the-human-interface-device

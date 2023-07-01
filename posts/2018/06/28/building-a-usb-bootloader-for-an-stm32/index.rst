@@ -418,4 +418,4 @@ I hope this has been a useful read and I do encourage actually checking out the 
 .. rstblog-settings::
    :title: Building a USB bootloader for an STM32
    :date: 2018/06/28
-   :url: 2018/06/28/building-a-usb-bootloader-for-an-stm32
+   :url: /2018/06/28/building-a-usb-bootloader-for-an-stm32

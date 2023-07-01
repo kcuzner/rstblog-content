@@ -102,4 +102,4 @@ I eventually will put up this Tetris implementation as a gist or repository on g
 .. rstblog-settings::
    :title: Lessons in game design...in a car!
    :date: 2013/05/03
-   :url: 2013/05/03/lessons-in-game-design-in-a-car
+   :url: /2013/05/03/lessons-in-game-design-in-a-car

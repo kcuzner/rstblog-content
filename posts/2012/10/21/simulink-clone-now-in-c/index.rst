@@ -26,4 +26,4 @@ In terms of development time, C++ is quite a bit slower for me than Python. Howe
 .. rstblog-settings::
    :title: Simulink clone...now in C++
    :date: 2012/10/21
-   :url: 2012/10/21/simulink-clone-now-in-c
+   :url: /2012/10/21/simulink-clone-now-in-c

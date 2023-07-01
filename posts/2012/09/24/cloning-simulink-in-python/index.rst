@@ -21,4 +21,4 @@ For the record, I do have access to Simulink and Matlab through the University I
 .. rstblog-settings::
    :title: Cloning Simulink...in Python
    :date: 2012/09/24
-   :url: 2012/09/24/cloning-simulink-in-python
+   :url: /2012/09/24/cloning-simulink-in-python

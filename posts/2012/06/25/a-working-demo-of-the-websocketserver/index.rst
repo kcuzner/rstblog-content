@@ -5,4 +5,4 @@ I have finally given in and purchased some hosting at rackspace so I could put t
 .. rstblog-settings::
    :title: A Working Demo of the WebSocketServer
    :date: 2012/06/25
-   :url: 2012/06/25/a-working-demo-of-the-websocketserver
+   :url: /2012/06/25/a-working-demo-of-the-websocketserver

@@ -1069,4 +1069,4 @@ I've posted this hoping its useful to someone, even with all its shortcomings. I
 .. rstblog-settings::
    :title: Bare metal STM32: Writing a USB driver
    :date: 2018/01/29
-   :url: 2018/01/29/bare-metal-stm32-writing-a-usb-driver
+   :url: /2018/01/29/bare-metal-stm32-writing-a-usb-driver

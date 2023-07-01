@@ -728,7 +728,7 @@ class Content(Item):
                 f".. rstblog-settings::",
                 f"   :title: {self.title}",
                 f"   :date: {self.rst_date}",
-                f"   :url: {self.rst_url}",
+                f"   :url: /{self.rst_url}",
             ]
         )
 

@@ -186,4 +186,4 @@ In summary, to reduce KnockoutJS memory usage consider the following\:
 .. rstblog-settings::
    :title: KnockoutJS and Memory Usage
    :date: 2012/07/13
-   :url: 2012/07/13/knockoutjs-and-memory-usage
+   :url: /2012/07/13/knockoutjs-and-memory-usage

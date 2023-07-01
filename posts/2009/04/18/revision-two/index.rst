@@ -28,4 +28,4 @@ I am now thinking of how to get this board fabricated. I have found one company,
 .. rstblog-settings::
    :title: Revision two
    :date: 2009/04/18
-   :url: 2009/04/18/revision-two
+   :url: /2009/04/18/revision-two

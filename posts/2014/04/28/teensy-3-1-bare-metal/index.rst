@@ -162,4 +162,4 @@ Again, all files from this escapade can be found here\: `https\://github.com/kc
 .. rstblog-settings::
    :title: Teensy 3.1 Bare-Metal
    :date: 2014/04/28
-   :url: 2014/04/28/teensy-3-1-bare-metal
+   :url: /2014/04/28/teensy-3-1-bare-metal

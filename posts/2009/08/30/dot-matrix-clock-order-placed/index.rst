@@ -7,4 +7,4 @@ I just have to hope that they notice that all my solder side stuff is mirrored a
 .. rstblog-settings::
    :title: Dot Matrix Clock: Order placed
    :date: 2009/08/30
-   :url: 2009/08/30/dot-matrix-clock-order-placed
+   :url: /2009/08/30/dot-matrix-clock-order-placed

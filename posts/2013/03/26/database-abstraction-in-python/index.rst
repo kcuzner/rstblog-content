@@ -742,4 +742,4 @@ One fallacy of this structure is that at the moment it assumes that the primar
 .. rstblog-settings::
    :title: Database Abstraction in Python
    :date: 2013/03/26
-   :url: 2013/03/26/database-abstraction-in-python
+   :url: /2013/03/26/database-abstraction-in-python

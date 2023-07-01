@@ -626,4 +626,4 @@ Here we've seen how the VTOR works, why it's useful to bootloaders, and one way 
 .. rstblog-settings::
    :title: Bootloader for ARM Cortex-M0: No VTOR
    :date: 2018/11/13
-   :url: 2018/11/13/bootloader-for-arm-cortex-m0-no-vtor
+   :url: /2018/11/13/bootloader-for-arm-cortex-m0-no-vtor

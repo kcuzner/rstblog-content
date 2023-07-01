@@ -21,4 +21,4 @@ The screenshot above shows my Microsoft Office installation. This took two-ish d
 .. rstblog-settings::
    :title: Ubuntu Netbook Remix & MS Office
    :date: 2009/02/23
-   :url: 2009/02/23/ubuntu-netbook-remix-ms-office
+   :url: /2009/02/23/ubuntu-netbook-remix-ms-office

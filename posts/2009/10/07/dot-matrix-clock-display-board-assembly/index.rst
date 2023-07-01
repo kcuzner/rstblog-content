@@ -46,4 +46,4 @@ Anyway, aside from the mentioned problems the boards turned out pretty well. Oli
 .. rstblog-settings::
    :title: Dot Matrix Clock: Display board assembly
    :date: 2009/10/07
-   :url: 2009/10/07/dot-matrix-clock-display-board-assembly
+   :url: /2009/10/07/dot-matrix-clock-display-board-assembly

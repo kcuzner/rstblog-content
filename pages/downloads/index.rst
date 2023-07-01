@@ -7,4 +7,4 @@ On there I have my python websocket server, the LED CPU monitor (software and sc
 .. rstblog-settings::
    :title: Open Source Projects
    :date: 2009/05/24
-   :url: downloads
+   :url: /downloads

@@ -22,4 +22,4 @@ Currently, the repository includes a demo chatroom service for which I should ha
 .. rstblog-settings::
    :title: Making a WebSocket server
    :date: 2012/06/17
-   :url: 2012/06/17/making-a-websocket-server
+   :url: /2012/06/17/making-a-websocket-server

@@ -94,4 +94,4 @@ So, with the controller in the box and everything assembled, it seems that all w
 .. rstblog-settings::
    :title: Pop 'n Music controller...AVR style
    :date: 2013/08/17
-   :url: 2013/08/17/pop-n-music-controller-avr-style
+   :url: /2013/08/17/pop-n-music-controller-avr-style

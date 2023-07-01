@@ -7,4 +7,4 @@ I have just installed Ubuntu 9.04 Netbook Remix on my Acer Aspire One and I have
 .. rstblog-settings::
    :title: Ubuntu 9.04
    :date: 2009/06/04
-   :url: 2009/06/04/ubuntu-904
+   :url: /2009/06/04/ubuntu-904

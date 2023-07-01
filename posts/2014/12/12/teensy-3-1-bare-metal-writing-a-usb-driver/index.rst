@@ -641,4 +641,4 @@ If there are any mistakes in the above, please let me know in the comments or sh
 .. rstblog-settings::
    :title: Teensy 3.1 bare metal: Writing a USB driver
    :date: 2014/12/12
-   :url: 2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver
+   :url: /2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver

@@ -503,4 +503,4 @@ If you have any questions or comments (or want to let me know about any errors I
 .. rstblog-settings::
    :title: Dev boards? Where we're going we won't need dev boards...
    :date: 2016/05/22
-   :url: 2016/05/22/dev-boards-where-were-going-we-wont-need-dev-boards
+   :url: /2016/05/22/dev-boards-where-were-going-we-wont-need-dev-boards

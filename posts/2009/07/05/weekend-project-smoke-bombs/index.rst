@@ -1,4 +1,4 @@
-[caption id="attachment_69" align="alignright" width="192" caption="Saltpeter or KNO3"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/saltpeter.jpg
+[caption id="attachment_69" align="alignright" width="192" caption="Saltpeter or KNO3"].. image:: saltpeter.jpg
 
 [/caption]
 
@@ -15,11 +15,11 @@ Materials
 
 
 * 
-[caption id="attachment_71" align="alignright" width="192" caption="Sugar"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/sugar.jpg
+[caption id="attachment_71" align="alignright" width="192" caption="Sugar"].. image:: /wp-content/uploads/2009/07/sugar.jpg
 
   [/caption]
 
-  [caption id="attachment_70" align="alignright" width="192" caption="Postal Scale"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/scale.jpg
+  [caption id="attachment_70" align="alignright" width="192" caption="Postal Scale"].. image:: /wp-content/uploads/2009/07/scale.jpg
 
   [/caption]
 
@@ -38,7 +38,7 @@ Materials
 
 
 * 
-[caption id="attachment_65" align="alignright" width="192" caption="Makeshift morter & pestle"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/jarpestle.jpg
+[caption id="attachment_65" align="alignright" width="192" caption="Makeshift morter & pestle"].. image:: /wp-content/uploads/2009/07/jarpestle.jpg
 
   [/caption]
 
@@ -56,11 +56,11 @@ Instructions
 
 
 #. 
-[caption id="attachment_66" align="alignright" width="192" caption="All the measured ingredients"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/measured.jpg
+[caption id="attachment_66" align="alignright" width="192" caption="All the measured ingredients"].. image:: /wp-content/uploads/2009/07/measured.jpg
 
    [/caption]
 
-   [caption id="attachment_67" align="alignright" width="192" caption="Mixing the sugar and saltpeter"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/mixing.jpg
+   [caption id="attachment_67" align="alignright" width="192" caption="Mixing the sugar and saltpeter"].. image:: /wp-content/uploads/2009/07/mixing.jpg
 
    [/caption]
 
@@ -76,7 +76,7 @@ Instructions
 
 
 #. 
-[caption id="attachment_68" align="alignright" width="192" caption="Packed into a paper towel"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/packed-1024x768.jpg
+[caption id="attachment_68" align="alignright" width="192" caption="Packed into a paper towel"].. image:: /wp-content/uploads/2009/07/packed-1024x768.jpg
 
    [/caption]
 
@@ -90,11 +90,11 @@ Instructions
 Video and Pictures
 ==================
 
-[caption id="attachment_64" align="aligncenter" width="640" caption="Before lighting it"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/before.jpg
+[caption id="attachment_64" align="aligncenter" width="640" caption="Before lighting it"].. image:: before.jpg
 
 [/caption]
 
-[caption id="attachment_63" align="aligncenter" width="640" caption="After lighting it"].. image:: http://kevincuzner.com/wp-content/uploads/2009/07/after.jpg
+[caption id="attachment_63" align="aligncenter" width="640" caption="After lighting it"].. image:: after.jpg
 
 [/caption]
 

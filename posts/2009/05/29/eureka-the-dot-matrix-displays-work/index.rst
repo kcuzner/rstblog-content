@@ -1,4 +1,4 @@
-[caption id="attachment_48" align="alignright" width="462" caption="Running one display block with pixel 0,0 turned off"].. image:: http://kevincuzner.com/wp-content/uploads/2009/05/sdc10183-1024x768.jpg
+[caption id="attachment_48" align="alignright" width="462" caption="Running one display block with pixel 0,0 turned off"].. image:: sdc10183.jpg
 
 [/caption]
 

@@ -48,7 +48,7 @@ Pursuant to the V-USB licence, I am releasing my hardware schematics and the sof
 
 The schematic is as follows\:
 
-[caption id="attachment_170" align="aligncenter" width="300" caption="Schematic (click to open full size)"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/schematic-300x195.png
+[caption id="attachment_170" align="aligncenter" width="300" caption="Schematic (click to open full size)"].. image:: /wp-content/uploads/2012/04/schematic-300x195.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/schematic.png
 
 [/caption]
@@ -113,32 +113,32 @@ Although I already have a link above, the software can be found here\: `Case LED
 
 So, here are pictures of the finished product\:
 
-[caption id="attachment_173" align="alignleft" width="225" caption="LEDs shining magenta"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1973-e1335235943256-225x300.jpg
+[caption id="attachment_173" align="alignleft" width="225" caption="LEDs shining magenta"].. image:: /wp-content/uploads/2012/04/HPIM1973-e1335235943256-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1973-e1335235943256.jpg
 
 [/caption]
 
-[caption id="attachment_172" align="alignleft" width="225" caption="LEDs shining orange"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1972-e1335235909822-225x300.jpg
+[caption id="attachment_172" align="alignleft" width="225" caption="LEDs shining orange"].. image:: /wp-content/uploads/2012/04/HPIM1972-e1335235909822-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1972-e1335235909822.jpg
 
 [/caption]
 
-[caption id="attachment_171" align="alignleft" width="225" caption="LEDs shining green"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1971-e1335235790482-225x300.jpg
+[caption id="attachment_171" align="alignleft" width="225" caption="LEDs shining green"].. image:: /wp-content/uploads/2012/04/HPIM1971-e1335235790482-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1971-e1335235790482.jpg
 
 [/caption]
 
-[caption id="attachment_176" align="alignleft" width="300" caption="With its guts hanging out"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968-300x225.jpg
+[caption id="attachment_176" align="alignleft" width="300" caption="With its guts hanging out"].. image:: /wp-content/uploads/2012/04/HPIM1968-300x225.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968.jpg
 
 [/caption]
 
-[caption id="attachment_175" align="alignleft" width="300" caption="The mounting viewed from the outside"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966-300x225.jpg
+[caption id="attachment_175" align="alignleft" width="300" caption="The mounting viewed from the outside"].. image:: /wp-content/uploads/2012/04/HPIM1966-300x225.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966.jpg
 
 [/caption]
 
-[caption id="attachment_174" align="alignleft" width="300" caption="Mounted onto the front fan grille"].. image:: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1967-300x225.jpg
+[caption id="attachment_174" align="alignleft" width="300" caption="Mounted onto the front fan grille"].. image:: /wp-content/uploads/2012/04/HPIM1967-300x225.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1967.jpg
 
 [/caption]

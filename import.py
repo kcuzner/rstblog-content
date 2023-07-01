@@ -11,9 +11,15 @@ from collections import deque
 from itertools import chain
 from html.parser import HTMLParser
 import pathlib
+import re
 import textwrap
+import urllib.parse
+import urllib.request
+import logging
 
 from xml.etree import ElementTree as ET
+
+_log = logging.getLogger(__name__)
 
 XML_NAMESPACES = {
     "excerpt": "http://wordpress.org/export/1.2/excerpt/",
@@ -82,7 +88,16 @@ class Attachment(Item):
 
     @property
     def keys(self):
-        return (self.link, self.guid)
+        _, _, link_path, _, _, _ = urllib.parse.urlparse(self.link)
+        _, _, guid_path, _, _, _ = urllib.parse.urlparse(self.guid)
+        paths = set((link_path, guid_path))
+        return (self.link, self.guid, *paths)
+
+    def download(self, dst_dir):
+        _, _, path, _, _, _ = urllib.parse.urlparse(self.guid)
+        name = pathlib.Path(path).name
+        urllib.request.urlretrieve(self.attachment_url, dst_dir / name)
+        return name
 
 
 class TextBody:
@@ -90,6 +105,7 @@ class TextBody:
         self.text = text
         self.line = pos[0]
         self.offset = pos[1]
+        self.attachments = []
 
     def to_rst(self, *args, escape=":`*", **kwargs):
         text = self.text
@@ -134,6 +150,7 @@ class TagHandler(ABC):
         self.attrs = dict(attrs)
         self.line = pos[0]
         self.offset = pos[1]
+        self.attachments = []
 
     @abstractmethod
     def to_rst(self, *args, **kwargs):
@@ -209,6 +226,17 @@ class ImgTag(TagHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.src = self.attrs.get("src")
+        self.attachments.append(self)
+
+    @property
+    def src(self):
+        return self._src
+
+    @src.setter
+    def src(self, value):
+        _, _, path, _, _, _ = urllib.parse.urlparse(value)
+        self._last_src = path
+        self._src = path
 
     def to_rst(self, *args, **kwargs):
         if self.src is None:
@@ -662,6 +690,11 @@ class WordpressToRst(HTMLParser):
         else:
             self.content.append(TextBody(data, self.getpos()))
 
+    @property
+    def attachments(self):
+        for c in self.content:
+            yield from c.attachments
+
     def close(self):
         super().close()
         if len(self.stack):
@@ -689,6 +722,7 @@ class Content(Item):
         # Process the HTML content into RST
         content = WordpressToRst()
         content.feed(self.content_raw)
+        attachments.process(content.attachments, output_dir)
         rst = content.close()
         with open(index_path, "w") as f:
             f.write(rst)
@@ -730,9 +764,30 @@ class AttachmentRegistry:
     def __init__(self, items):
         attachments = (i for i in items if isinstance(i, Attachment))
         self.registry = dict(((k, a) for a in attachments for k in a.keys))
+        _log.debug("Logging registry:")
+        for k in self.registry:
+            _log.debug(k)
+        _log.debug("Registery logged.")
+
+    def process(self, attachments, output_dir):
+        for a in attachments:
+            if attachment := self.find(a.src):
+                name = attachment.download(output_dir)
+                a.src = name
 
     def find(self, link):
-        return self.registry.get(link, None)
+        # First attempt to find the attachment by the link naturally
+        if r := self.registry.get(link, None):
+            return r
+        # The link may be a resized version. Strip off any resizing information
+        # from the end.
+        _, _, path, _, _, _ = urllib.parse.urlparse(link)
+        if (m := re.search(r"/\w+(-\d+x\d+)\.\w+$", path)) and (
+            r := self.registry.get(link.replace(m.group(1), ""), None)
+        ):
+            return r
+        _log.warning(f'Unable to find attachment for "{link}"')
+        return None
 
 
 def load_rss(file):
@@ -744,7 +799,7 @@ def load_rss(file):
     items = [i for i in items if not i.discard]
     attachments = AttachmentRegistry(items)
     for i in (i for i in items if isinstance(i, Content)):
-        print(f"Processing {i.name}")
+        _log.info(f"Processing {i.name}")
         i.process(attachments)
 
 
@@ -753,6 +808,9 @@ def main():
     parser.add_argument("rss", help="Path to RSS XML file")
 
     args = parser.parse_args()
+
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.INFO)
 
     load_rss(args.rss)
 

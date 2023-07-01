@@ -1,6 +1,6 @@
 I just got my Aspire One back from Acer Repair (finally) and they managed to fix it this time (third time). I promptly installed ubuntu 8.10 on it to try out Netbook Remix and so far I have to say that I really like it. My screen seems spacious (except for a few programs) and it is easy to see even if light is shining on the screen because of the high contrast of the theme. I don't quite agree with `this <http://arstechnica.com/hardware/news/2008/06/hands-on-with-the-ubuntu-netbook-remix.ars>`_ reviewer with his "fecal brown" statement about the theme. It is more black than the traditional ubuntu orange and the orange that is there is more of a bright orange than a fecal brown.
 
-[caption id="attachment_7" align="alignright" width="300" caption="Netbook Remix with MS Office"].. image:: http://kevincuzner.com/wp-content/uploads/2009/02/ubuntunetbookmsoffice-300x175.jpg
+[caption id="attachment_7" align="alignright" width="300" caption="Netbook Remix with MS Office"].. image:: ubuntunetbookmsoffice.jpg
 
 [/caption]
 

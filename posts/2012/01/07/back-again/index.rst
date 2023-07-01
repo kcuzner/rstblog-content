@@ -6,19 +6,19 @@ On the mission, my two most interesting things I built were a small coilgun (als
 
 **The Coilgun**
 
-[caption id="attachment_109" align="alignleft" width="300" caption="The Coilgun without it's case"].. image:: http://kevincuzner.com/wp-content/uploads/2012/01/HPIM1787-300x225.jpg
+[caption id="attachment_109" align="alignleft" width="300" caption="The Coilgun without it's case"].. image:: HPIM1787.jpg
 
 [/caption]
 
 The coilgun is constructed of a relatively simple circuit which draws power for a camera flash charger from a AA battery (housed in what was the magazine for the airsoft gun) connected to two photo flash capacitors. There is an SCR connected in series with the coil (the green thing) which use the capacitors as a power source. The trigger uses very tiny snap action limit switch (it was the smallest I could find at a reasonable price) to trigger the SCR (through a 20K resistor). The total cost for parts was $10 since the case was free and the camera flashes were free. The working voltage is about 330V or so which is normal for photo chargers, but when building it I managed only to shock myself once.
 
-[caption id="attachment_110" align="alignright" width="150" caption="Coilgun with the case screwed on"].. image:: http://kevincuzner.com/wp-content/uploads/2012/01/HPIM1788-150x150.jpg
+[caption id="attachment_110" align="alignright" width="150" caption="Coilgun with the case screwed on"].. image:: HPIM1788.jpg
 
 [/caption]
 
 It shoots nails or anything else magnetic cut to a specific length so they are just a little inside the coil. The gun doesn't have much power (I would more call it a "nail tosser" than a gun), but it is fun to use because of the high pitched charging sound makes the gun sound bigger than it actually is (more bark than bite you could say).
 
-[caption id="attachment_111" align="alignleft" width="150" caption="Coilgun with the coil exposed"].. image:: http://kevincuzner.com/wp-content/uploads/2012/01/HPIM1785-150x150.jpg
+[caption id="attachment_111" align="alignleft" width="150" caption="Coilgun with the coil exposed"].. image:: HPIM1785.jpg
 
 [/caption]
 
@@ -26,13 +26,13 @@ There is a 1000V diode in reverse across the coil to prevent damage to the SCR a
 
 **The Headphones**
 
-[caption id="attachment_117" align="alignright" width="300" caption="The Headphones with the ear pads rubber banded on"].. image:: http://kevincuzner.com/wp-content/uploads/2012/01/HPIM1738-300x225.jpg
+[caption id="attachment_117" align="alignright" width="300" caption="The Headphones with the ear pads rubber banded on"].. image:: HPIM1738.jpg
 
 [/caption]
 
 In one of the apartments I lived in I was with some other missionaries who served a deaf congregation. Their ASL teacher was mostly deaf (she had 1% hearing in one of  her ears) and so she could listen to music occasionally. She was using some high quality DJ headphones to do this since she had to turn the music up really really loud for her to be able to hear it. Sadly, she let a friend borrow them and they got broken. So, one of the other missionaries who also enjoyed building things volunteered him and myself to construct new headphones for her. He built the case and I did the electronics. Electronically, it was a simple project since it was just taking a cheap iPod stereo and extending the wires out to fit into the case in the shape of headphones.
 
-[caption id="attachment_118" align="alignleft" width="150" caption="The completed headphones"].. image:: http://kevincuzner.com/wp-content/uploads/2012/01/HPIM1766-150x150.jpg
+[caption id="attachment_118" align="alignleft" width="150" caption="The completed headphones"].. image:: HPIM1766.jpg
 
 [/caption]
 

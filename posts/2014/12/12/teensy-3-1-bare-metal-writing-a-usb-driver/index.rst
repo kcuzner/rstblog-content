@@ -2,7 +2,7 @@ One of the things that has intrigued me for the past couple years is making embe
 
 Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`_ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
 
-[caption id="" align="alignright" width="328"].. image:: http://www.pjrc.com/teensy/teensy31.png
+[caption id="" align="alignright" width="328"].. image:: /teensy/teensy31.png
    :target: http://www.pjrc.com/teensy/teensy31.html
 
  Teensy 3.1[/caption]

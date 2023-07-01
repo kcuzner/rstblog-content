@@ -4,7 +4,7 @@ I entered a contest of sorts this past week which involves building an autonomou
 
 The most interesting part to me, by far, is the processor to be used. It is going to be a Teensy 3.1\:
 
-[caption id="" align="alignright" width="328"].. image:: http://www.pjrc.com/teensy/teensy31.png
+[caption id="" align="alignright" width="328"].. image:: /teensy/teensy31.png
    :target: http://www.pjrc.com/teensy/teensy31.html
 
  Teensy 3.1[/caption]

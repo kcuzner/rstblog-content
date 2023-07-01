@@ -44,7 +44,7 @@ As for the board gerbers, I am going to keep them to myself. I spent nearly a ye
 
 Now for the schematic. Here you go\:
 
-[caption id="attachment_89" align="aligncenter" width="800" caption="Dot Matrix Display Schematic v. 3.5"].. image:: http://kevincuzner.com/wp-content/uploads/2009/09/DotMatrix_v3_5.png
+[caption id="attachment_89" align="aligncenter" width="800" caption="Dot Matrix Display Schematic v. 3.5"].. image:: /wp-content/uploads/2009/09/DotMatrix_v3_5.png
    :target: http://kevincuzner.com/wp-content/uploads/2009/09/DotMatrix_v3_5.png
 
 [/caption]

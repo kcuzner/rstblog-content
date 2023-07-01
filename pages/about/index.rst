@@ -1,4 +1,4 @@
-[caption id="attachment_40" align="alignright" width="206"].. image:: http://kevincuzner.com/wp-content/uploads/2009/02/me.jpg
+[caption id="attachment_40" align="alignright" width="206"].. image:: me.jpg
 
  Me a decade ago[/caption]
 

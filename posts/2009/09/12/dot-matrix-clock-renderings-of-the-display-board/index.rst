@@ -1,22 +1,22 @@
 I finished modeling the entire board in blender today, so here are a few different views of the clock\:
 
-[caption id="" align="aligncenter" width="800" caption="Front with plastic/plexiglass cover"].. image:: http://www.cuznersoft.com/images/clock_front_bezel.jpg
+[caption id="" align="aligncenter" width="800" caption="Front with plastic/plexiglass cover"].. image:: /images/clock_front_bezel.jpg
 
 [/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Front without the plastic/plexiglass cover"].. image:: http://www.cuznersoft.com/images/clock_front_nobezel.jpg
+[caption id="" align="aligncenter" width="800" caption="Front without the plastic/plexiglass cover"].. image:: /images/clock_front_nobezel.jpg
 
 [/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Back of the board (sorry the board->board connector is blacked out..the lighting sucks)"].. image:: http://www.cuznersoft.com/images/clock_back.jpg
+[caption id="" align="aligncenter" width="800" caption="Back of the board (sorry the board->board connector is blacked out..the lighting sucks)"].. image:: /images/clock_back.jpg
 
 [/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Front of the board without the case of display modules"].. image:: http://www.cuznersoft.com/images/clock_front_nocase.jpg
+[caption id="" align="aligncenter" width="800" caption="Front of the board without the case of display modules"].. image:: /images/clock_front_nocase.jpg
 
 [/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Back of the board without a case"].. image:: http://www.cuznersoft.com/images/clock_back_nocase.jpg
+[caption id="" align="aligncenter" width="800" caption="Back of the board without a case"].. image:: /images/clock_back_nocase.jpg
 
 [/caption]
 

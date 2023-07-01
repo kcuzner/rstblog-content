@@ -2,7 +2,7 @@ After looking at my design of a few days back I decided it definately needed ano
 
  
 
-[caption id="attachment_29" align="alignright" width="610" caption="Dot Matrix revision 2"].. image:: http://kevincuzner.com/wp-content/uploads/2009/04/dotmatrix_8x8_v2.png
+[caption id="attachment_29" align="alignright" width="610" caption="Dot Matrix revision 2"].. image:: dotmatrix_8x8_v2.png
 
 [/caption]
 

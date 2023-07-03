@@ -288,7 +288,7 @@ class HeaderTag(TagHandler):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
-        link = f".. _{self.id}::\n\n" if self.id else ""
+        link = f".. _{self.id}:\n\n" if self.id else ""
         content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
         if content.count("\n") > 1:
             raise ValueError(

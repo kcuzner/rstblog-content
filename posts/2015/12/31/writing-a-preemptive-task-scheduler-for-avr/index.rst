@@ -55,7 +55,7 @@ Table of Contents
 
 
 
-.. _preemption::
+.. _preemption:
 
 Preemption?
 ===========
@@ -74,7 +74,7 @@ A positive side effect of doing things this way (with a scheduler) is that we ca
 
 **Summary\:** Using a preemptive scheduler can allow for lower latency and jitter between an interrupt occurring and some non-ISR code responding to it when compared to using several state machines. This means it will respond more consistently to interrupts occurring, though not necessarily in a more timely fashion. It also allows for fine-grained priority control with these responses.
 
-.. _prosandcons::
+.. _prosandcons:
 
 Pros and Cons
 =============
@@ -116,7 +116,7 @@ Some Cons
 
 So...lots of those are contradictory. What is a pro can also be a con. Anyway, I'm just presenting this as something cool to do, not as the end all be all of ways to structure an embedded program. If you have a microcontroller that is performing a lot of tasks that need to be able to react reliably to an interrupt, this might be the way to go for you. However, if your microcontroller is just toggling some gpios and reacting to some timers, this might be overkill. It all depends on the application.
 
-.. _implementation::
+.. _implementation:
 
 Implementation
 ==============
@@ -202,7 +202,7 @@ Ok, so for the basic task scheduling and dispatching functionality we are going 
 
 As for source files, we will only have a single C file for the implementation, but there will be some inline assembly because we are going to have to fiddle with registers. Yay! I'll just go through the functions one by one and afterwards I'll go through my design decisions and how they affect things. This is not the only, nor the best, way to do this.
 
-.. _initnewtask::
+.. _initnewtask:
 
 Implementation\: kos_init and kos_new_task
 ------------------------------------------
@@ -267,7 +267,7 @@ The kos_init function performs only one operation\: Add the idle task to the lis
 
 The kos_new_task function is a little more complex. It performs two operations\: setting up the initial context for the function and adding the Task structure to the linked list of tasks. The context needs to be set up initially because from the scheduler's perspective, the new task is simply an unblocked task that was blocked before. Therefore, it expects that some context is stored on that task's stack. Our context is ordered such that the PC (program counter) is first, the 32 registers are next, and the status register is last. Since the stack is last-in first-out, the SREG is popped first, then the 32 registers, and then the PC. We can see at the beginning of the function that we take the function pointer (they are usually 16 bits on most AVRs...the ones with lots of flash do it differently, so consult your datasheets) and set it up to be the program counter. It is arranged LSB-first, so the LSByte is "pushed" before the MSByte. The order here is very important and the reason why will become very apparent when we see the code for the dispatcher. After that, we put 32 0's onto the stack. These are the initial values for the registers and 0 seemed like a sensible value. The very last byte "pushed" is the status register. We set it to 0x80 so that the interrupt flag is set. This is a design decision to prevent problems with forgetting to enable interrupts for every task and having one task where we forgot to enable it prevent all interrupts from executing. Finally, the top of the stack (note the subtraction of 35 bytes from the stack pointer) is stored on the Task struct along with the initial task state. We add it to the task list as the head of the list, so the last task added is the task with the highest priority.
 
-.. _runschedule::
+.. _runschedule:
 
 Implementation\: kos_run and kos_schedule
 -----------------------------------------
@@ -312,7 +312,7 @@ The very first thing to notice is the kos_isr_level reference. This solves a ver
 
 The purpose of the ATOMIC_BLOCK is to ensure that interrupts are disabled when the dispatcher runs. Since the stack is going to be manipulated, the entire dispatcher is considered to be a critical section of code and must be run atomically. The ATOMIC_BLOCK will restore the interrupt status after kos_dispatch returns (which is after the task has been resumed).
 
-.. _isr::
+.. _isr:
 
 Implementation\: kos_enter_isr and kos_exit_isr
 -----------------------------------------------
@@ -388,7 +388,7 @@ As seen in kos_schedule, we use the kos_isr_level variable to indicate to the sc
 
 These functions must be run with interrupts disabled since they don't use any sort of locking, but they should support nested interrupts so long as they are called at the point in the interrupt when interrupts have been disabled.
 
-.. _dispatch::
+.. _dispatch:
 
 Implementation\: kos_dispatch
 -----------------------------
@@ -526,7 +526,7 @@ Resuming the next task's context is a little less straightforward than saving it
 
 After dancing around with bits and restoring the modified SREG, we proceed to pop off the rest of the registers in the reverse order that they were stored at the beginning of the function. At the very end, we use a T flag branch instruction to determine which return instruction to use. "ret" will return normally without setting the interrupt flag and "reti" will set the interrupt flag.
 
-.. _codesize::
+.. _codesize:
 
 Implementation\: Results by code size
 -------------------------------------
@@ -551,7 +551,7 @@ So, at this point we have implemented a task scheduler and dispatcher. Here is h
 
 Not the best, but its reasonable. The data usage could be taken down by reducing the number of maximum tasks. There are other RTOS available for AVR which can compile smaller. We could do several optimizations which I will discuss in the conclusion
 
-.. _semaphore::
+.. _semaphore:
 
 Example\: A semaphore
 =====================
@@ -784,7 +784,7 @@ Before I finish up I want to mention a few things about debugging with avr-gdb. 
 
 
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ==========

@@ -26,7 +26,7 @@ I want to talk about how I overcame the lack of a VTOR to write a USB bootloader
 
 
 
-.. _what-is-vtor::
+.. _what-is-vtor:
 
 What is the VTOR?
 =================
@@ -241,7 +241,7 @@ One thing you may have noticed at this point is that my assembly dump earlier ha
 
 Some STM32s have support for extra modes like mapping the SRAM (address 0x20000000) onto 0x00000000. So although the VTOR's default value is 0x00000000, since the STM32 is remapping 0x08000000 into that space the ARM Cortex core sees the contents of the flash when it loads information from locations relative to 0x00000000 if the BOOT0 pin is tied low.
 
-.. _bootloader-vtor::
+.. _bootloader-vtor:
 
 Bootloaders and the VTOR
 ========================
@@ -344,7 +344,7 @@ The user program is now tricked into thinking that flash starts at 0x08002000 an
 
 All the addresses are offset by 0x08002000. Now all the bootloader has to do is set the VTOR to 0x08002000 and this user program will execute normally, interrupts and all.
 
-.. _no-vtor::
+.. _no-vtor:
 
 Dealing with an absent VTOR
 ===========================
@@ -628,7 +628,7 @@ I placed it in its own section for fun, but you'll see that it now lives in ".te
 
 With those two pieces together, we have effectively emulated the VTOR functionality. There are a few corner cases that this doesn't handle very well (such as exceptions before the bootloader_vtor value is initialized) which likely result in Hard Faults, but I haven't encountered an issue there yet.
 
-.. _debugging::
+.. _debugging:
 
 Debugging the user program
 --------------------------
@@ -646,7 +646,7 @@ While I didn't overcome this issue completely and stack traces can be a little a
 
 The "add-symbol-file" directive points gdb towards my bootloader's elf file and informs it about any symbols it might find if we just so happen to break while inside the bootloader's program space. It also knows about the names of symbols inside the bootloader's reserved SRAM space.
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ==========

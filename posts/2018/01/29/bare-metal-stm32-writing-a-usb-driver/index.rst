@@ -57,7 +57,7 @@ Contents
 
 `Conclusion <conclusion>`_
 
-.. _stm32-usb-peripheral::
+.. _stm32-usb-peripheral:
 
 The STM32 USB Peripheral
 ========================
@@ -93,7 +93,7 @@ ST makes these easy to find on their website. For the USB peripheral, there's a 
 
 
 
-.. _pma::
+.. _pma:
 
 The Packet Memory Area
 ----------------------
@@ -102,7 +102,7 @@ In my opinion, this is the most complex part of the peripheral and something tha
 
 The STM32 provides some amount of general SRAM that is used by the application program. This is arranged in 32-bit words accessible by word, halfword and byte, with some restrictions, through the main memory bus. The packet memory area is completely separate from the general SRAM and instead contains 16-bit words. As I mentioned earlier, it can be accessed concurrently by the main memory bus and the USB Peripheral by way of an Arbiter which moderates between the two without needing the program to intervene or be aware of the USB Peripheral accessing the PMA. There are some differences in how this is implemented between the STM32F1 and the STM32L0\:
 
-.. _pma-stm32f103::
+.. _pma-stm32f103:
 
 For the STM32F103\:
 ~~~~~~~~~~~~~~~~~~~
@@ -217,7 +217,7 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
 
-.. _pma-stm32l052::
+.. _pma-stm32l052:
 
 For the STM32L052\:
 ~~~~~~~~~~~~~~~~~~~
@@ -302,7 +302,7 @@ The main difference here is that you'll see that the appSrc and appDest pointers
 
 Still naive, still insecure, and still requiring 16-bit aligned buffers in the general SRAM. Just about the only upside is the simplicity of access.
 
-.. _pma-variables::
+.. _pma-variables:
 
 Allocating variables in the PMA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -404,7 +404,7 @@ All the USB_LOCAL_ADDR macro does is subtract 0x40006000 from the address of wha
 
 In conclusion, by creating this .pma section I have enabled using the pointer math features already present in C for accessing the PMA. The amount of pointer math I have to do with macros is fairly limited compared to manually computing an address inside the PMA and dereferencing it. So far this seems like a safer way to do this, though I think it can still be improved.
 
-.. _handling-transfers::
+.. _handling-transfers:
 
 Handling Transfers
 ------------------
@@ -572,7 +572,7 @@ Now, to tie it all together, here's what happens when we initialize an endpoint\
 
 When the application sets up an endpoint, I store the requested size of the endpoint in the endpoint_status struct (which we'll see more of later). When a transfer is actually requested (by calling usb_endpoint_send in this snippet) the code checks to see if the BDT has been configured yet (since the BDT lives at address 0, it knows that if tx_addr is 0 then it hasn't been configured). If it hasn't it allocates a new buffer by calling usb_allocate_pma_buffer with the size value stored when the endpoint was set up by the application.
 
-.. _hook-pattern::
+.. _hook-pattern:
 
 The "hook pattern", callbacks based on weak links
 =================================================
@@ -680,7 +680,7 @@ Notice these are `weak symbols <https://en.wikipedia.org/wiki/Weak_symbol>`_. El
 
 If someone knows the real name of this pattern, please enlighten me.
 
-.. _peripheral-api::
+.. _peripheral-api:
 
 My USB Peripheral API
 =====================
@@ -841,7 +841,7 @@ Much of the guts of these methods are fairly self-explanatory if you read throug
 
  
 
-.. _transfers::
+.. _transfers:
 
 Transfers
 ---------
@@ -1075,7 +1075,7 @@ A few things to note\:
 
  
 
-.. _where-to::
+.. _where-to:
 
 Where to go from here
 =====================
@@ -1091,7 +1091,7 @@ Using this framework, it should be fairly simple to implement different types of
 
 
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ==========

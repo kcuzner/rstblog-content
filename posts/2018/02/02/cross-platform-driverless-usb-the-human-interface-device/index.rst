@@ -48,7 +48,7 @@ Contents
 
 `Conclusion <conclusion>`_
 
-.. _overview::
+.. _overview:
 
 Overview of HID
 ===============
@@ -63,7 +63,7 @@ Before doing anything HID, you need two pieces of documentation\:
 
 This is one of the few times I have read an industry specification and it hasn't required an almost lawyer-style analysis to comprehend. It is surprisingly readable and I highly recommend at least scrolling through it somewhat since it makes a halfway decent reference.
 
-.. _overview-reports::
+.. _overview-reports:
 
 Reports
 -------
@@ -89,7 +89,7 @@ All the report naming is quite host-centric as you can see. Now, when a device d
 
 So in total, a HID has either one or two extra endpoints beyond the basic control endpoint. These endpoints are used to either send IN Reports of events happening to the device to the host or receive OUT Reports from the host commanding the device to do things.
 
-.. _overview-report-descriptors::
+.. _overview-report-descriptors:
 
 Report Descriptors
 ------------------
@@ -109,7 +109,7 @@ This is possible by the use of "Report Descriptors". These serve as a way for th
 
 Building cross-platform report descriptors is one of the more challenging parts of creating a human interface device. Some operating systems, such as Linux, are extremely permissive and will still enumerate the device with a badly formatted report. Other operating systems, such as Windows, are extremely strict in terms of what they accept and will not enumerate your device if the report descriptor doesn't conform to its exacting standards (you'll get the dreaded "Device failed to start" error in Device Manager).
 
-.. _step-1::
+.. _step-1:
 
 Step 1\:Extending Setup Requests
 ================================
@@ -180,13 +180,13 @@ In my LED Watch, the USB setup request handler will call hook_usb_handle_setup_r
 
 And with that, your device is now prepared to handle the host setup requests. The next step is going to be actually writing the descriptors.
 
-.. _step-2::
+.. _step-2:
 
 Step 2\: Descriptors
 ====================
 
 
-.. _step-2-configuration::
+.. _step-2-configuration:
 
 Modifying the configuration descriptor
 --------------------------------------
@@ -315,7 +315,7 @@ Here is an example of a completed configuration descriptor that declares a singl
 
 One thing to note here\: The HID Descriptor declares how many Report Descriptors will appear in relation to the USB device (bNumDescriptors + (bDescriptorType + wDescriptorLength)\*<number of descriptors>). In general, HID devices don't usually need more than one report descriptor since you can describe multiple reports in a single descriptor. However, there's nothing stopping you from implementing multiple report descriptors.
 
-.. _step-2-report-descriptors::
+.. _step-2-report-descriptors:
 
 Writing a report descriptor
 ---------------------------
@@ -532,7 +532,7 @@ Some more interesting things that this example brings up\:
 
  
 
-.. _step-3::
+.. _step-3:
 
 Step 3\: Sending IN Reports
 ===========================
@@ -557,7 +557,7 @@ In my LED Watch project I wrote a USB API which takes care of packetizing for me
 
 You'll probably want to set up some system for notifying the program that the report was sent. Note that most microcontroller USB peripherals should set an endpoint to NAK once a report has sent, so the host will not see another report to read until you explicitly tell your peripheral to send again.
 
-.. _step-4::
+.. _step-4:
 
 Step 4\: Sending OUT Reports
 ============================
@@ -578,7 +578,7 @@ This is the exact same story as IN reports, except this time you don't construct
 
 Remember again that if you used the REPORT_ID token, the first byte will be the report ID and all bytes that follow will be the report.
 
-.. _host::
+.. _host:
 
 Host Software
 =============
@@ -587,7 +587,7 @@ Writing host software for HID devices is not complicated, but there are some got
 
 When choosing how to write your host software you can choose to either use the OS's input system which will parse HID reports for you (abstracting away the reports themselves) or you can talk to the device in terms of reports ("raw"). I can't give much guidance for using the host's report parser, but for talking raw in terms of reports I do have some suggestions\:
 
-.. _host-c::
+.. _host-c:
 
 C/C++ Cross-Platform
 --------------------
@@ -596,7 +596,7 @@ If you're application is going to be written in C or C++, then there is a fairly
 
 This library will take care of all the stuff that is required to enumerate the HID devices attached the computer. It will also handle reading and writing to the device using raw reports.
 
-.. _host-python::
+.. _host-python:
 
 Python under Linux
 ------------------
@@ -605,7 +605,7 @@ For python, I highly recommend using the "hid" module\: `https\://pypi.python.o
 
 An example of using this can be found in the "host" directory in my LED watch repository.
 
-.. _host-c-sharp::
+.. _host-c-sharp:
 
 C# under Windows
 ----------------
@@ -630,7 +630,7 @@ I don't actually recommend using the library itself. Rather, I would recommend r
 
 
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ==========

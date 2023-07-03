@@ -45,7 +45,7 @@ Contents
 
 
 
-.. _parts::
+.. _parts:
 
 Parts of a bootloader
 =====================
@@ -62,7 +62,7 @@ There's a few pieces to the bootloader that I'm going to describe here which are
 
 
 
-.. _enter-exit::
+.. _enter-exit:
 
 Bootloader Entry and Exit
 =========================
@@ -170,7 +170,7 @@ After these steps are performed, the user program will begin to run. Since this 
 
 In summary, the bootloader is entered immediately upon device reset. It then decides to either run the user program (exiting the bootloader) or continue on in bootloader mode based on the value of the CSR register.
 
-.. _self-programming::
+.. _self-programming:
 
 Self-programming via USB
 ========================
@@ -385,7 +385,7 @@ By combining the bootloader state machine with these methods for writing the fla
 
 I do recommend reading through the code for the bootloader state machine (just bootloader.c in the bootloader directory). The state machine is table-based (see the "fsm" constant table variable and the "bootloader_tick" function) and I find that to be a very maintainable model for writing state machines in C.
 
-.. _linking::
+.. _linking:
 
 Considerations for linking the application
 ==========================================
@@ -417,7 +417,7 @@ When the user program wishes to enter bootloader mode, it just needs to issue a 
 
 Very simple, very easy.
 
-.. _host::
+.. _host:
 
 Host software
 =============
@@ -426,7 +426,7 @@ The host software is written in python and uses pyhidapi to talk to the bootload
 
 One small hack is that the host software does hardcode where it believes the program should start (address 0x08002000). One possible resolution for this hack is to take elf files instead of intel hex files, or just assume the lowest address in the hex file is the starting point.
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ==========

@@ -317,7 +317,7 @@ Contents
 
 
 
-.. _the-script::
+.. _the-script:
 
 The Script
 ----------
@@ -480,7 +480,7 @@ For example, here is the "main.c" file of my `midi-fader device <https://github.
 It only needs to declare the main device descriptor with the manufacturer and model strings. I have two other interfaces (usb_hid and usb_midi) in this project, but there's no trace of them here except for the bits where I hook them into the overall application. I'll talk a little more about that at the end, but the main point of this post is to show my new method for handling USB descriptors.
 
 
-.. _makefile-changes::
+.. _makefile-changes:
 
 Makefile changes
 ----------------
@@ -605,7 +605,7 @@ This works like so\:
 
 
 
-.. _usb-descriptors::
+.. _usb-descriptors:
 
 USB Descriptor XML
 ------------------
@@ -730,7 +730,7 @@ To summarize, this descriptor generating script allows me to do some pretty conv
 
 
 
-.. _usb-application::
+.. _usb-application:
 
 USB Application Object
 ----------------------
@@ -943,7 +943,7 @@ Meanwhile, in my usb_hid.c I have defined **hid_interface** to look like this (a
 Aside from the runtime overhead of now needing to walk a linked list to handle hooks, I now have a pretty low-resource method for making my modules portable. I can now take my self-contained module C file and header, drop them into a project (simply dropping them in tends to make the descriptor be generated), and then hook them up in main.c to the **usb_app_setup** object. Nice and easy.
 
 
-.. _conclusion::
+.. _conclusion:
 
 Conclusion
 ----------

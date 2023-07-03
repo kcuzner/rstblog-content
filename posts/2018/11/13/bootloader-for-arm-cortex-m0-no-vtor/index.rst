@@ -83,136 +83,142 @@ When an interrupt occurs, the NVIC will examine this table, read the handler add
 
 For any program meant to run on an ARM Cortex processor there'll be some assembly (or maybe C) that looks like this (this one was provided by ST's CMSIS implementation for the STM32F042)\:
 
-.. code-block:: asm
-
-       .section .isr_vector,"a",%progbits
-      .type g_pfnVectors, %object
-      .size g_pfnVectors, .-g_pfnVectors
+.. code-block:: {lang}
 
 
-    g_pfnVectors:
-      .word  _estack
-      .word  Reset_Handler
-      .word  NMI_Handler
-      .word  HardFault_Handler
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  SVC_Handler
-      .word  0
-      .word  0
-      .word  PendSV_Handler
-      .word  SysTick_Handler
-      .word  WWDG_IRQHandler                   /* Window WatchDog              */
-      .word  PVD_VDDIO2_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
-      .word  RTC_IRQHandler                    /* RTC through the EXTI line    */
-      .word  FLASH_IRQHandler                  /* FLASH                        */
-      .word  RCC_CRS_IRQHandler                /* RCC and CRS                  */
-      .word  EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
-    ...
+
+      .section .isr_vector,"a",%progbits
+     .type g_pfnVectors, %object
+     .size g_pfnVectors, .-g_pfnVectors
+
+
+   g_pfnVectors:
+     .word  _estack
+     .word  Reset_Handler
+     .word  NMI_Handler
+     .word  HardFault_Handler
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  SVC_Handler
+     .word  0
+     .word  0
+     .word  PendSV_Handler
+     .word  SysTick_Handler
+     .word  WWDG_IRQHandler                   /* Window WatchDog              */
+     .word  PVD_VDDIO2_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
+     .word  RTC_IRQHandler                    /* RTC through the EXTI line    */
+     .word  FLASH_IRQHandler                  /* FLASH                        */
+     .word  RCC_CRS_IRQHandler                /* RCC and CRS                  */
+     .word  EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
+   ...
 
 Then in my linker script I have the "SECTIONS" portion start out like this\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    SECTIONS
-    {
-        /* General code */
-        .text :
-        {
-            _flash_start = .;
-            . = ALIGN(4);
-            /* At beginning of flash is:
-             *
-             * Required:
-             * 0x0000 Initial stack pointer
-             * 0x0004 Reset Handler
-             *
-             * Optional:
-             * 0x0008 and beyond: NVIC ISR Table
-             */
-            KEEP(*(.isr_vector))
-            . = ALIGN(4);
-            *(.text)
-            *(.text*)
-            *(.glue_7)
-            *(.glue_7t)
 
-            /* C startup support */
-            /* TODO: Convert to -nostartfiles for maximum DIY */
-            *(.eh_frame)
-            KEEP(*(.init))
-            KEEP(*(.fini))
-        } > FLASH
-    ...
+
+   SECTIONS
+   {
+       /* General code */
+       .text :
+       {
+           _flash_start = .;
+           . = ALIGN(4);
+           /* At beginning of flash is:
+            *
+            * Required:
+            * 0x0000 Initial stack pointer
+            * 0x0004 Reset Handler
+            *
+            * Optional:
+            * 0x0008 and beyond: NVIC ISR Table
+            */
+           KEEP(*(.isr_vector))
+           . = ALIGN(4);
+           *(.text)
+           *(.text*)
+           *(.glue_7)
+           *(.glue_7t)
+
+           /* C startup support */
+           /* TODO: Convert to -nostartfiles for maximum DIY */
+           *(.eh_frame)
+           KEEP(*(.init))
+           KEEP(*(.fini))
+       } > FLASH
+   ...
 
 The assembly snippet creates the table for the NVIC (g_pfnVectors in this example) and assigns it to the ".isr_vector" section. The linker script then locates this section right at the beginning of the flash (the "KEEP(\*(.isr_vector))" right at the beginning after some variable declarations). When the program is compiled what I end up with it something that looks like this (this is an assembly dump of the beginning of one of my binaries)\:
 
-.. code-block:: asm
+.. code-block:: {lang}
 
-    Disassembly of section .text:
 
-    08000000 <_flash_start>:
-     8000000:	20001800 	andcs	r1, r0, r0, lsl #16
-     8000004:	08001701 	stmdaeq	r0, {r0, r8, r9, sl, ip}
-     8000008:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800000c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000010:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000014:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000018:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800001c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000020:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000024:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000028:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800002c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000030:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000034:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000038:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800003c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000040:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000044:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000048:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800004c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000050:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000054:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000058:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800005c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000060:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000064:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000068:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800006c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000070:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000074:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000078:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800007c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000080:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000084:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000088:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800008c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000090:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000094:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     8000098:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     800009c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000a0:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000a4:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000a8:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000ac:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000b0:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000b4:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000b8:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
-     80000bc:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
 
-    080000c0 <bootloader_tick>:
-     80000c0:	4a0d      	ldr	r2, [pc, #52]	; (80000f8 <bootloader_tick+0x38>)
-     80000c2:	2300      	movs	r3, #0
-     80000c4:	0011      	movs	r1, r2
-     80000c6:	b570      	push	{r4, r5, r6, lr}
-     80000c8:	4c0c      	ldr	r4, [pc, #48]	; (80000fc <bootloader_tick+0x3c>)
-    ...
+   Disassembly of section .text:
+
+   08000000 <_flash_start>:
+    8000000:	20001800 	andcs	r1, r0, r0, lsl #16
+    8000004:	08001701 	stmdaeq	r0, {r0, r8, r9, sl, ip}
+    8000008:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800000c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000010:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000014:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000018:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800001c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000020:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000024:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000028:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800002c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000030:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000034:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000038:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800003c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000040:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000044:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000048:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800004c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000050:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000054:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000058:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800005c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000060:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000064:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000068:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800006c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000070:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000074:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000078:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800007c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000080:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000084:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000088:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800008c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000090:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000094:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    8000098:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    800009c:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000a0:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000a4:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000a8:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000ac:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000b0:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000b4:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000b8:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+    80000bc:	080005af 	stmdaeq	r0, {r0, r1, r2, r3, r5, r7, r8, sl}
+
+   080000c0 <bootloader_tick>:
+    80000c0:	4a0d      	ldr	r2, [pc, #52]	; (80000f8 <bootloader_tick+0x38>)
+    80000c2:	2300      	movs	r3, #0
+    80000c4:	0011      	movs	r1, r2
+    80000c6:	b570      	push	{r4, r5, r6, lr}
+    80000c8:	4c0c      	ldr	r4, [pc, #48]	; (80000fc <bootloader_tick+0x3c>)
+   ...
 
 For the first several 32-bit words I have created a bunch of function pointers which make up the table that the NVIC will read. After that table, the actual code starts.
 
@@ -266,71 +272,75 @@ So long as the user program doesn't go and mess with the VTOR, any interrupts th
 
 There is one step that the user program has to do, however. It needs to properly offset all of its addresses in the flash. As I mentioned in my previous post about bootloaders this is pretty easy to do in the linker script by just tricking it into thinking that the flash starts at the beginning of the user program partition (example on a 32K microcontroller)\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    _flash_origin = 0x08002000;
-    _flash_length = 24K;
 
-    MEMORY
-    {
-        FLASH (RX) : ORIGIN = _flash_origin, LENGTH = _flash_length
-        RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 6K
-    }
+
+   _flash_origin = 0x08002000;
+   _flash_length = 24K;
+
+   MEMORY
+   {
+       FLASH (RX) : ORIGIN = _flash_origin, LENGTH = _flash_length
+       RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 6K
+   }
 
 
 The user program is now tricked into thinking that flash starts at 0x08002000 and is only 24K. We can see that this was successful if we take a look at the beginning of the disassembly of a compiled program\:
 
-.. code-block:: asm
+.. code-block:: {lang}
 
-    Disassembly of section .text:
 
-    08002000 <_flash_start>:
-     8002000:	20001800 	andcs	r1, r0, r0, lsl #16
-     8002004:	08004141 	stmdaeq	r0, {r0, r6, r8, lr}
-     8002008:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800200c:	08003c29 	stmdaeq	r0, {r0, r3, r5, sl, fp, ip, sp}
-    	...
-     800202c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-    	...
-     8002038:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800203c:	08002f05 	stmdaeq	r0, {r0, r2, r8, r9, sl, fp, sp}
-     8002040:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002044:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002048:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800204c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002050:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002054:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002058:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800205c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002060:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002064:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002068:	08002e07 	stmdaeq	r0, {r0, r1, r2, r9, sl, fp, sp}
-     800206c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002070:	08002c51 	stmdaeq	r0, {r0, r4, r6, sl, fp, sp}
-     8002074:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002078:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800207c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002080:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-    	...
-     800208c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002090:	00000000 	andeq	r0, r0, r0
-     8002094:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     8002098:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     800209c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     80020a0:	00000000 	andeq	r0, r0, r0
-     80020a4:	08002e05 	stmdaeq	r0, {r0, r2, r9, sl, fp, sp}
-     80020a8:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     80020ac:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     80020b0:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     80020b4:	00000000 	andeq	r0, r0, r0
-     80020b8:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
-     80020bc:	08003919 	stmdaeq	r0, {r0, r3, r4, r8, fp, ip, sp}
 
-    080020c0 <configuration_begin_request>:
-     80020c0:	b513      	push	{r0, r1, r4, lr}
-     80020c2:	4668      	mov	r0, sp
-     80020c4:	0002      	movs	r2, r0
-    ...
+   Disassembly of section .text:
+
+   08002000 <_flash_start>:
+    8002000:	20001800 	andcs	r1, r0, r0, lsl #16
+    8002004:	08004141 	stmdaeq	r0, {r0, r6, r8, lr}
+    8002008:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800200c:	08003c29 	stmdaeq	r0, {r0, r3, r5, sl, fp, ip, sp}
+   	...
+    800202c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+   	...
+    8002038:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800203c:	08002f05 	stmdaeq	r0, {r0, r2, r8, r9, sl, fp, sp}
+    8002040:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002044:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002048:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800204c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002050:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002054:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002058:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800205c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002060:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002064:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002068:	08002e07 	stmdaeq	r0, {r0, r1, r2, r9, sl, fp, sp}
+    800206c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002070:	08002c51 	stmdaeq	r0, {r0, r4, r6, sl, fp, sp}
+    8002074:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002078:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800207c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002080:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+   	...
+    800208c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002090:	00000000 	andeq	r0, r0, r0
+    8002094:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    8002098:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    800209c:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    80020a0:	00000000 	andeq	r0, r0, r0
+    80020a4:	08002e05 	stmdaeq	r0, {r0, r2, r9, sl, fp, sp}
+    80020a8:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    80020ac:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    80020b0:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    80020b4:	00000000 	andeq	r0, r0, r0
+    80020b8:	080041c1 	stmdaeq	r0, {r0, r6, r7, r8, lr}
+    80020bc:	08003919 	stmdaeq	r0, {r0, r3, r4, r8, fp, ip, sp}
+
+   080020c0 <configuration_begin_request>:
+    80020c0:	b513      	push	{r0, r1, r4, lr}
+    80020c2:	4668      	mov	r0, sp
+    80020c4:	0002      	movs	r2, r0
+   ...
 
 All the addresses are offset by 0x08002000. Now all the bootloader has to do is set the VTOR to 0x08002000 and this user program will execute normally, interrupts and all.
 
@@ -367,17 +377,19 @@ I implemented this with these linker script memory modifications\:
 
 **Bootloader linker script\:**
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    _flash_origin = 0x08000000;
-    _flash_length = 32K;
 
-    MEMORY
-    {
-        FLASH (RX) : ORIGIN = _flash_origin, LENGTH = 8K
-        RAM_RSVD (W!RX) : ORIGIN = 0x20000000, LENGTH = 256
-        RAM (W!RX)  : ORIGIN = 0x20000100, LENGTH = 6K - 256
-    }
+
+   _flash_origin = 0x08000000;
+   _flash_length = 32K;
+
+   MEMORY
+   {
+       FLASH (RX) : ORIGIN = _flash_origin, LENGTH = 8K
+       RAM_RSVD (W!RX) : ORIGIN = 0x20000000, LENGTH = 256
+       RAM (W!RX)  : ORIGIN = 0x20000100, LENGTH = 6K - 256
+   }
 
 
 
@@ -387,16 +399,18 @@ I implemented this with these linker script memory modifications\:
 
 **Device linker script\:**
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    _flash_origin = 0x08002000;
-    _flash_length = 24K;
 
-    MEMORY
-    {
-        FLASH (RX) : ORIGIN = _flash_origin, LENGTH = _flash_length
-        RAM (W!RX)  : ORIGIN = 0x20000100, LENGTH = 6K - 256
-    }
+
+   _flash_origin = 0x08002000;
+   _flash_length = 24K;
+
+   MEMORY
+   {
+       FLASH (RX) : ORIGIN = _flash_origin, LENGTH = _flash_length
+       RAM (W!RX)  : ORIGIN = 0x20000100, LENGTH = 6K - 256
+   }
 
 
 
@@ -406,197 +420,209 @@ I implemented this with these linker script memory modifications\:
 
 And this section addition in the bootloader linker script\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    ...
-        .boot_data :
-        {
-            *(.rsvd.data)
-            *(.rsvd.data*)
-        } > RAM_RSVD
-    ...
+
+
+   ...
+       .boot_data :
+       {
+           *(.rsvd.data)
+           *(.rsvd.data*)
+       } > RAM_RSVD
+   ...
 
 Now I have some reserved memory that the user program won't touch. I use this area to store a psuedo-VTOR\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Places a symbol into the reserved RAM section. This RAM is not
-     * initialized and must be manually initialized before use.
-     */
-    #define RSVD_SECTION ".rsvd.data,\"aw\",%nobits//"
-    #define _RSVD __attribute__((used, section(RSVD_SECTION)))
 
-    static volatile _RSVD uint32_t bootloader_vtor;
 
-    extern uint32_t *g_pfnVectors;
+   /**
+    * Places a symbol into the reserved RAM section. This RAM is not
+    * initialized and must be manually initialized before use.
+    */
+   #define RSVD_SECTION ".rsvd.data,\"aw\",%nobits//"
+   #define _RSVD __attribute__((used, section(RSVD_SECTION)))
 
-    void bootloader_init(void)
-    {
-        bootloader_vtor = (uint32_t)(&g_pfnVectors);
-    ...
+   static volatile _RSVD uint32_t bootloader_vtor;
+
+   extern uint32_t *g_pfnVectors;
+
+   void bootloader_init(void)
+   {
+       bootloader_vtor = (uint32_t)(&g_pfnVectors);
+   ...
 
 When the bootloader starts it will set this "bootloader_vtor" variable to the location of the bootloader's vector table (the "extern uint32_t \*g_pfnVectors" is linked to that table defined in assembly earlier).
 
 Then, if the bootloader determines that the user program exists it overwrites bootloader_vtor with the following\:
 
-.. code-block:: default
+::
 
-    void bootloader_init(void)
-    {
-    ...
-        uint32_t user_vtor_value = 0;
-    ...load the user value...
-        //if the prog_start field is set and there are no entry bits set in the CSR (or the magic code is programmed appropriate), start the user program
-        if (user_vtor_value &&
-                (!reset_entry || (magic == BOOTLOADER_MAGIC_SKIP)))
-        {
-    ...housekeeping before we jump to the user program...
-            __disable_irq();
 
-            uint32_t *user_vtor = (uint32_t *)user_vtor_value;
-            uint32_t sp = user_vtor[0];
-            uint32_t pc = user_vtor[1];
-            bootloader_vtor = user_vtor_value;
-            __asm__ __volatile__("mov sp,%0\n\t"
-                    "bx %1\n\t"
-                    : /* no output */
-                    : "r" (sp), "r" (pc)
-                    : "sp");
-            while (1) { }
-        }
-    }
+
+   void bootloader_init(void)
+   {
+   ...
+       uint32_t user_vtor_value = 0;
+   ...load the user value...
+       //if the prog_start field is set and there are no entry bits set in the CSR (or the magic code is programmed appropriate), start the user program
+       if (user_vtor_value &&
+               (!reset_entry || (magic == BOOTLOADER_MAGIC_SKIP)))
+       {
+   ...housekeeping before we jump to the user program...
+           __disable_irq();
+
+           uint32_t *user_vtor = (uint32_t *)user_vtor_value;
+           uint32_t sp = user_vtor[0];
+           uint32_t pc = user_vtor[1];
+           bootloader_vtor = user_vtor_value;
+           __asm__ __volatile__("mov sp,%0\n\t"
+                   "bx %1\n\t"
+                   : /* no output */
+                   : "r" (sp), "r" (pc)
+                   : "sp");
+           while (1) { }
+       }
+   }
 
 
 Ok, so that solves the issue of "where do the user's interrupts live". The next issue is actually jumping to those. Turns out, that's not a hard problem to solve now. A quick change to the interrupt handlers makes short work of that\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Entry point for all exceptions which passes off execution to the appropriate
-     * handler. This adds some non-trivial overhead, but it does tail-call the
-     * handler and I think it's about as minimal as you can get for emulating the
-     * VTOR.
-     */
-    void __attribute__((naked)) Bootloader_IRQHandler(void)
-    {
-        __asm__ volatile (
-                " ldr r0,=bootloader_vtor\n" // Read the fake VTOR into r0
-                " ldr r0,[r0]\n"
-                " ldr r1,=0xE000ED04\n" // Prepare to read the ICSR
-                " ldr r1,[r1]\n" // Load the ICSR
-                " mov r2,#63\n"  // Prepare to mask SCB_ICSC_VECTACTIVE (6 bits, Cortex-M0)
-                " and r1, r2\n"  // Mask the ICSR, r1 now contains the vector number
-                " lsl r1, #2\n"  // Multiply vector number by sizeof(function pointer)
-                " add r0, r1\n"  // Apply the offset to the table base
-                " ldr r0,[r0]\n" // Read the function pointer value
-                " bx r0\n" // Aaaannd branch!
-                );
-    }
+
+
+   /**
+    * Entry point for all exceptions which passes off execution to the appropriate
+    * handler. This adds some non-trivial overhead, but it does tail-call the
+    * handler and I think it's about as minimal as you can get for emulating the
+    * VTOR.
+    */
+   void __attribute__((naked)) Bootloader_IRQHandler(void)
+   {
+       __asm__ volatile (
+               " ldr r0,=bootloader_vtor\n" // Read the fake VTOR into r0
+               " ldr r0,[r0]\n"
+               " ldr r1,=0xE000ED04\n" // Prepare to read the ICSR
+               " ldr r1,[r1]\n" // Load the ICSR
+               " mov r2,#63\n"  // Prepare to mask SCB_ICSC_VECTACTIVE (6 bits, Cortex-M0)
+               " and r1, r2\n"  // Mask the ICSR, r1 now contains the vector number
+               " lsl r1, #2\n"  // Multiply vector number by sizeof(function pointer)
+               " add r0, r1\n"  // Apply the offset to the table base
+               " ldr r0,[r0]\n" // Read the function pointer value
+               " bx r0\n" // Aaaannd branch!
+               );
+   }
 
 What this does is determine which interrupt number is executing, multiply that number by 4, adds it to bootloader_vtor, and jumps to that location. This does naively what the VTOR does from the perspective of a program. This routine does stomp all over r0, r1, and r2, but since those registers are part of the ARM Exception Context, the original values have already been pushed onto the stack. Since we haven't modified the stack at all (no pushes or pops here), the actual interrupt handler should be none the wiser that something happened before it (and it shouldn't care what's in r0, r1, and r2 as well).
 
 The bootloader also gets a rather non-trivial change to its interrupt vector table\:
 
-.. code-block:: asm
+.. code-block:: {lang}
 
-    /******************************************************************************
-    *
-    * The minimal vector table for a Cortex M0.  Note that the proper constructs
-    * must be placed on this to ensure that it ends up at physical address
-    * 0x0000.0000.
-    *
-    ******************************************************************************/
-       .section .isr_vector,"a",%progbits
-      .word  _estack
-      .word  Reset_Handler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler
-      .word  Bootloader_IRQHandler                   /* Window WatchDog              */
-      .word  Bootloader_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
-      .word  Bootloader_IRQHandler                    /* RTC through the EXTI line    */
-      .word  Bootloader_IRQHandler                  /* FLASH                        */
-      .word  Bootloader_IRQHandler                /* RCC and CRS                  */
-      .word  Bootloader_IRQHandler                /* EXTI Line 0 and 1            */
-      .word  Bootloader_IRQHandler                /* EXTI Line 2 and 3            */
-      .word  Bootloader_IRQHandler               /* EXTI Line 4 to 15            */
-      .word  Bootloader_IRQHandler                    /* TSC                          */
-      .word  Bootloader_IRQHandler          /* DMA1 Channel 1               */
-      .word  Bootloader_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
-      .word  Bootloader_IRQHandler        /* DMA1 Channel 4 and Channel 5 */
-      .word  Bootloader_IRQHandler                   /* ADC1                         */
-      .word  Bootloader_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
-      .word  Bootloader_IRQHandler                /* TIM1 Capture Compare         */
-      .word  Bootloader_IRQHandler                   /* TIM2                         */
-      .word  Bootloader_IRQHandler                   /* TIM3                         */
-      .word  Bootloader_IRQHandler                                 /* Reserved                     */
-      .word  Bootloader_IRQHandler                                 /* Reserved                     */
-      .word  Bootloader_IRQHandler                  /* TIM14                        */
-      .word  Bootloader_IRQHandler                                 /* Reserved                     */
-      .word  Bootloader_IRQHandler                  /* TIM16                        */
-      .word  Bootloader_IRQHandler                  /* TIM17                        */
-      .word  Bootloader_IRQHandler                   /* I2C1                         */
-      .word  Bootloader_IRQHandler                                 /* Reserved                     */
-      .word  Bootloader_IRQHandler                   /* SPI1                         */
-      .word  Bootloader_IRQHandler                   /* SPI2                         */
-      .word  Bootloader_IRQHandler                 /* USART1                       */
-      .word  Bootloader_IRQHandler                 /* USART2                       */
-      .word  Bootloader_IRQHandler                                 /* Reserved                     */
-      .word  Bootloader_IRQHandler                /* CEC and CAN                  */
-      .word  Bootloader_IRQHandler                    /* USB                          */
+
+
+   /******************************************************************************
+   *
+   * The minimal vector table for a Cortex M0.  Note that the proper constructs
+   * must be placed on this to ensure that it ends up at physical address
+   * 0x0000.0000.
+   *
+   ******************************************************************************/
+      .section .isr_vector,"a",%progbits
+     .word  _estack
+     .word  Reset_Handler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler
+     .word  Bootloader_IRQHandler                   /* Window WatchDog              */
+     .word  Bootloader_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
+     .word  Bootloader_IRQHandler                    /* RTC through the EXTI line    */
+     .word  Bootloader_IRQHandler                  /* FLASH                        */
+     .word  Bootloader_IRQHandler                /* RCC and CRS                  */
+     .word  Bootloader_IRQHandler                /* EXTI Line 0 and 1            */
+     .word  Bootloader_IRQHandler                /* EXTI Line 2 and 3            */
+     .word  Bootloader_IRQHandler               /* EXTI Line 4 to 15            */
+     .word  Bootloader_IRQHandler                    /* TSC                          */
+     .word  Bootloader_IRQHandler          /* DMA1 Channel 1               */
+     .word  Bootloader_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
+     .word  Bootloader_IRQHandler        /* DMA1 Channel 4 and Channel 5 */
+     .word  Bootloader_IRQHandler                   /* ADC1                         */
+     .word  Bootloader_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
+     .word  Bootloader_IRQHandler                /* TIM1 Capture Compare         */
+     .word  Bootloader_IRQHandler                   /* TIM2                         */
+     .word  Bootloader_IRQHandler                   /* TIM3                         */
+     .word  Bootloader_IRQHandler                                 /* Reserved                     */
+     .word  Bootloader_IRQHandler                                 /* Reserved                     */
+     .word  Bootloader_IRQHandler                  /* TIM14                        */
+     .word  Bootloader_IRQHandler                                 /* Reserved                     */
+     .word  Bootloader_IRQHandler                  /* TIM16                        */
+     .word  Bootloader_IRQHandler                  /* TIM17                        */
+     .word  Bootloader_IRQHandler                   /* I2C1                         */
+     .word  Bootloader_IRQHandler                                 /* Reserved                     */
+     .word  Bootloader_IRQHandler                   /* SPI1                         */
+     .word  Bootloader_IRQHandler                   /* SPI2                         */
+     .word  Bootloader_IRQHandler                 /* USART1                       */
+     .word  Bootloader_IRQHandler                 /* USART2                       */
+     .word  Bootloader_IRQHandler                                 /* Reserved                     */
+     .word  Bootloader_IRQHandler                /* CEC and CAN                  */
+     .word  Bootloader_IRQHandler                    /* USB                          */
 
 
 All the interrupts point to this new Bootloader_IRQHandler except Reset. We now have another problem\: What about the interrupts for when we actually need to execute the bootloader program instead of the user program. Well, that's fairly simple now. We just move the g_pfnVectors table so that it is just like any other table\:
 
-.. code-block:: asm
+.. code-block:: {lang}
 
-    /**
-     * Default vector table local to the bootloader. This is used by the
-     * emulated VTOR functionality to actually dispatch interrupts. It must
-     * be word-aligned since "ldr" is used to access it.
-     */
-       .section .text.LocalVectors,"a",%progbits
-      .type g_pfnVectors, %object
-      .size g_pfnVectors, .-g_pfnVectors
-      .align 4
 
-    g_pfnVectors:
-      .word  _estack
-      .word  Reset_Handler
-      .word  NMI_Handler
-      .word  HardFault_Handler
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  0
-      .word  SVC_Handler
-      .word  0
-      .word  0
-      .word  PendSV_Handler
-      .word  SysTick_Handler
-      .word  WWDG_IRQHandler                   /* Window WatchDog              */
-      .word  PVD_VDDIO2_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
-      .word  RTC_IRQHandler                    /* RTC through the EXTI line    */
-      .word  FLASH_IRQHandler                  /* FLASH                        */
-      .word  RCC_CRS_IRQHandler                /* RCC and CRS                  */
-      .word  EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
-      .word  EXTI2_3_IRQHandler                /* EXTI Line 2 and 3            */
-    ...
+
+   /**
+    * Default vector table local to the bootloader. This is used by the
+    * emulated VTOR functionality to actually dispatch interrupts. It must
+    * be word-aligned since "ldr" is used to access it.
+    */
+      .section .text.LocalVectors,"a",%progbits
+     .type g_pfnVectors, %object
+     .size g_pfnVectors, .-g_pfnVectors
+     .align 4
+
+   g_pfnVectors:
+     .word  _estack
+     .word  Reset_Handler
+     .word  NMI_Handler
+     .word  HardFault_Handler
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  0
+     .word  SVC_Handler
+     .word  0
+     .word  0
+     .word  PendSV_Handler
+     .word  SysTick_Handler
+     .word  WWDG_IRQHandler                   /* Window WatchDog              */
+     .word  PVD_VDDIO2_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
+     .word  RTC_IRQHandler                    /* RTC through the EXTI line    */
+     .word  FLASH_IRQHandler                  /* FLASH                        */
+     .word  RCC_CRS_IRQHandler                /* RCC and CRS                  */
+     .word  EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
+     .word  EXTI2_3_IRQHandler                /* EXTI Line 2 and 3            */
+   ...
 
 I placed it in its own section for fun, but you'll see that it now lives in ".text". This means that it ends up in flash just like any other read only variable would and I don't really care where it ends up. I suppose I could also have put it into the "rodata" section and that would probably be more correct, but it hasn't caused a problem yet. Anyway, as we saw during bootloader_init the address of the bootloader's g_pfnVectors is loaded into bootloader_vtor and if there's no user program it will remain there.
 
@@ -611,9 +637,11 @@ With my other bootloader which relied on the VTOR, the presence of the bootloade
 
 While I didn't overcome this issue completely and stack traces can be a little awkward if they are interrupted at just the right time, I did manage to massage gdb enough to make it somewhat usable\:
 
-.. code-block:: sh
+.. code-block:: {lang}
 
-    gdb -ex "target remote localhost:3333" -ex "add-symbol-file ./path/to/my/bootloader.elf 0x08000000" ./path/to/my/user/program.elf
+
+
+   gdb -ex "target remote localhost:3333" -ex "add-symbol-file ./path/to/my/bootloader.elf 0x08000000" ./path/to/my/user/program.elf
 
 
 The "add-symbol-file" directive points gdb towards my bootloader's elf file and informs it about any symbols it might find if we just so happen to break while inside the bootloader's program space. It also knows about the names of symbols inside the bootloader's reserved SRAM space.

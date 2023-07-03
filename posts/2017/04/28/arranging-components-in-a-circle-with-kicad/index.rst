@@ -10,41 +10,43 @@ When writing a script for pcbnew, it is usually helpful to have some documentati
 
 Here's my script\:
 
-.. code-block:: python
+.. code-block:: {lang}
 
-    #!/usr/bin/env python2
 
-    # Random placement helpers because I'm tired of using spreadsheets for doing this
-    #
-    # Kevin Cuzner
 
-    import math
-    from pcbnew import *
+   #!/usr/bin/env python2
 
-    def place_circle(refdes, start_angle, center, radius, component_offset=0, hide_ref=True, lock=False):
-        """
-        Places components in a circle
-        refdes: List of component references
-        start_angle: Starting angle
-        center: Tuple of (x, y) mils of circle center
-        radius: Radius of the circle in mils
-        component_offset: Offset in degrees for each component to add to angle
-        hide_ref: Hides the reference if true, leaves it be if None
-        lock: Locks the footprint if true
-        """
-        pcb = GetBoard()
-        deg_per_idx = 360 / len(refdes)
-        for idx, rd in enumerate(refdes):
-            part = pcb.FindModuleByReference(rd)
-            angle = (deg_per_idx * idx + start_angle) % 360;
-            print "{0}: {1}".format(rd, angle)
-            xmils = center[0] + math.cos(math.radians(angle)) * radius
-            ymils = center[1] + math.sin(math.radians(angle)) * radius
-            part.SetPosition(wxPoint(FromMils(xmils), FromMils(ymils)))
-            part.SetOrientation(angle * -10)
-            if hide_ref is not None:
-                part.Reference().SetVisible(not hide_ref)
-        print "Placement finished. Press F11 to refresh."
+   # Random placement helpers because I'm tired of using spreadsheets for doing this
+   #
+   # Kevin Cuzner
+
+   import math
+   from pcbnew import *
+
+   def place_circle(refdes, start_angle, center, radius, component_offset=0, hide_ref=True, lock=False):
+       """
+       Places components in a circle
+       refdes: List of component references
+       start_angle: Starting angle
+       center: Tuple of (x, y) mils of circle center
+       radius: Radius of the circle in mils
+       component_offset: Offset in degrees for each component to add to angle
+       hide_ref: Hides the reference if true, leaves it be if None
+       lock: Locks the footprint if true
+       """
+       pcb = GetBoard()
+       deg_per_idx = 360 / len(refdes)
+       for idx, rd in enumerate(refdes):
+           part = pcb.FindModuleByReference(rd)
+           angle = (deg_per_idx * idx + start_angle) % 360;
+           print "{0}: {1}".format(rd, angle)
+           xmils = center[0] + math.cos(math.radians(angle)) * radius
+           ymils = center[1] + math.sin(math.radians(angle)) * radius
+           part.SetPosition(wxPoint(FromMils(xmils), FromMils(ymils)))
+           part.SetOrientation(angle * -10)
+           if hide_ref is not None:
+               part.Reference().SetVisible(not hide_ref)
+       print "Placement finished. Press F11 to refresh."
 
 
 
@@ -61,18 +63,20 @@ Before you can use the scripts on your footprints, they need to be imported. Mak
 
 The scripting console can be found under Tools->Scripting Console. Once it is opened you will see a standard python (2) command prompt. If you placed your script in a location where the Scripting Console will search, you should be able to do something like the following\:
 
-.. code-block:: python
+.. code-block:: {lang}
 
-    PyCrust 0.9.8 - KiCAD Python Shell
-    Python 2.7.13 (default, Feb 11 2017, 12:22:40) 
-    [GCC 6.3.1 20170109] on linux2
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import placement_helpers
-    >>> placement_helpers.place_circle(["D1", "D2"], 0, (500, 500), 1000)
-    D1: 0
-    D2: 180
-    Placement finished. Press F11 to refresh.
-    >>>
+
+
+   PyCrust 0.9.8 - KiCAD Python Shell
+   Python 2.7.13 (default, Feb 11 2017, 12:22:40) 
+   [GCC 6.3.1 20170109] on linux2
+   Type "help", "copyright", "credits" or "license" for more information.
+   >>> import placement_helpers
+   >>> placement_helpers.place_circle(["D1", "D2"], 0, (500, 500), 1000)
+   D1: 0
+   D2: 180
+   Placement finished. Press F11 to refresh.
+   >>>
 
 
 Now, pcbnew may not recognize that your PCB has changed and enable the save button. You should do something like lay a trace or some other board modification so that you can save any changes the script made. I'm sure there's a way to trigger this in Python, but I haven't got around to trying it yet.

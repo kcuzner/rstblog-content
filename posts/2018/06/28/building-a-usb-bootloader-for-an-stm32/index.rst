@@ -71,34 +71,36 @@ When the watch first boots, the bootloader is going to be the first thing that r
 
 First, there's a few #defines and global variables that it would be good to know about for some context\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    #define EEPROM_SECTION ".eeprom,\"aw\",%nobits//" //a bit of a hack to prevent .eeprom from being programmed
-    #define _EEPROM __attribute__((section (EEPROM_SECTION)))
 
-    /**
-     * Mask for RCC_CSR defining which bits may trigger an entry into bootloader mode:
-     * - Any watchdog reset
-     * - Any soft reset
-     * - A pin reset (aka manual reset)
-     * - A firewall reset
-     */
-    #define BOOTLOADER_RCC_CSR_ENTRY_MASK (RCC_CSR_WWDGRSTF | RCC_CSR_IWDGRSTF | RCC_CSR_SFTRSTF | RCC_CSR_PINRSTF | RCC_CSR_FWRSTF)
 
-    /**
-     * Magic code value to make the bootloader ignore any of the entry bits set in
-     * RCC_CSR and skip to the user program anyway, if a valid program start value
-     * has been programmed.
-     */
-    #define BOOTLOADER_MAGIC_SKIP 0x3C65A95A
+   #define EEPROM_SECTION ".eeprom,\"aw\",%nobits//" //a bit of a hack to prevent .eeprom from being programmed
+   #define _EEPROM __attribute__((section (EEPROM_SECTION)))
 
-    static _EEPROM struct {
-        uint32_t magic_code;
-        union {
-            uint32_t *user_vtor;
-            uint32_t user_vtor_value;
-        };
-    } bootloader_persistent_state;
+   /**
+    * Mask for RCC_CSR defining which bits may trigger an entry into bootloader mode:
+    * - Any watchdog reset
+    * - Any soft reset
+    * - A pin reset (aka manual reset)
+    * - A firewall reset
+    */
+   #define BOOTLOADER_RCC_CSR_ENTRY_MASK (RCC_CSR_WWDGRSTF | RCC_CSR_IWDGRSTF | RCC_CSR_SFTRSTF | RCC_CSR_PINRSTF | RCC_CSR_FWRSTF)
+
+   /**
+    * Magic code value to make the bootloader ignore any of the entry bits set in
+    * RCC_CSR and skip to the user program anyway, if a valid program start value
+    * has been programmed.
+    */
+   #define BOOTLOADER_MAGIC_SKIP 0x3C65A95A
+
+   static _EEPROM struct {
+       uint32_t magic_code;
+       union {
+           uint32_t *user_vtor;
+           uint32_t user_vtor_value;
+       };
+   } bootloader_persistent_state;
 
 
 
@@ -115,15 +117,17 @@ There are a few things that can be gathered from this\:
 
 The first thing that the bootloader does is ask the following question to determine if it should run the user application\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    void bootloader_init(void)
-    {
-        //if the prog_start field is set and there are no entry bits set in the CSR (or the magic code is programmed appropriate), start the user program
-        if (bootloader_persistent_state.user_vtor &&
-                (!(RCC->CSR & BOOTLOADER_RCC_CSR_ENTRY_MASK) || bootloader_persistent_state.magic_code == BOOTLOADER_MAGIC_SKIP))
-        {
-    ...
+
+
+   void bootloader_init(void)
+   {
+       //if the prog_start field is set and there are no entry bits set in the CSR (or the magic code is programmed appropriate), start the user program
+       if (bootloader_persistent_state.user_vtor &&
+               (!(RCC->CSR & BOOTLOADER_RCC_CSR_ENTRY_MASK) || bootloader_persistent_state.magic_code == BOOTLOADER_MAGIC_SKIP))
+       {
+   ...
 
 Reading here, we can see that if there is a user_vtor value and there was either no reset condition forcing an entry into bootloader mode or the magic number was programmed to our state, we're going to continue and load the user program rather than staying in bootloader mode.
 
@@ -133,20 +137,22 @@ The next thing to explain here is probably the purpose of this magic_code value.
 
 After the bootloader determines that it needs to run the user's program, it will execute the following\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-            if (bootloader_persistent_state.magic_code)
-                nvm_eeprom_write_w(&bootloader_persistent_state.magic_code, 0);
-            __disable_irq();
-            uint32_t sp = bootloader_persistent_state.user_vtor[0];
-            uint32_t pc = bootloader_persistent_state.user_vtor[1];
-            SCB->VTOR = bootloader_persistent_state.user_vtor_value;
-            __asm__ __volatile__("mov sp,%0\n\t"
-                    "bx %1\n\t"
-                    : /* no output */
-                    : "r" (sp), "r" (pc)
-                    : "sp");
-            while (1) { }
+
+
+           if (bootloader_persistent_state.magic_code)
+               nvm_eeprom_write_w(&bootloader_persistent_state.magic_code, 0);
+           __disable_irq();
+           uint32_t sp = bootloader_persistent_state.user_vtor[0];
+           uint32_t pc = bootloader_persistent_state.user_vtor[1];
+           SCB->VTOR = bootloader_persistent_state.user_vtor_value;
+           __asm__ __volatile__("mov sp,%0\n\t"
+                   "bx %1\n\t"
+                   : /* no output */
+                   : "r" (sp), "r" (pc)
+                   : "sp");
+           while (1) { }
 
 
 The first step here is to reset the magic_code value, since this is a one-time CSR-check override. Next, interrupts are disabled and some steps are taken to start executing the user program\:
@@ -171,49 +177,53 @@ Self-programming via USB
 
 One main goal I had with this bootloader is that it should be driverless and cross-platform. To facilitate this, the bootloader enumerates as a USB Human Interface Device. Here is my report descriptor for the bootloader\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
-        HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
-        HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
-        HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
-        HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
-        HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
-        HID_SHORT(0x94, 0x40), //  REPORT_COUNT(64)
-        HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
-        HID_SHORT(0xc0),       //END_COLLECTION
-    };
+
+
+   static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
+       HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
+       HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
+       HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
+       HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
+       HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
+       HID_SHORT(0x94, 0x40), //  REPORT_COUNT(64)
+       HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
+       HID_SHORT(0xc0),       //END_COLLECTION
+   };
 
 
 
 Our reports are very simple\: We have a 64-byte IN report and a 64-byte OUT report. Although the report descriptor only describes these as simple arrays, the bootloader will actually type-pun them into something a little more structured as follows\:
 
-.. code-block:: default
+::
 
-    static union {
-        uint32_t buffer[16];
-        struct {
-            uint32_t last_command;
-            uint32_t flags;
-            uint32_t crc32_lower;
-            uint32_t crc32_upper;
-            uint8_t data[48];
-        };
-    } in_report;
 
-    static union {
-        uint32_t buffer[16];
-        struct {
-            uint32_t command;
-            uint32_t *address;
-            uint32_t crc32_lower;
-            uint32_t crc32_upper;
-        };
-    } out_report;
+
+   static union {
+       uint32_t buffer[16];
+       struct {
+           uint32_t last_command;
+           uint32_t flags;
+           uint32_t crc32_lower;
+           uint32_t crc32_upper;
+           uint8_t data[48];
+       };
+   } in_report;
+
+   static union {
+       uint32_t buffer[16];
+       struct {
+           uint32_t command;
+           uint32_t *address;
+           uint32_t crc32_lower;
+           uint32_t crc32_upper;
+       };
+   } out_report;
 
 
 To program the device, this bootloader implements a state machine that interprets sequences of OUT reports and issues IN reports as follows\:
@@ -240,130 +250,134 @@ A more detailed description of this protocol can be found at `https\://github.c
 
 I'll cover briefly the process for writing the flash on the STM32. On my particular model, flash pages are 128 bytes and writes are always done in 64-byte groups. This is fairly standard for NOR flash that is seen in microcontrollers. When self-programming, one of the main issues I ran into was that the processor is not allowed to access the flash memory while a flash write is occurring. This is a problem since the flash write process requires the program to poll registers and wait for events to finish. Since this code by default resides in the flash memory, that will cause the write to fail. The solution to this is fairly straightforward\: We have to ensure that the code that actually performs flash writes lives in RAM. Since RAM is executable on the STM32, this is just as simple as requesting the linker to locate the functions in RAM. Here's my code that does flash erases and writes\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Certain functions, such as flash write, are easier to do if the code is
-     * executed from the RAM. This decoration relocates the function there and
-     * prevents any inlining that might otherwise move the function to flash.
-     */
-    #define _RAM __attribute__((section (".data#"), noinline))
 
-    /**
-     * RAM-located function which actually performs page erases.
-     *
-     * address: Page-aligned address to erase
-     */
-    static _RAM bool nvm_flash_do_page_erase(uint32_t *address)
-    {
-        //erase operation
-        FLASH->PECR |= FLASH_PECR_ERASE | FLASH_PECR_PROG;
-        *address = (uint32_t)0;
-        //wait for completion
-        while (FLASH->SR & FLASH_SR_BSY) { }
-        if (FLASH->SR & FLASH_SR_EOP)
-        {
-            //completed without incident
-            FLASH->SR = FLASH_SR_EOP;
-            return true;
-        }
-        else
-        {
-            //there was an error
-            FLASH->SR = FLASH_SR_FWWERR | FLASH_SR_PGAERR | FLASH_SR_WRPERR;
-            return false;
-        }
-    }
 
-    /**
-     * RAM-located function which actually performs half-page writes on previously
-     * erased pages.
-     *
-     * address: Half-page aligned address to write
-     * data: Array to 16 32-bit words to write
-     */
-    static _RAM bool nvm_flash_do_write_half_page(uint32_t *address, uint32_t *data)
-    {
-        uint8_t i;
+   /**
+    * Certain functions, such as flash write, are easier to do if the code is
+    * executed from the RAM. This decoration relocates the function there and
+    * prevents any inlining that might otherwise move the function to flash.
+    */
+   #define _RAM __attribute__((section (".data#"), noinline))
 
-        //half-page program operation
-        FLASH->PECR |= FLASH_PECR_PROG | FLASH_PECR_FPRG;
-        for (i = 0; i < 16; i++)
-        {
-            *address = data[i]; //the actual address written is unimportant as these words will be queued
-        }
-        //wait for completion
-        while (FLASH->SR & FLASH_SR_BSY) { }
-        if (FLASH->SR & FLASH_SR_EOP)
-        {
-            //completed without incident
-            FLASH->SR = FLASH_SR_EOP;
-            return true;
-        }
-        else
-        {
-            //there was an error
-            FLASH->SR = FLASH_SR_FWWERR | FLASH_SR_NOTZEROERR | FLASH_SR_PGAERR | FLASH_SR_WRPERR;
-            return false;
+   /**
+    * RAM-located function which actually performs page erases.
+    *
+    * address: Page-aligned address to erase
+    */
+   static _RAM bool nvm_flash_do_page_erase(uint32_t *address)
+   {
+       //erase operation
+       FLASH->PECR |= FLASH_PECR_ERASE | FLASH_PECR_PROG;
+       *address = (uint32_t)0;
+       //wait for completion
+       while (FLASH->SR & FLASH_SR_BSY) { }
+       if (FLASH->SR & FLASH_SR_EOP)
+       {
+           //completed without incident
+           FLASH->SR = FLASH_SR_EOP;
+           return true;
+       }
+       else
+       {
+           //there was an error
+           FLASH->SR = FLASH_SR_FWWERR | FLASH_SR_PGAERR | FLASH_SR_WRPERR;
+           return false;
+       }
+   }
 
-        }
-    }
+   /**
+    * RAM-located function which actually performs half-page writes on previously
+    * erased pages.
+    *
+    * address: Half-page aligned address to write
+    * data: Array to 16 32-bit words to write
+    */
+   static _RAM bool nvm_flash_do_write_half_page(uint32_t *address, uint32_t *data)
+   {
+       uint8_t i;
+
+       //half-page program operation
+       FLASH->PECR |= FLASH_PECR_PROG | FLASH_PECR_FPRG;
+       for (i = 0; i < 16; i++)
+       {
+           *address = data[i]; //the actual address written is unimportant as these words will be queued
+       }
+       //wait for completion
+       while (FLASH->SR & FLASH_SR_BSY) { }
+       if (FLASH->SR & FLASH_SR_EOP)
+       {
+           //completed without incident
+           FLASH->SR = FLASH_SR_EOP;
+           return true;
+       }
+       else
+       {
+           //there was an error
+           FLASH->SR = FLASH_SR_FWWERR | FLASH_SR_NOTZEROERR | FLASH_SR_PGAERR | FLASH_SR_WRPERR;
+           return false;
+
+       }
+   }
 
 
 The other thing to discuss about self-programming is the way the STM32 protects itself against erroneous writes. It does this by "locking" and "unlocking" using writes of magic values to certain registers in the FLASH module. The idea is that the flash should only be unlocked for just the amount of time needed to actually program the flash and then locked again. This prevents program corruption due to factors like incorrect code, ESD causing the microcontroller to wig out, power loss, and other things that really can't be predicted. I do the following to actually execute writes to the flash (note how the following code uses the _RAM-located functions I noted earlier)\:
 
-.. code-block:: c
-
-    /**
-     * Unlocks the PECR and the flash
-     */
-    static void nvm_unlock_flash(void)
-    {
-        nvm_unlock_pecr();
-        if (FLASH->PECR & FLASH_PECR_PRGLOCK)
-        {
-            FLASH->PRGKEYR = 0x8c9daebf;
-            FLASH->PRGKEYR = 0x13141516;
-        }
-    }
-
-    /**
-     * Locks all unlocked NVM regions and registers
-     */
-    static void nvm_lock(void)
-    {
-        if (!(FLASH->PECR & FLASH_PECR_PELOCK))
-        {
-            FLASH->PECR |= FLASH_PECR_OPTLOCK | FLASH_PECR_PRGLOCK | FLASH_PECR_PELOCK;
-        }
-    }
+.. code-block:: {lang}
 
 
-    bool nvm_flash_erase_page(uint32_t *address)
-    {
-        bool result = false;
 
-        if ((uint32_t)address & 0x7F)
-            return false; //not page aligned
+   /**
+    * Unlocks the PECR and the flash
+    */
+   static void nvm_unlock_flash(void)
+   {
+       nvm_unlock_pecr();
+       if (FLASH->PECR & FLASH_PECR_PRGLOCK)
+       {
+           FLASH->PRGKEYR = 0x8c9daebf;
+           FLASH->PRGKEYR = 0x13141516;
+       }
+   }
 
-        nvm_unlock_flash();
-        result = nvm_flash_do_page_erase(address);
-        nvm_lock();
-        return result;
-    }
+   /**
+    * Locks all unlocked NVM regions and registers
+    */
+   static void nvm_lock(void)
+   {
+       if (!(FLASH->PECR & FLASH_PECR_PELOCK))
+       {
+           FLASH->PECR |= FLASH_PECR_OPTLOCK | FLASH_PECR_PRGLOCK | FLASH_PECR_PELOCK;
+       }
+   }
 
-    bool nvm_flash_write_half_page(uint32_t *address, uint32_t *data)
-    {
-        bool result = false;
 
-        if ((uint32_t)address & 0x3F)
-            return false; //not half-page aligned
+   bool nvm_flash_erase_page(uint32_t *address)
+   {
+       bool result = false;
 
-        nvm_unlock_flash();
-        result = nvm_flash_do_write_half_page(address, data);
-        nvm_lock();
-        return result;
-    }
+       if ((uint32_t)address & 0x7F)
+           return false; //not page aligned
+
+       nvm_unlock_flash();
+       result = nvm_flash_do_page_erase(address);
+       nvm_lock();
+       return result;
+   }
+
+   bool nvm_flash_write_half_page(uint32_t *address, uint32_t *data)
+   {
+       bool result = false;
+
+       if ((uint32_t)address & 0x3F)
+           return false; //not half-page aligned
+
+       nvm_unlock_flash();
+       result = nvm_flash_do_write_half_page(address, data);
+       nvm_lock();
+       return result;
+   }
 
 More information about these magic numbers and the unlock-lock sequencing can be found in the documentation for the PRGKEYR register in the FLASH module on the STM32L052.
 
@@ -378,23 +392,27 @@ Considerations for linking the application
 
 One big thing we haven't yet covered is how exactly the user application needs to be changed in order to be compatible with the bootloader. Due to how the bootloader is structured (it just lives in the first bit of flash) and how it is entered (any reset other than power-on will enter bootloader mode), the only real change needed to make a user program compatible is to relocate where the linker script places the user program in flash (leaving the first section of it blank). In my linker script for the LED watch, I changed the MEMORY directive to read as follows\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    MEMORY
-    {
-        FLASH (RX) : ORIGIN = 0x08002000, LENGTH = 56K
-        RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 8K
-        PMA (W)  : ORIGIN = 0x40006000, LENGTH = 512 /* 256 x 16bit */
-    }
+
+
+   MEMORY
+   {
+       FLASH (RX) : ORIGIN = 0x08002000, LENGTH = 56K
+       RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 8K
+       PMA (W)  : ORIGIN = 0x40006000, LENGTH = 512 /* 256 x 16bit */
+   }
 
 The flash segment has been shorted from 64K to 56K and the ORIGIN has been moved up to 0x08002000. The first 8KB of flash are now reserved for the bootloader. The bootloader is linked just like any other program, with the ORIGIN at 0x08000000, but its LENGTH is set to 8K instead.
 
 When the user program wishes to enter bootloader mode, it just needs to issue a soft reset. The LED watch has a command for this that is issued over USB and just executes the following when it receives that command\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    //entering bootloader mode with a simple soft reset
-    NVIC_SystemReset();
+
+
+   //entering bootloader mode with a simple soft reset
+   NVIC_SystemReset();
 
 
 Very simple, very easy.

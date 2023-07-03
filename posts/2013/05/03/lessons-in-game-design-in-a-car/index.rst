@@ -16,75 +16,79 @@ Event bubbling
 
 When making my Tetris game, I wanted an easy to way to know when to update or redraw the screen rather than always redrawing it. My idea was to create an event system that would "notice" when the game changed somehow\: whether a block had moved or maybe the score changed. I remembered of two event systems that I really really liked\: C#'s event keyword plus delegate thing and Javascript's event bubbling system. Some people probably hate both of those, but I have learned to love them. Mainly, its just because I'm new to this sort of thing and am still being dazzled by their plethora of uses. Using some knowledge I gleaned from my database abstraction project about the fun data model special function names in Python, I created the following\:
 
-.. code-block::
+::
 
-    class EventDispatcher(object):
-        """
-        Event object which operates like C# events
 
-        "event += handler" adds a handler to this event
-        "event -= handler" removes a handler from this event
-        "event(obj)" calls all of the handlers, passing the passed object
 
-        Events may be temporarily suppressed by using them in a with
-        statement. The context returned will be this event object.
-        """
-        def __init__(self):
-            """
-            Initializes a new event
-            """
-            self.__handlers = []
-            self.__supress_count = 0
-        def __call__(self, e):
-            if self.__supress_count > 0:
-                return
-            for h in self.__handlers:
-                h(e)
-        def __iadd__(self, other):
-            if other not in self.__handlers:
-                self.__handlers.append(other)
-            return self
-        def __isub__(self, other):
-            self.__handlers.remove(other)
-            return self
-        def __enter__(self):
-            self.__supress_count += 1
-            return self
-        def __exit__(self, exc_type, exc_value, traceback):
-            self.__supress_count -= 1
+   class EventDispatcher(object):
+       """
+       Event object which operates like C# events
+
+       "event += handler" adds a handler to this event
+       "event -= handler" removes a handler from this event
+       "event(obj)" calls all of the handlers, passing the passed object
+
+       Events may be temporarily suppressed by using them in a with
+       statement. The context returned will be this event object.
+       """
+       def __init__(self):
+           """
+           Initializes a new event
+           """
+           self.__handlers = []
+           self.__supress_count = 0
+       def __call__(self, e):
+           if self.__supress_count > 0:
+               return
+           for h in self.__handlers:
+               h(e)
+       def __iadd__(self, other):
+           if other not in self.__handlers:
+               self.__handlers.append(other)
+           return self
+       def __isub__(self, other):
+           self.__handlers.remove(other)
+           return self
+       def __enter__(self):
+           self.__supress_count += 1
+           return self
+       def __exit__(self, exc_type, exc_value, traceback):
+           self.__supress_count -= 1
 
 My first thought when making this was to do it like C# events\: super flexible, but no defined "way" to do them. The event dispatcher uses the same syntax as the C# events (+=, -= or __iadd__, __isub__) to add/remove handlers and also to call each handler (() or __call__). It also has the added functionality of optionally suppressing events by using them inside a "with" statement (which may actually be breaking the pattern, but I needed it to avoid some interesting redrawing issues). I would add EventDispatcher objects to represent each type of event that I wanted to catch and then pass an Event object into the event to send it off to the listening functions. However, I ran into an issue with this\: Although I was able to cut down the number of events being sent and how far they propagated, I would occasionally lose events. The issue this caused is that my renderer was listening to find out where it should "erase" blocks and where it should "add" blocks and it would sometimes seem to forget to erase some of the blocks. I later discovered that I had simply forgotten to call the event during a certain function which was called periodically to move the Tetris blocks down, but even so, it got my started on the next thing which I feel is better.
 
 Javascript events work by specifying types of events, a "target" or object in the focus of the event, and arguments that get passed along with the event. The events then "bubble" upward through the DOM, firing first for a child and then for the parent of that child until it reaches the top element. The advantage of this is that if one wants to know, for example, if the screen has been clicked, a listener doesn't have to listen at the lowest leaf element of each branch of the DOM; it can simply listen at the top element and wait for the "click" event to "bubble" upwards through the tree. After my aforementioned issue I initially thought that I was missing events because my structure was flawed, so I ended up re-using the above class to implement event bubbling by doing the following\:
 
-.. code-block::
+::
 
-    class Event(object):
-        """
-        Instance of an event to be dispatched
-        """
-        def __init__(self, target, name, *args, **kwargs):
-            self.target = target
-            self.name = name
-            self.args = args
-            self.kwargs = kwargs
 
-    class EventedObject(object):
-        def __init__(self, parent=None):
-            self.__parent = parent
-            self.event = EventDispatcher()
-            self.event += self.__on_event
-        def __on_event(self, e):
-            if hasattr(self.__parent, 'event'):
-                self.__parent.event(e)
-        @property
-        def parent(self):
-            return self.__parent
-        @parent.setter
-        def parent(self, value):
-            l = self.parent
-            self.__parent = value
-            self.event(Event(self, "parent-changed", current=self.parent, last=l))
+
+   class Event(object):
+       """
+       Instance of an event to be dispatched
+       """
+       def __init__(self, target, name, *args, **kwargs):
+           self.target = target
+           self.name = name
+           self.args = args
+           self.kwargs = kwargs
+
+   class EventedObject(object):
+       def __init__(self, parent=None):
+           self.__parent = parent
+           self.event = EventDispatcher()
+           self.event += self.__on_event
+       def __on_event(self, e):
+           if hasattr(self.__parent, 'event'):
+               self.__parent.event(e)
+       @property
+       def parent(self):
+           return self.__parent
+       @parent.setter
+       def parent(self, value):
+           l = self.parent
+           self.__parent = value
+           self.event(Event(self, "parent-changed", current=self.parent, last=l))
 
 The example here is the object from which all of my moving game objects (blocks, polyominoes, the game grid, etc) derive from. It defines a single EventDispatcher, through which Event objects are passed. It listens to its own event and when it hears something, it activates its parent's event, passing through the same object that it received. The advantage here is that by listening to just one "top" object, all of the events that occurred for the child objects are passed to whatever handler is attached to the top object's dispatcher. In my specific implementation I had each block send an Event up the pipeline when the were moved, each polyomino send an Event when it was moved or rotated, and the game send an Event when the score, level, or line count was changed. By having my renderer listen to just the game object's EventDispatcher I was able to intercept all of these events at one location.
 

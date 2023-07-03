@@ -109,90 +109,94 @@ For the STM32F103\:
 
 The PMA is arranged as 256 16-bit words (512 bytes of PMA SRAM), but from the processor bus it must be accessed in a 32-bit aligned fashion. I think this is most easily understood with the following diagram\:
 
-.. code-block:: default
+::
 
-    ADDR+OFFSET: |  0x0  |  0x1  |  0x2  |  0x3  |
-    -------------|-------|-------|-------|-------|
-      0x40006000 | 0x000 | 0x001 | ----- | ----- |
-      0x40006004 | 0x002 | 0x003 | ----- | ----- |
-      0x40006008 | 0x004 | 0x005 | ----- | ----- |
-      0x4000600C | 0x006 | 0x007 | ----- | ----- |
-      0x40006010 | 0x008 | 0x009 | ----- | ----- |
-      ....
-      0x400063F8 | 0x1FC | 0x1FD | ----- | ----- |
-      0x400063FC | 0x1FE | 0x1FF | ----- | ----- |
+
+
+   ADDR+OFFSET: |  0x0  |  0x1  |  0x2  |  0x3  |
+   -------------|-------|-------|-------|-------|
+     0x40006000 | 0x000 | 0x001 | ----- | ----- |
+     0x40006004 | 0x002 | 0x003 | ----- | ----- |
+     0x40006008 | 0x004 | 0x005 | ----- | ----- |
+     0x4000600C | 0x006 | 0x007 | ----- | ----- |
+     0x40006010 | 0x008 | 0x009 | ----- | ----- |
+     ....
+     0x400063F8 | 0x1FC | 0x1FD | ----- | ----- |
+     0x400063FC | 0x1FE | 0x1FF | ----- | ----- |
 
 
 Each 16-bit word of PMA memory utilizes all four bytes of a 32-bit-aligned address, even though the value itself only uses the first two bytes. This means that even though there are only 512 bytes of PMA SRAM, it takes up 1KB of address space (0x3FF = 256).
 
 This also requires some special considerations when accessing memory. Since accesses can only happen by 32-bit word and only two bytes of that word are actually used, it is not suitable for use as general memory. If you want a nice byte buffer that your application can work with, you'll need to allocate that in general SRAM. When you're ready to send it over USB then it can be copied into the PMA with its weird access alignment rules. I ended up making the following methods to help with that (note\: USB_PMAADDR is defined to 0x40006000 elsewhere, which is the start of the PMA from the perspective of the main memory bus)\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Minimally sized data type for things in the PMA
-     */
-    typedef uint16_t PMAWord;
 
-    /**
-     * Translates a PMA pointer into a local address for the USB peripheral
-     */
-    #define USB_LOCAL_ADDR(PMAPTR) (uint32_t)((uint32_t)(PMAPTR) - USB_PMAADDR)
-    /**
-     * Translates a USB local address into a PMA pointer
-     */
-    #define PMA_ADDR_FROM_USB_LOCAL(LOCALPTR) (PMAWord *)((LOCALPTR) + USB_PMAADDR)
-    /**
-     * Translates a PMA pointer into an application memory pointer
-     * Note: This is safe for pointer arithmetic and will map correctly
-     */
-    #define APPLICATION_ADDR(PMAPTR) (uint32_t *)((USB_LOCAL_ADDR(PMAPTR))*2 + USB_PMAADDR)
-    /**
-     * Translates the size of a PMA symbol into its size as seen in application memory
-     */
-    #define APPLICATION_SIZEOF(SYMB) (sizeof(SYMB)*2)
 
-    /**
-     * Performs a copy into a region of memory into a the PMA
-     *
-     * src: Pointer to source located in normal memory
-     * pmaDest: Pointer to destination located in PMA
-     * len: Length in bytes to copy
-     */
-    static void usb_pma_copy_in(void *src, PMAWord *pmaDest, uint16_t len)
-    {
-        //note the sizes of the following
-        PMAWord *wordSrc = (PMAWord *)src;
-        uint32_t *appDest = APPLICATION_ADDR(pmaDest);
+   /**
+    * Minimally sized data type for things in the PMA
+    */
+   typedef uint16_t PMAWord;
 
-        for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
-        {
-            *appDest = *wordSrc;
-            appDest++; //move along by four bytes to next PMA word
-            wordSrc++; //move along by one word
-        }
-    }
+   /**
+    * Translates a PMA pointer into a local address for the USB peripheral
+    */
+   #define USB_LOCAL_ADDR(PMAPTR) (uint32_t)((uint32_t)(PMAPTR) - USB_PMAADDR)
+   /**
+    * Translates a USB local address into a PMA pointer
+    */
+   #define PMA_ADDR_FROM_USB_LOCAL(LOCALPTR) (PMAWord *)((LOCALPTR) + USB_PMAADDR)
+   /**
+    * Translates a PMA pointer into an application memory pointer
+    * Note: This is safe for pointer arithmetic and will map correctly
+    */
+   #define APPLICATION_ADDR(PMAPTR) (uint32_t *)((USB_LOCAL_ADDR(PMAPTR))*2 + USB_PMAADDR)
+   /**
+    * Translates the size of a PMA symbol into its size as seen in application memory
+    */
+   #define APPLICATION_SIZEOF(SYMB) (sizeof(SYMB)*2)
 
-    /**
-     * Performs a copy from the PMA into a region of memory
-     *
-     * pmaSrc: Pointer to source located in PMA
-     * dest: Pointer to destination located in normal memory
-     * len: Length in bytes to copy
-     */
-    static void usb_pma_copy_out(PMAWord *pmaSrc, void *dest, uint16_t len)
-    {
-        //note the size of the following
-        uint32_t *appSrc = APPLICATION_ADDR(pmaSrc);
-        PMAWord *wordDest = (PMAWord *)dest;
+   /**
+    * Performs a copy into a region of memory into a the PMA
+    *
+    * src: Pointer to source located in normal memory
+    * pmaDest: Pointer to destination located in PMA
+    * len: Length in bytes to copy
+    */
+   static void usb_pma_copy_in(void *src, PMAWord *pmaDest, uint16_t len)
+   {
+       //note the sizes of the following
+       PMAWord *wordSrc = (PMAWord *)src;
+       uint32_t *appDest = APPLICATION_ADDR(pmaDest);
 
-        for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
-        {
-            *wordDest = *appSrc;
-            wordDest++; //move along by one word
-            appSrc++; //move along by four bytes to the next PMA word
-        }
-    }
+       for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
+       {
+           *appDest = *wordSrc;
+           appDest++; //move along by four bytes to next PMA word
+           wordSrc++; //move along by one word
+       }
+   }
+
+   /**
+    * Performs a copy from the PMA into a region of memory
+    *
+    * pmaSrc: Pointer to source located in PMA
+    * dest: Pointer to destination located in normal memory
+    * len: Length in bytes to copy
+    */
+   static void usb_pma_copy_out(PMAWord *pmaSrc, void *dest, uint16_t len)
+   {
+       //note the size of the following
+       uint32_t *appSrc = APPLICATION_ADDR(pmaSrc);
+       PMAWord *wordDest = (PMAWord *)dest;
+
+       for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
+       {
+           *wordDest = *appSrc;
+           wordDest++; //move along by one word
+           appSrc++; //move along by four bytes to the next PMA word
+       }
+   }
 
 
 The main thing to get out of these is that the usb_pma_copy functions treat the buffer as a bunch of 16-bit values and perform all accesses 32-bit aligned. My implementation **is naive and highly insecure.** Buffers are subject to some restrictions that will cause interesting behavior if they aren't followed\:
@@ -201,9 +205,11 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    #define USB_DATA_ALIGN __attribute__ ((aligned(2)))
+
+
+   #define USB_DATA_ALIGN __attribute__ ((aligned(2)))
 
 
 * **Insecure\:** The copy functions will actually copy an extra byte to or from general SRAM if the buffer length is odd. This is very insecure, but the hole should only be visible from the application side since I'm required to allocate things on 16-bit boundaries inside the PMA, even if the buffer length is odd (so the USB peripheral couldn't copy in or out of the adjacent buffer if an odd number of bytes were transferred). In fact, the USB peripheral will respect odd/excessive lengths and stop writing/reading if it reaches the end of a buffer in the PMA. So, the reach of this insecurity should be fairly small beyond copying an extra byte to where it doesn't belong.
@@ -218,75 +224,77 @@ For the STM32L052\:
 
 This microcontroller's PMA is actually far simpler than the STM32F1's. It is arranged as 512 16-bit words (so its twice the size) and also does not require access on 32-bit boundaries. The methods I defined for the STM32L103 are now instead\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Minimally sized data type for things in the PMA
-     */
-    typedef uint16_t PMAWord;
 
-    /**
-     * Translates a PMA pointer into a local address for the USB peripheral
-     */
-    #define USB_LOCAL_ADDR(PMAPTR) (uint16_t)((uint32_t)(PMAPTR) - USB_PMAADDR)
-    /**
-     * Translates a USB local address into a PMA pointer
-     */
-    #define PMA_ADDR_FROM_USB_LOCAL(LOCALPTR) (PMAWord *)((LOCALPTR) + USB_PMAADDR)
 
-    /**
-     * Placeholder for address translation between PMA space and Application space.
-     * Unused on the STM32L0
-     */
-    #define APPLICATION_ADDR(PMAPTR) (uint16_t *)(PMAPTR)
+   /**
+    * Minimally sized data type for things in the PMA
+    */
+   typedef uint16_t PMAWord;
 
-    /**
-     * Placeholder for size translation between PMA space and application space.
-     * Unused on the STM32L0
-     */
-    #define APPLICATION_SIZEOF(S) (sizeof(S))
+   /**
+    * Translates a PMA pointer into a local address for the USB peripheral
+    */
+   #define USB_LOCAL_ADDR(PMAPTR) (uint16_t)((uint32_t)(PMAPTR) - USB_PMAADDR)
+   /**
+    * Translates a USB local address into a PMA pointer
+    */
+   #define PMA_ADDR_FROM_USB_LOCAL(LOCALPTR) (PMAWord *)((LOCALPTR) + USB_PMAADDR)
 
-    /**
-     * Performs a copy from a region of memory into a the PMA
-     *
-     * src: Pointer to source located in normal memory
-     * pmaDest: Pointer to destination located in PMA
-     * len: Length in bytes to copy
-     */
-    static void usb_pma_copy_in(void *src, PMAWord *pmaDest, uint16_t len)
-    {
-        //note the sizes of the following
-        PMAWord *wordSrc = (PMAWord *)src;
-        uint16_t *appDest = APPLICATION_ADDR(pmaDest);
+   /**
+    * Placeholder for address translation between PMA space and Application space.
+    * Unused on the STM32L0
+    */
+   #define APPLICATION_ADDR(PMAPTR) (uint16_t *)(PMAPTR)
 
-        for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
-        {
-            *appDest = *wordSrc;
-            appDest++; //move along by two bytes to next PMA word
-            wordSrc++; //move along by one word
-        }
-    }
+   /**
+    * Placeholder for size translation between PMA space and application space.
+    * Unused on the STM32L0
+    */
+   #define APPLICATION_SIZEOF(S) (sizeof(S))
 
-    /**
-     * Performs a copy from the PMA into a region of memory
-     *
-     * pmaSrc: Pointer to source located in PMA
-     * dest: Pointer to destination located in normal memory
-     * len: Length in bytes to copy
-     */
-    static void usb_pma_copy_out(PMAWord *pmaSrc, void *dest, uint16_t len)
-    {
-        //note the size of the following
-        uint16_t *appSrc = APPLICATION_ADDR(pmaSrc);
-        PMAWord *wordDest = (PMAWord *)dest;
+   /**
+    * Performs a copy from a region of memory into a the PMA
+    *
+    * src: Pointer to source located in normal memory
+    * pmaDest: Pointer to destination located in PMA
+    * len: Length in bytes to copy
+    */
+   static void usb_pma_copy_in(void *src, PMAWord *pmaDest, uint16_t len)
+   {
+       //note the sizes of the following
+       PMAWord *wordSrc = (PMAWord *)src;
+       uint16_t *appDest = APPLICATION_ADDR(pmaDest);
 
-        for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
-        {
-            *wordDest = *appSrc;
-            wordDest++; //move along by one word
-            appSrc++; //move along by two bytes to the next PMA word
-        }
-    }
+       for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
+       {
+           *appDest = *wordSrc;
+           appDest++; //move along by two bytes to next PMA word
+           wordSrc++; //move along by one word
+       }
+   }
+
+   /**
+    * Performs a copy from the PMA into a region of memory
+    *
+    * pmaSrc: Pointer to source located in PMA
+    * dest: Pointer to destination located in normal memory
+    * len: Length in bytes to copy
+    */
+   static void usb_pma_copy_out(PMAWord *pmaSrc, void *dest, uint16_t len)
+   {
+       //note the size of the following
+       uint16_t *appSrc = APPLICATION_ADDR(pmaSrc);
+       PMAWord *wordDest = (PMAWord *)dest;
+
+       for (uint16_t i = 0; i < len; i += sizeof(PMAWord)) //we move along by word
+       {
+           *wordDest = *appSrc;
+           wordDest++; //move along by one word
+           appSrc++; //move along by two bytes to the next PMA word
+       }
+   }
 
 
 
@@ -303,37 +311,41 @@ One fun thing I decided to do was use the GCC linker to manage static allocation
 
 My linker script for the STM32L052 has the following MEMORY declaration (in the github repo it is somewhat different, but that's because of my bootloader among other things)\:
 
-.. code-block:: default
+::
 
-    MEMORY
-    {
-        FLASH (RX) : ORIGIN = 0x08000000, LENGTH = 64K
-        RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 8K
-        PMA (W)  : ORIGIN = 0x40006000, LENGTH = 1024 /* 512 x 16bit */
-    }
+
+
+   MEMORY
+   {
+       FLASH (RX) : ORIGIN = 0x08000000, LENGTH = 64K
+       RAM (W!RX)  : ORIGIN = 0x20000000, LENGTH = 8K
+       PMA (W)  : ORIGIN = 0x40006000, LENGTH = 1024 /* 512 x 16bit */
+   }
 
 
 You can see that I said there's a segment of memory called FLASH that is 64K long living at 0x08000000, another segment I called RAM living at 0x20000000 which is 8K long, and another section called PMA living at 0x40006000 which is 1K long (it may actually be 2K long in 32-bit address space, see my blurb about my doubts on my understanding of the STM32L052's PMA structure).
 
 I'm not going to copy in my whole linker script, but to add support for allocating variables into the PMA I added the following to my SECTIONS\:
 
-.. code-block:: default
+::
 
-    SECTIONS
-    {
-    ...
-        /* USB/CAN Packet Memory Area (PMA) */
-        .pma :
-        {
-            _pma_start = .; /* Start of PMA in real memory space */
-            . = ALIGN(2);
-            *(.pma)
-            *(.pma*)
-            . = ALIGN(2);
-            _pma_end = .; /* End of PMA in PMA space */
-        } > PMA
-    ...
-    }
+
+
+   SECTIONS
+   {
+   ...
+       /* USB/CAN Packet Memory Area (PMA) */
+       .pma :
+       {
+           _pma_start = .; /* Start of PMA in real memory space */
+           . = ALIGN(2);
+           *(.pma)
+           *(.pma*)
+           . = ALIGN(2);
+           _pma_end = .; /* End of PMA in PMA space */
+       } > PMA
+   ...
+   }
 
 
 
@@ -341,17 +353,19 @@ I declared a segment called ".pma" which puts everything inside any sections sta
 
 Now, as for why I wanted to do this, take a look at this fun variable declaration\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    #define PMA_SECTION ".pma,\"aw\",%nobits//" //a bit of a hack to prevent .pma from being programmed
-    #define _PMA __attribute__((section (PMA_SECTION), aligned(2))) //everything needs to be 2-byte aligned
-    #define _PMA_BDT __attribute__((section (PMA_SECTION), used, aligned(8))) //buffer descriptors need to be 8-byte aligned
 
-    /**
-     * Buffer table located in packet memory. This table contains structures which
-     * describe the buffer locations for the 8 endpoints in packet memory.
-     */
-    static USBBufferDescriptor _PMA_BDT bt[8];
+
+   #define PMA_SECTION ".pma,\"aw\",%nobits//" //a bit of a hack to prevent .pma from being programmed
+   #define _PMA __attribute__((section (PMA_SECTION), aligned(2))) //everything needs to be 2-byte aligned
+   #define _PMA_BDT __attribute__((section (PMA_SECTION), used, aligned(8))) //buffer descriptors need to be 8-byte aligned
+
+   /**
+    * Buffer table located in packet memory. This table contains structures which
+    * describe the buffer locations for the 8 endpoints in packet memory.
+    */
+   static USBBufferDescriptor _PMA_BDT bt[8];
 
 
 
@@ -364,22 +378,26 @@ This creates a variable in the ".pma" section called "bt". Now, there are a few 
 
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
-    {
-        *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
-    }
+
+
+   if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
+   {
+       *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
+   }
 
 
 When accessing PMA variables, the address of anything that the program needs to access (such as "bt[endpoint].tx_addr") needs to be translated into an address space compatible with the user programs-side of the Arbiter before it is dereferenced (note that the \* is *after* we have translated the address).
 
 Another thing to note is that when the USB peripheral gets an address to something in the PMA, it does not need the 0x40006000 offset. In fact, from its perspective address 0x00000000 is the start of the PMA. This means that when we want to point the USB to the BDT (that's what the bt variable is), we have to do the following\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    //BDT lives at the beginning of packet memory (see linker script)
-    USB->BTABLE = USB_LOCAL_ADDR(bt);
+
+
+   //BDT lives at the beginning of packet memory (see linker script)
+   USB->BTABLE = USB_LOCAL_ADDR(bt);
 
 
 All the USB_LOCAL_ADDR macro does is subtract 0x40006000 from the address of whatever is passed.
@@ -439,15 +457,17 @@ The main point I want to hit on with this register is the Status fields. The USB
 
 This is where the PMA ties in. The USB Peripheral uses the Buffer Descriptor Table to look up the addresses of the buffers in the PMA. There are 8 entries in the BDT (one for each endpoint) and they have the following structure (assuming the Kind bit is set to 0...the Kind bit can enable double buffering, which is beyond the scope of this post)\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    //single ended buffer descriptor
-    typedef struct __attribute__((packed)) {
-        PMAWord tx_addr;
-        PMAWord tx_count;
-        PMAWord rx_addr;
-        PMAWord rx_count;
-    } USBBufferDescriptor;
+
+
+   //single ended buffer descriptor
+   typedef struct __attribute__((packed)) {
+       PMAWord tx_addr;
+       PMAWord tx_count;
+       PMAWord rx_addr;
+       PMAWord rx_count;
+   } USBBufferDescriptor;
 
 
 The struct is packed, meaning that each of those PMAWords is right next to the other one. Since PMAWord is actually uint16_t, we can see that the tx_addr and rx_addr fields are not large enough to be pointing to something in the global memory. They are in fact pointing to locations inside the PMA as well. The BDT is just an array, consisting of 8 of these 16-byte structures.
@@ -462,88 +482,92 @@ After an endpoint is initialized and the user requests a transfer on that endpoi
 
 The buffers used for transferring data in the PMA I dynamically allocate by using the symbol "_pma_end" which was defined by the linker script. When the USB device is reset, I move a "break" to point to the address of _pma_end. When the user application initializes an endpoint, I take the break and move it forward some bytes to reserve that space in the PMA for that endpoint's buffer. Here's the code\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Start of the wide open free packet memory area, provided by the linker script
-     */
-    extern PMAWord _pma_end;
 
-    /**
-     * Current memory break in PMA space (note that the pointer itself it is stored
-     * in normal memory).
-     *
-     * On usb reset all packet buffers are considered deallocated and this resets
-     * back to the _pma_end address. This is a uint16_t because all address in
-     * PMA must be 2-byte aligned if they are to be used in an endpoint buffer.
-     */
-    static PMAWord *pma_break;
 
-    /**
-     * Dynamically allocates a buffer from the PMA
-     * len: Buffer length in bytes
-     *
-     * Returns PMA buffer address
-     */
-    static PMAWord *usb_allocate_pma_buffer(uint16_t len)
-    {
-        PMAWord *buffer = pma_break;
+   /**
+    * Start of the wide open free packet memory area, provided by the linker script
+    */
+   extern PMAWord _pma_end;
 
-        //move the break, ensuring that the next buffer doesn't collide with this one
-        len = (len + 1) / sizeof(PMAWord); //divide len by sizeof(PMAWord), rounding up (should be optimized to a right shift)
-        pma_break += len; //mmm pointer arithmetic (pma_break is the appropriate size to advance the break correctly)
+   /**
+    * Current memory break in PMA space (note that the pointer itself it is stored
+    * in normal memory).
+    *
+    * On usb reset all packet buffers are considered deallocated and this resets
+    * back to the _pma_end address. This is a uint16_t because all address in
+    * PMA must be 2-byte aligned if they are to be used in an endpoint buffer.
+    */
+   static PMAWord *pma_break;
 
-        return buffer;
-    }
+   /**
+    * Dynamically allocates a buffer from the PMA
+    * len: Buffer length in bytes
+    *
+    * Returns PMA buffer address
+    */
+   static PMAWord *usb_allocate_pma_buffer(uint16_t len)
+   {
+       PMAWord *buffer = pma_break;
 
-    /**
-     * Called during interrupt for a usb reset
-     */
-    static void usb_reset(void)
-    {
-    ...
-        //All packet buffers are now deallocated and considered invalid. All endpoints statuses are reset.
-        memset(APPLICATION_ADDR(bt), 0, APPLICATION_SIZEOF(bt));
-        pma_break = &_pma_end;
-        if (!pma_break)
-            pma_break++; //we use the assumption that 0 = none = invalid all over
-    ...
-    }
+       //move the break, ensuring that the next buffer doesn't collide with this one
+       len = (len + 1) / sizeof(PMAWord); //divide len by sizeof(PMAWord), rounding up (should be optimized to a right shift)
+       pma_break += len; //mmm pointer arithmetic (pma_break is the appropriate size to advance the break correctly)
+
+       return buffer;
+   }
+
+   /**
+    * Called during interrupt for a usb reset
+    */
+   static void usb_reset(void)
+   {
+   ...
+       //All packet buffers are now deallocated and considered invalid. All endpoints statuses are reset.
+       memset(APPLICATION_ADDR(bt), 0, APPLICATION_SIZEOF(bt));
+       pma_break = &_pma_end;
+       if (!pma_break)
+           pma_break++; //we use the assumption that 0 = none = invalid all over
+   ...
+   }
 
 
 The _pma_end symbol was defined by the statement "_pma_end = .;" in the linker script earlier. It is accessed here by declaring it as an extern PMAWord (uint16_t) so that the compiler knows that it is 2-byte aligned (due to the ". = ALIGN(2)" immediately beforehand). By accessing its address, we can find out where the end of static allocations (like "bt") in the PMA is. After this address, we can use the rest of the memory in the PMA as we please at runtime, just like a simple heap. When usb_allocate_pma_buffer is called, the pma_break variable is moved foward.
 
 Now, to tie it all together, here's what happens when we initialize an endpoint\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    void usb_endpoint_setup(uint8_t endpoint, uint8_t address, uint16_t size, USBEndpointType type, USBTransferFlags flags)
-    {
-        if (endpoint > 7 || type > USB_ENDPOINT_INTERRUPT)
-            return; //protect against tomfoolery
 
-        endpoint_status[endpoint].size = size;
-        endpoint_status[endpoint].flags = flags;
-        USB_ENDPOINT_REGISTER(endpoint) = (type == USB_ENDPOINT_BULK ? USB_EP_BULK :
-                type == USB_ENDPOINT_CONTROL ? USB_EP_CONTROL :
-                USB_EP_INTERRUPT) |
-            (address & 0xF);
-    }
 
-    void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len)
-    {
-    ...
-        uint16_t packetSize = endpoint_status[endpoint].size;
+   void usb_endpoint_setup(uint8_t endpoint, uint8_t address, uint16_t size, USBEndpointType type, USBTransferFlags flags)
+   {
+       if (endpoint > 7 || type > USB_ENDPOINT_INTERRUPT)
+           return; //protect against tomfoolery
 
-        //check for PMA buffer presence, allocate if needed
-        if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
-        {
-            *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
-        }
-    ...
-    }
+       endpoint_status[endpoint].size = size;
+       endpoint_status[endpoint].flags = flags;
+       USB_ENDPOINT_REGISTER(endpoint) = (type == USB_ENDPOINT_BULK ? USB_EP_BULK :
+               type == USB_ENDPOINT_CONTROL ? USB_EP_CONTROL :
+               USB_EP_INTERRUPT) |
+           (address & 0xF);
+   }
 
-    ...receive looks similar, but more on that later...
+   void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len)
+   {
+   ...
+       uint16_t packetSize = endpoint_status[endpoint].size;
+
+       //check for PMA buffer presence, allocate if needed
+       if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
+       {
+           *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
+       }
+   ...
+   }
+
+   ...receive looks similar, but more on that later...
 
 
 When the application sets up an endpoint, I store the requested size of the endpoint in the endpoint_status struct (which we'll see more of later). When a transfer is actually requested (by calling usb_endpoint_send in this snippet) the code checks to see if the BDT has been configured yet (since the BDT lives at address 0, it knows that if tx_addr is 0 then it hasn't been configured). If it hasn't it allocates a new buffer by calling usb_allocate_pma_buffer with the size value stored when the endpoint was set up by the application.
@@ -565,87 +589,91 @@ To that end, I decided to use what I call the "hook" pattern because of how I na
 
 In my USB driver header file I declared the following\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Hook function implemented by the application which is called when a
-     * non-standard setup request arrives on endpoint zero.
-     *
-     * setup: Setup packet received
-     * nextTransfer: Filled during this function call with any data for the next state
-     *
-     * Returns whether to continue with the control pipeline or stall
-     */
-    USBControlResult hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer);
 
-    /**
-     * Hook function implemented by the application which is called when the status
-     * stage of a setup request is completed on endpoint zero.
-     *
-     * setup: Setup packet received
-     */
-    void hook_usb_control_complete(USBSetupPacket const *setup);
 
-    /**
-     * Hook function implemented by the application which is called when the
-     * USB peripheral has been reset
-     */
-    void hook_usb_reset(void);
+   /**
+    * Hook function implemented by the application which is called when a
+    * non-standard setup request arrives on endpoint zero.
+    *
+    * setup: Setup packet received
+    * nextTransfer: Filled during this function call with any data for the next state
+    *
+    * Returns whether to continue with the control pipeline or stall
+    */
+   USBControlResult hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer);
 
-    /**
-     * Hook function implemented by the application which is called when an SOF is
-     * received (1ms intervals from host)
-     */
-    void hook_usb_sof(void);
+   /**
+    * Hook function implemented by the application which is called when the status
+    * stage of a setup request is completed on endpoint zero.
+    *
+    * setup: Setup packet received
+    */
+   void hook_usb_control_complete(USBSetupPacket const *setup);
 
-    /**
-     * Hook function implemented by the application which is called when the host
-     * sets a configuration. The configuration index is passed.
-     */
-    void hook_usb_set_configuration(uint16_t configuration);
+   /**
+    * Hook function implemented by the application which is called when the
+    * USB peripheral has been reset
+    */
+   void hook_usb_reset(void);
 
-    /**
-     * Hook function implemented by the application which is called when the host
-     * sets an [alternate] interface for the current configuration.
-     */
-    void hook_usb_set_interface(uint16_t interface);
+   /**
+    * Hook function implemented by the application which is called when an SOF is
+    * received (1ms intervals from host)
+    */
+   void hook_usb_sof(void);
 
-    /**
-     * Hook function implemented by the application which is called when a setup
-     * token has been received. Setup tokens will always be processed, regardless
-     * of NAK or STALL status.
-     */
-    void hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup);
+   /**
+    * Hook function implemented by the application which is called when the host
+    * sets a configuration. The configuration index is passed.
+    */
+   void hook_usb_set_configuration(uint16_t configuration);
 
-    /**
-     * Hook function implemented by the application which is called when data has
-     * been received into the latest buffer set up by usb_endpoint_receive.
-     */
-    void hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len);
+   /**
+    * Hook function implemented by the application which is called when the host
+    * sets an [alternate] interface for the current configuration.
+    */
+   void hook_usb_set_interface(uint16_t interface);
 
-    /**
-     * Hook function implemented by the application which is called when data has
-     * been sent from the latest buffer set up by usb_endpoint_send.
-     */
-    void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len);
+   /**
+    * Hook function implemented by the application which is called when a setup
+    * token has been received. Setup tokens will always be processed, regardless
+    * of NAK or STALL status.
+    */
+   void hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup);
+
+   /**
+    * Hook function implemented by the application which is called when data has
+    * been received into the latest buffer set up by usb_endpoint_receive.
+    */
+   void hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len);
+
+   /**
+    * Hook function implemented by the application which is called when data has
+    * been sent from the latest buffer set up by usb_endpoint_send.
+    */
+   void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len);
 
 
 And in my main USB C file I have the following\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
-    {
-        return USB_CTL_STALL; //default: Stall on an unhandled request
-    }
-    void __attribute__ ((weak)) hook_usb_control_complete(USBSetupPacket const *setup) { }
-    void __attribute__ ((weak)) hook_usb_reset(void) { }
-    void __attribute__ ((weak)) hook_usb_sof(void) { }
-    void __attribute__ ((weak)) hook_usb_set_configuration(uint16_t configuration) { }
-    void __attribute__ ((weak)) hook_usb_set_interface(uint16_t interface) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len) { }
+
+
+   USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
+   {
+       return USB_CTL_STALL; //default: Stall on an unhandled request
+   }
+   void __attribute__ ((weak)) hook_usb_control_complete(USBSetupPacket const *setup) { }
+   void __attribute__ ((weak)) hook_usb_reset(void) { }
+   void __attribute__ ((weak)) hook_usb_sof(void) { }
+   void __attribute__ ((weak)) hook_usb_set_configuration(uint16_t configuration) { }
+   void __attribute__ ((weak)) hook_usb_set_interface(uint16_t interface) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len) { }
 
 
 Notice these are `weak symbols <https://en.wikipedia.org/wiki/Weak_symbol>`_. Elsewhere in the application I can redefine these and that implementation will take precedence over these. When events happen during the USB interrupt, these functions will be called to inform the application and get its response. In most cases, no return result is needed except in the case of the hook_usb_handle_setup_request, which is used for extending the endpoint 0 setup request handler.
@@ -661,150 +689,152 @@ Most of this section is taken from the code in common/usb.c and common/usb.h
 
 Ok, so here's how I organized this API. My idea was to present an interface consisting entirely of byte buffers to the application program, keeping the knowledge of packetizing and the PMA isolated to within the driver. Facing the application side, here's how it looks (read the comments for notes about how the functions are used)\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    #define USB_CONTROL_ENDPOINT_SIZE 64
 
-    /**
-     * Endpoint types passed to the setup function
-     */
-    typedef enum { USB_ENDPOINT_BULK, USB_ENDPOINT_CONTROL, USB_ENDPOINT_INTERRUPT } USBEndpointType;
 
-    /**
-     * Direction of a USB transfer from the host perspective
-     */
-    typedef enum { USB_HOST_IN = 1 << 0, USB_HOST_OUT = 1 << 1 } USBDirection;
+   #define USB_CONTROL_ENDPOINT_SIZE 64
 
-    /**
-     * Flags for usb transfers for some USB-specific settings
-     *
-     * USB_FLAGS_NOZLP: This replaces ZLP-based transfer endings with exact length
-     * transfer endings. For transmit, this merely stops ZLPs from being sent at
-     * the end of a transfer with a length which is a multiple of the endpoint size.
-     * For receive, this disables the ability for the endpoint to finish receiving
-     * into a buffer in the event that packets an exact multiple of the endpoint
-     * size are received. For example, if a 64 byte endpoint is set up to receive
-     * 128 bytes and the host only sends 64 bytes, the endpoint will not complete
-     * the reception until the next packet is received, whatever the length. This
-     * flag is meant specifically for USB classes where the expected transfer size
-     * is known in advance. In this case, the application must implement some sort
-     * of synchronization to avoid issues stemming from host-side hiccups.
-     */
-    typedef enum { USB_FLAGS_NONE = 0, USB_FLAGS_NOZLP = 1 << 0 } USBTransferFlags;
+   /**
+    * Endpoint types passed to the setup function
+    */
+   typedef enum { USB_ENDPOINT_BULK, USB_ENDPOINT_CONTROL, USB_ENDPOINT_INTERRUPT } USBEndpointType;
 
-    /**
-     * Setup packet type definition
-     */
-    typedef struct {
-        union {
-            uint16_t wRequestAndType;
-            struct {
-                uint8_t bmRequestType;
-                uint8_t bRequest;
-            };
-        };
-        uint16_t wValue;
-        uint16_t wIndex;
-        uint16_t wLength;
-    } USBSetupPacket;
+   /**
+    * Direction of a USB transfer from the host perspective
+    */
+   typedef enum { USB_HOST_IN = 1 << 0, USB_HOST_OUT = 1 << 1 } USBDirection;
 
-    /**
-     * Basic data needed to initiate a transfer
-     */
-    typedef struct {
-        void *addr;
-        uint16_t len;
-    } USBTransferData;
+   /**
+    * Flags for usb transfers for some USB-specific settings
+    *
+    * USB_FLAGS_NOZLP: This replaces ZLP-based transfer endings with exact length
+    * transfer endings. For transmit, this merely stops ZLPs from being sent at
+    * the end of a transfer with a length which is a multiple of the endpoint size.
+    * For receive, this disables the ability for the endpoint to finish receiving
+    * into a buffer in the event that packets an exact multiple of the endpoint
+    * size are received. For example, if a 64 byte endpoint is set up to receive
+    * 128 bytes and the host only sends 64 bytes, the endpoint will not complete
+    * the reception until the next packet is received, whatever the length. This
+    * flag is meant specifically for USB classes where the expected transfer size
+    * is known in advance. In this case, the application must implement some sort
+    * of synchronization to avoid issues stemming from host-side hiccups.
+    */
+   typedef enum { USB_FLAGS_NONE = 0, USB_FLAGS_NOZLP = 1 << 0 } USBTransferFlags;
 
-    /**
-     * Result of a control setup request handler
-     */
-    typedef enum { USB_CTL_OK, USB_CTL_STALL } USBControlResult;
+   /**
+    * Setup packet type definition
+    */
+   typedef struct {
+       union {
+           uint16_t wRequestAndType;
+           struct {
+               uint8_t bmRequestType;
+               uint8_t bRequest;
+           };
+       };
+       uint16_t wValue;
+       uint16_t wIndex;
+       uint16_t wLength;
+   } USBSetupPacket;
 
-    #define USB_REQ_DIR_IN   (1 << 7)
-    #define USB_REQ_DIR_OUT  (0 << 7)
-    #define USB_REQ_TYPE_STD (0 << 5)
-    #define USB_REQ_TYPE_CLS (1 << 5)
-    #define USB_REQ_TYPE_VND (2 << 5)
-    #define USB_REQ_RCP_DEV  (0)
-    #define USB_REQ_RCP_IFACE (1)
-    #define USB_REQ_RCP_ENDP  (2)
-    #define USB_REQ_RCP_OTHER (3)
+   /**
+    * Basic data needed to initiate a transfer
+    */
+   typedef struct {
+       void *addr;
+       uint16_t len;
+   } USBTransferData;
 
-    #define USB_REQ(REQUEST, TYPE) (uint16_t)(((REQUEST) << 8) | ((TYPE) & 0xFF))
+   /**
+    * Result of a control setup request handler
+    */
+   typedef enum { USB_CTL_OK, USB_CTL_STALL } USBControlResult;
 
-    /**
-     * Initializes the USB peripheral. Before calling this, the USB divider
-     * must be set appropriately
-     */
-    void usb_init(void);
+   #define USB_REQ_DIR_IN   (1 << 7)
+   #define USB_REQ_DIR_OUT  (0 << 7)
+   #define USB_REQ_TYPE_STD (0 << 5)
+   #define USB_REQ_TYPE_CLS (1 << 5)
+   #define USB_REQ_TYPE_VND (2 << 5)
+   #define USB_REQ_RCP_DEV  (0)
+   #define USB_REQ_RCP_IFACE (1)
+   #define USB_REQ_RCP_ENDP  (2)
+   #define USB_REQ_RCP_OTHER (3)
 
-    /**
-     * Enables the usb peripheral
-     */
-    void usb_enable(void);
+   #define USB_REQ(REQUEST, TYPE) (uint16_t)(((REQUEST) << 8) | ((TYPE) & 0xFF))
 
-    /**
-     * Disables the USB peripheral
-     */
-    void usb_disable(void);
+   /**
+    * Initializes the USB peripheral. Before calling this, the USB divider
+    * must be set appropriately
+    */
+   void usb_init(void);
 
-    /**
-     * Enables an endpoint
-     *
-     * Notes about size: The size must conform the the following constraints to not
-     * cause unexpected behavior interacting with the STM32 hardware (i.e. conflicting
-     * unexpectedly with descriptor definitions of endpoints):
-     * - It must be no greater than 512
-     * - If greater than 62, it must be a multiple of 32
-     * - If less than or equal to 62, it must be even
-     * Size is merely the packet size. Data actually sent and received does not need
-     * to conform to these parameters. If the endpoint is to be used only as a bulk
-     * IN endpoint (i.e. transmitting only), these constraints do not apply so long
-     * as the size conforms to the USB specification itself.
-     *
-     * endpoint: Endpoint to set up
-     * address: Endpoint address
-     * size: Endpoint maximum packet size
-     * type: Endpoint type
-     * flags: Endpoint transfer flags
-     */
-    void usb_endpoint_setup(uint8_t endpoint, uint8_t address, uint16_t size, USBEndpointType type, USBTransferFlags flags);
+   /**
+    * Enables the usb peripheral
+    */
+   void usb_enable(void);
 
-    /**
-     * Sets up or disables send operations from the passed buffer. A send operation
-     * is started when the host sends an IN token. The host will continue sending
-     * IN tokens until it receives all data (dentoed by sending either a packet
-     * less than the endpoint size or a zero length packet, in the case where len
-     * is an exact multiple of the endpoint size).
-     *
-     * endpoint: Endpoint to set up
-     * buf: Buffer to send from or NULL if transmit operations are to be disabled
-     * len: Length of the buffer
-     */
-    void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len);
+   /**
+    * Disables the USB peripheral
+    */
+   void usb_disable(void);
 
-    /**
-     * Sets up or disables receive operations into the passed buffer. A receive
-     * operation is started when the host sends either an OUT or SETUP token and
-     * is completed when the host sends a packet less than the endpoint size or
-     * sends a zero length packet.
-     *
-     * endpoint: Endpoint to set up
-     * buf: Buffer to receive into or NULL if receive operations are to be disabled
-     * len: Length of the buffer
-     */
-    void usb_endpoint_receive(uint8_t endpoint, void *buf, uint16_t len);
+   /**
+    * Enables an endpoint
+    *
+    * Notes about size: The size must conform the the following constraints to not
+    * cause unexpected behavior interacting with the STM32 hardware (i.e. conflicting
+    * unexpectedly with descriptor definitions of endpoints):
+    * - It must be no greater than 512
+    * - If greater than 62, it must be a multiple of 32
+    * - If less than or equal to 62, it must be even
+    * Size is merely the packet size. Data actually sent and received does not need
+    * to conform to these parameters. If the endpoint is to be used only as a bulk
+    * IN endpoint (i.e. transmitting only), these constraints do not apply so long
+    * as the size conforms to the USB specification itself.
+    *
+    * endpoint: Endpoint to set up
+    * address: Endpoint address
+    * size: Endpoint maximum packet size
+    * type: Endpoint type
+    * flags: Endpoint transfer flags
+    */
+   void usb_endpoint_setup(uint8_t endpoint, uint8_t address, uint16_t size, USBEndpointType type, USBTransferFlags flags);
 
-    /**
-     * Places an endpoint in a stalled state, which persists until usb_endpoint_send
-     * or usb_endpoint_receive is called. Note that setup packets can still be
-     * received.
-     *
-     * endpoint: Endpoint to stall
-     * direction: Direction to stall
-     */
-    void usb_endpoint_stall(uint8_t endpoint, USBDirection direction);
+   /**
+    * Sets up or disables send operations from the passed buffer. A send operation
+    * is started when the host sends an IN token. The host will continue sending
+    * IN tokens until it receives all data (dentoed by sending either a packet
+    * less than the endpoint size or a zero length packet, in the case where len
+    * is an exact multiple of the endpoint size).
+    *
+    * endpoint: Endpoint to set up
+    * buf: Buffer to send from or NULL if transmit operations are to be disabled
+    * len: Length of the buffer
+    */
+   void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len);
+
+   /**
+    * Sets up or disables receive operations into the passed buffer. A receive
+    * operation is started when the host sends either an OUT or SETUP token and
+    * is completed when the host sends a packet less than the endpoint size or
+    * sends a zero length packet.
+    *
+    * endpoint: Endpoint to set up
+    * buf: Buffer to receive into or NULL if receive operations are to be disabled
+    * len: Length of the buffer
+    */
+   void usb_endpoint_receive(uint8_t endpoint, void *buf, uint16_t len);
+
+   /**
+    * Places an endpoint in a stalled state, which persists until usb_endpoint_send
+    * or usb_endpoint_receive is called. Note that setup packets can still be
+    * received.
+    *
+    * endpoint: Endpoint to stall
+    * direction: Direction to stall
+    */
+   void usb_endpoint_stall(uint8_t endpoint, USBDirection direction);
 
 
 Much of the guts of these methods are fairly self-explanatory if you read through the source (common/src/usb.c). The part that really makes this API work for me is in how it does transfers.
@@ -850,186 +880,188 @@ I'm just going to go through the transmit sequence, since the receive works in a
 
 The supporting code for this is as follows\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Endpoint status, tracked here to enable easy sending and receiving through
-     * USB by the application program.
-     *
-     * size: Endpoint packet size in PMA (buffer table contains PMA buffer addresses)
-     * flags: Flags for this endpoint (such as class-specific disabling of ZLPs)
-     *
-     * tx_buf: Start of transmit buffer located in main memory
-     * tx_pos: Current transmit position within the buffer or zero if transmission is finished
-     * tx_len: Transmit buffer length in bytes
-     *
-     * rx_buf: Start of receive buffer located in main memory
-     * rx_pos: Current receive position within the buffer
-     * rx_len: Receive buffer length
-     *
-     * last_setup: Last received setup packet for this endpoint
-     */
-    typedef struct {
-        uint16_t size; //endpoint packet size
-        USBTransferFlags flags; //flags for this endpoint
-        void *tx_buf; //transmit buffer located in main memory
-        void *tx_pos; //next transmit position in the buffer or zero if done
-        uint16_t tx_len; //transmit buffer length
-        void *rx_buf; //receive buffer located in main memory
-        void *rx_pos; //next transmit position in the buffer or zero if done
-        uint16_t rx_len; //receive buffer length
-        USBSetupPacket last_setup; //last setup packet received by this endpoint (oh man what a waste of RAM, good thing its only 8 bytes)
-    } USBEndpointStatus;
 
-    typedef enum { USB_TOK_ANY, USB_TOK_SETUP, USB_TOK_IN, USB_TOK_OUT, USB_TOK_RESET } USBToken;
 
-    typedef enum { USB_RX_WORKING, USB_RX_DONE = 1 << 0, USB_RX_SETUP = 1 << 1 } USBRXStatus;
+   /**
+    * Endpoint status, tracked here to enable easy sending and receiving through
+    * USB by the application program.
+    *
+    * size: Endpoint packet size in PMA (buffer table contains PMA buffer addresses)
+    * flags: Flags for this endpoint (such as class-specific disabling of ZLPs)
+    *
+    * tx_buf: Start of transmit buffer located in main memory
+    * tx_pos: Current transmit position within the buffer or zero if transmission is finished
+    * tx_len: Transmit buffer length in bytes
+    *
+    * rx_buf: Start of receive buffer located in main memory
+    * rx_pos: Current receive position within the buffer
+    * rx_len: Receive buffer length
+    *
+    * last_setup: Last received setup packet for this endpoint
+    */
+   typedef struct {
+       uint16_t size; //endpoint packet size
+       USBTransferFlags flags; //flags for this endpoint
+       void *tx_buf; //transmit buffer located in main memory
+       void *tx_pos; //next transmit position in the buffer or zero if done
+       uint16_t tx_len; //transmit buffer length
+       void *rx_buf; //receive buffer located in main memory
+       void *rx_pos; //next transmit position in the buffer or zero if done
+       uint16_t rx_len; //receive buffer length
+       USBSetupPacket last_setup; //last setup packet received by this endpoint (oh man what a waste of RAM, good thing its only 8 bytes)
+   } USBEndpointStatus;
 
-    /**
-     * Sets the status bits to the appropriate value, preserving non-toggle fields
-     *
-     * endpoint: Endpoint register to modify
-     * status: Desired value of status bits (i.e. USB_EP_TX_DIS, USB_EP_RX_STALL, etc)
-     * tx_rx_mask: Mask indicating which bits are being modified (USB_EPTX_STAT or USB_EPRX_STAT)
-     */
-    static inline void usb_set_endpoint_status(uint8_t endpoint, uint32_t status, uint32_t tx_rx_mask)
-    {
-        uint32_t val = USB_ENDPOINT_REGISTER(endpoint);
-        USB_ENDPOINT_REGISTER(endpoint) = (val ^ (status & tx_rx_mask)) & (USB_EPREG_MASK | tx_rx_mask);
-    }
+   typedef enum { USB_TOK_ANY, USB_TOK_SETUP, USB_TOK_IN, USB_TOK_OUT, USB_TOK_RESET } USBToken;
 
-    void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len)
-    {
-        //TODO: Race condition here since usb_endpoint_send_next_packet is called during ISRs.
-        if (buf)
-        {
-            endpoint_status[endpoint].tx_buf = buf;
-            endpoint_status[endpoint].tx_len = len;
-            endpoint_status[endpoint].tx_pos = buf;
-            usb_endpoint_send_next_packet(endpoint);
-        }
-        else
-        {
-            endpoint_status[endpoint].tx_pos = 0;
-            usb_set_endpoint_status(endpoint, USB_EP_TX_DIS, USB_EPTX_STAT);
-        }
-    }
+   typedef enum { USB_RX_WORKING, USB_RX_DONE = 1 << 0, USB_RX_SETUP = 1 << 1 } USBRXStatus;
 
-    /**
-     * Sends the next packet for the passed endpoint. If there is no remaining data
-     * to send, no operation occurs.
-     *
-     * endpoint: Endpoint to send a packet on
-     */
-    static void usb_endpoint_send_next_packet(uint8_t endpoint)
-    {
-        uint16_t packetSize = endpoint_status[endpoint].size;
+   /**
+    * Sets the status bits to the appropriate value, preserving non-toggle fields
+    *
+    * endpoint: Endpoint register to modify
+    * status: Desired value of status bits (i.e. USB_EP_TX_DIS, USB_EP_RX_STALL, etc)
+    * tx_rx_mask: Mask indicating which bits are being modified (USB_EPTX_STAT or USB_EPRX_STAT)
+    */
+   static inline void usb_set_endpoint_status(uint8_t endpoint, uint32_t status, uint32_t tx_rx_mask)
+   {
+       uint32_t val = USB_ENDPOINT_REGISTER(endpoint);
+       USB_ENDPOINT_REGISTER(endpoint) = (val ^ (status & tx_rx_mask)) & (USB_EPREG_MASK | tx_rx_mask);
+   }
 
-        //is transmission finished (or never started)?
-        if (!endpoint_status[endpoint].tx_pos || !packetSize)
-            return;
+   void usb_endpoint_send(uint8_t endpoint, void *buf, uint16_t len)
+   {
+       //TODO: Race condition here since usb_endpoint_send_next_packet is called during ISRs.
+       if (buf)
+       {
+           endpoint_status[endpoint].tx_buf = buf;
+           endpoint_status[endpoint].tx_len = len;
+           endpoint_status[endpoint].tx_pos = buf;
+           usb_endpoint_send_next_packet(endpoint);
+       }
+       else
+       {
+           endpoint_status[endpoint].tx_pos = 0;
+           usb_set_endpoint_status(endpoint, USB_EP_TX_DIS, USB_EPTX_STAT);
+       }
+   }
 
-        //if we get this far, we have something to transmit, even if its nothing
+   /**
+    * Sends the next packet for the passed endpoint. If there is no remaining data
+    * to send, no operation occurs.
+    *
+    * endpoint: Endpoint to send a packet on
+    */
+   static void usb_endpoint_send_next_packet(uint8_t endpoint)
+   {
+       uint16_t packetSize = endpoint_status[endpoint].size;
 
-        //check for PMA buffer presence, allocate if needed
-        if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
-        {
-            *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
-        }
+       //is transmission finished (or never started)?
+       if (!endpoint_status[endpoint].tx_pos || !packetSize)
+           return;
 
-        //determine actual packet length, capped at the packet size
-        uint16_t completedLength = endpoint_status[endpoint].tx_pos - endpoint_status[endpoint].tx_buf;
-        uint16_t len = endpoint_status[endpoint].tx_len - completedLength;
-        if (len > packetSize)
-            len = packetSize;
+       //if we get this far, we have something to transmit, even if its nothing
 
-        //copy to PMA tx buffer
-        uint16_t localBufAddr = *APPLICATION_ADDR(&bt[endpoint].tx_addr);
-        usb_pma_copy_in(endpoint_status[endpoint].tx_pos, PMA_ADDR_FROM_USB_LOCAL(localBufAddr), len);
+       //check for PMA buffer presence, allocate if needed
+       if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
+       {
+           *APPLICATION_ADDR(&bt[endpoint].tx_addr) = USB_LOCAL_ADDR(usb_allocate_pma_buffer(packetSize));
+       }
 
-        //set count to actual packet length
-        *APPLICATION_ADDR(&bt[endpoint].tx_count) = len;
+       //determine actual packet length, capped at the packet size
+       uint16_t completedLength = endpoint_status[endpoint].tx_pos - endpoint_status[endpoint].tx_buf;
+       uint16_t len = endpoint_status[endpoint].tx_len - completedLength;
+       if (len > packetSize)
+           len = packetSize;
 
-        //move tx_pos
-        endpoint_status[endpoint].tx_pos += len;
+       //copy to PMA tx buffer
+       uint16_t localBufAddr = *APPLICATION_ADDR(&bt[endpoint].tx_addr);
+       usb_pma_copy_in(endpoint_status[endpoint].tx_pos, PMA_ADDR_FROM_USB_LOCAL(localBufAddr), len);
 
-        //There are now three cases:
-        // 1. We still have bytes to send
-        // 2. We have sent all bytes and len == packetSize
-        // 3. We have sent all bytes and len != packetSize
-        //
-        //Case 1 obviously needs another packet. Case 2 needs a zero length packet.
-        //Case 3 should result in no further packets and the application being
-        //notified once the packet being queued here is completed.
-        //
-        //Responses:
-        // 1. We add len to tx_pos. On the next completed IN token, this function
-        //    will be called again.
-        // 2. We add len to tx_pos. On the next completed IN token, this function
-        //    will be called again. A zero length packet will then be produced.
-        //    Since len will not equal packetSize at that point, Response 3 will
-        //    happen.
-        // 3. We now set tx_pos to zero. On the next completed IN token, the
-        //    application can be notified. Further IN tokens will result in a NAK
-        //    condition which will prevent repeated notifications. Further calls to
-        //    this function will result in no operation until usb_endpoint_send is
-        //    called again.
-        //
-        //Exceptions:
-        // - Certain classes (such as HID) do not normally send ZLPs, so the
-        //   case 3 logic is supplemented by the condition that if the NOZLP
-        //   flag is set, the len == packetSize, and completedLength + len
-        //   >= tx_len.
-        //
-        if (len != packetSize ||
-                ((endpoint_status[endpoint].flags & USB_FLAGS_NOZLP) && len == packetSize && (len + completedLength >= endpoint_status[endpoint].tx_len)))
-        {
-            endpoint_status[endpoint].tx_pos = 0;
-        }
-        else
-        {
-            endpoint_status[endpoint].tx_pos += len;
-        }
+       //set count to actual packet length
+       *APPLICATION_ADDR(&bt[endpoint].tx_count) = len;
 
-        //Inform the endpoint that the packet is ready.
-        usb_set_endpoint_status(endpoint, USB_EP_TX_VALID, USB_EPTX_STAT);
-    }
+       //move tx_pos
+       endpoint_status[endpoint].tx_pos += len;
 
-    void USB_IRQHandler(void)
-    {
-        volatile uint16_t stat = USB->ISTR;
+       //There are now three cases:
+       // 1. We still have bytes to send
+       // 2. We have sent all bytes and len == packetSize
+       // 3. We have sent all bytes and len != packetSize
+       //
+       //Case 1 obviously needs another packet. Case 2 needs a zero length packet.
+       //Case 3 should result in no further packets and the application being
+       //notified once the packet being queued here is completed.
+       //
+       //Responses:
+       // 1. We add len to tx_pos. On the next completed IN token, this function
+       //    will be called again.
+       // 2. We add len to tx_pos. On the next completed IN token, this function
+       //    will be called again. A zero length packet will then be produced.
+       //    Since len will not equal packetSize at that point, Response 3 will
+       //    happen.
+       // 3. We now set tx_pos to zero. On the next completed IN token, the
+       //    application can be notified. Further IN tokens will result in a NAK
+       //    condition which will prevent repeated notifications. Further calls to
+       //    this function will result in no operation until usb_endpoint_send is
+       //    called again.
+       //
+       //Exceptions:
+       // - Certain classes (such as HID) do not normally send ZLPs, so the
+       //   case 3 logic is supplemented by the condition that if the NOZLP
+       //   flag is set, the len == packetSize, and completedLength + len
+       //   >= tx_len.
+       //
+       if (len != packetSize ||
+               ((endpoint_status[endpoint].flags & USB_FLAGS_NOZLP) && len == packetSize && (len + completedLength >= endpoint_status[endpoint].tx_len)))
+       {
+           endpoint_status[endpoint].tx_pos = 0;
+       }
+       else
+       {
+           endpoint_status[endpoint].tx_pos += len;
+       }
+
+       //Inform the endpoint that the packet is ready.
+       usb_set_endpoint_status(endpoint, USB_EP_TX_VALID, USB_EPTX_STAT);
+   }
+
+   void USB_IRQHandler(void)
+   {
+       volatile uint16_t stat = USB->ISTR;
     
-    ...
+   ...
 
-        while ((stat = USB->ISTR) & USB_ISTR_CTR)
-        {
-            uint8_t endpoint = stat & USB_ISTR_EP_ID;
-            uint16_t val = USB_ENDPOINT_REGISTER(endpoint);
+       while ((stat = USB->ISTR) & USB_ISTR_CTR)
+       {
+           uint8_t endpoint = stat & USB_ISTR_EP_ID;
+           uint16_t val = USB_ENDPOINT_REGISTER(endpoint);
 
-            if (val & USB_EP_CTR_RX)
-            {
-    ...
-            }
+           if (val & USB_EP_CTR_RX)
+           {
+   ...
+           }
 
-            if (val & USB_EP_CTR_TX)
-            {
-                usb_endpoint_send_next_packet(endpoint);
-                USB_ENDPOINT_REGISTER(endpoint) = val & USB_EPREG_MASK & ~USB_EP_CTR_TX;
-                if (!endpoint_status[endpoint].tx_pos)
-                {
-                    if (endpoint)
-                    {
-                        hook_usb_endpoint_sent(endpoint, endpoint_status[endpoint].tx_buf, endpoint_status[endpoint].tx_len);
-                    }
-                    else
-                    {
-                        //endpoint 0 IN complete
-                        usb_handle_endp0(USB_TOK_IN);
-                    }
-                }
-            }
-        }
-    }
+           if (val & USB_EP_CTR_TX)
+           {
+               usb_endpoint_send_next_packet(endpoint);
+               USB_ENDPOINT_REGISTER(endpoint) = val & USB_EPREG_MASK & ~USB_EP_CTR_TX;
+               if (!endpoint_status[endpoint].tx_pos)
+               {
+                   if (endpoint)
+                   {
+                       hook_usb_endpoint_sent(endpoint, endpoint_status[endpoint].tx_buf, endpoint_status[endpoint].tx_len);
+                   }
+                   else
+                   {
+                       //endpoint 0 IN complete
+                       usb_handle_endp0(USB_TOK_IN);
+                   }
+               }
+           }
+       }
+   }
 
 
 

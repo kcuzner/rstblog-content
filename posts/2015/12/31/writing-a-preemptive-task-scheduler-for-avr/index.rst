@@ -131,16 +131,18 @@ The focus of a scheduler/dispatcher system for tasks is manipulating the stack p
 
 First, let's take a look at the structure which represents a task\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    typedef enum { TASK_READY, TASK_SEMAPHORE, TASK_QUEUE } KOS_TaskStatus;
 
-    typedef struct KOS_Task {
-        void *sp;
-        KOS_TaskStatus status;
-        struct KOS_Task *next;
-        void *status_pointer;
-    } KOS_Task;
+
+   typedef enum { TASK_READY, TASK_SEMAPHORE, TASK_QUEUE } KOS_TaskStatus;
+
+   typedef struct KOS_Task {
+       void *sp;
+       KOS_TaskStatus status;
+       struct KOS_Task *next;
+       void *status_pointer;
+   } KOS_Task;
 
 The very first item in this struct is the pointer to the stack pointer (\*sp). It is a void\* because we don't normally access anything on it...we just make the SP register point to it when we want to execute the task.
 
@@ -152,49 +154,51 @@ Finally, we have the \*status_pointer. This is used by our functions which can u
 
 Ok, so for the basic task scheduling and dispatching functionality we are going to implement some functions (these are declared in a header)\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    typedef void (*KOS_TaskFn)(void);
 
-    extern KOS_Task *kos_current_task;
 
-    /**
-     * Initializes the KOS kernel
-     */
-    void kos_init(void);
+   typedef void (*KOS_TaskFn)(void);
 
-    /**
-     * Creates a new task
-     * Note: Not safe
-     */
-    void kos_new_task(KOS_TaskFn task, void *sp);
+   extern KOS_Task *kos_current_task;
 
-    /**
-     * Puts KOS in ISR mode
-     * Note: Not safe, assumes non-nested isrs
-     */
-    void kos_isr_enter(void);
+   /**
+    * Initializes the KOS kernel
+    */
+   void kos_init(void);
 
-    /**
-     * Leaves ISR mode, possibly executing the dispatcher
-     * Note: Not safe, assumes non-nested isrs
-     */
-    void kos_isr_exit(void);
+   /**
+    * Creates a new task
+    * Note: Not safe
+    */
+   void kos_new_task(KOS_TaskFn task, void *sp);
 
-    /**
-     * Runs the kernel
-     */
-    void kos_run(void);
+   /**
+    * Puts KOS in ISR mode
+    * Note: Not safe, assumes non-nested isrs
+    */
+   void kos_isr_enter(void);
 
-    /**
-     * Runs the scheduler
-     */
-    void kos_schedule(void);
+   /**
+    * Leaves ISR mode, possibly executing the dispatcher
+    * Note: Not safe, assumes non-nested isrs
+    */
+   void kos_isr_exit(void);
 
-    /**
-     * Dispatches the passed task, saving the context of the current task
-     */
-    void kos_dispatch(KOS_Task *next);
+   /**
+    * Runs the kernel
+    */
+   void kos_run(void);
+
+   /**
+    * Runs the scheduler
+    */
+   void kos_schedule(void);
+
+   /**
+    * Dispatches the passed task, saving the context of the current task
+    */
+   void kos_dispatch(KOS_Task *next);
 
 As for source files, we will only have a single C file for the implementation, but there will be some inline assembly because we are going to have to fiddle with registers. Yay! I'll just go through the functions one by one and afterwards I'll go through my design decisions and how they affect things. This is not the only, nor the best, way to do this.
 
@@ -205,55 +209,57 @@ Implementation\: kos_init and kos_new_task
 
 Firstly, we have the kos_init and kos_new_task functions, which come with some baggage\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static KOS_Task tasks[KOS_MAX_TASKS + 1];
-    static uint8_t next_task = 0;
-    static KOS_Task *task_head;
-    KOS_Task *kos_current_task;
 
-    static uint8_t kos_idle_task_stack[KOS_IDLE_TASK_STACK];
-    static void kos_idle_task(void)
-    {
-        while (1) { }
-    }
 
-    void kos_init(void)
-    {
-        kos_new_task(&kos_idle_task, &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1]);
-    }
+   static KOS_Task tasks[KOS_MAX_TASKS + 1];
+   static uint8_t next_task = 0;
+   static KOS_Task *task_head;
+   KOS_Task *kos_current_task;
 
-    void kos_new_task(KOS_TaskFn task, void *sp)
-    {
-        int8_t i;
-        uint8_t *stack = sp;
-        KOS_Task *tcb;
+   static uint8_t kos_idle_task_stack[KOS_IDLE_TASK_STACK];
+   static void kos_idle_task(void)
+   {
+       while (1) { }
+   }
 
-        //make space for pc, sreg, and 32 registers
-        stack[0] = (uint16_t)task & 0xFF;
-        stack[-1] = (uint16_t)task >> 8;
-        for (i = -2; i > -34; i--)
-        {
-            stack[i] = 0;
-        }
-        stack[-34] = 0x80; //sreg, interrupts enabled
+   void kos_init(void)
+   {
+       kos_new_task(&kos_idle_task, &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1]);
+   }
+
+   void kos_new_task(KOS_TaskFn task, void *sp)
+   {
+       int8_t i;
+       uint8_t *stack = sp;
+       KOS_Task *tcb;
+
+       //make space for pc, sreg, and 32 registers
+       stack[0] = (uint16_t)task & 0xFF;
+       stack[-1] = (uint16_t)task >> 8;
+       for (i = -2; i > -34; i--)
+       {
+           stack[i] = 0;
+       }
+       stack[-34] = 0x80; //sreg, interrupts enabled
     
-        //create the task structure
-        tcb = &tasks[next_task++];
-        tcb->sp = stack - 35;
-        tcb->status = TASK_READY;
+       //create the task structure
+       tcb = &tasks[next_task++];
+       tcb->sp = stack - 35;
+       tcb->status = TASK_READY;
 
-        //insert into the task list as the new highest priority task
-        if (task_head)
-        {
-            tcb->next = task_head;
-            task_head = tcb;
-        }
-        else
-        {
-            task_head = tcb;
-        }
-    }
+       //insert into the task list as the new highest priority task
+       if (task_head)
+       {
+           tcb->next = task_head;
+           task_head = tcb;
+       }
+       else
+       {
+           task_head = tcb;
+       }
+   }
 
 Here we have two concepts that are embodied. The first is the **context**. The context the data pushed onto the stack that the dispatcher is going to use in order to restore the task before executing it. This is similar (identical even) to the procedure used with interrupt service routines, except that we store every single one of the 32 registers instead of just the ones that we use. The next concept is that of the **idle task**. As an optimization, there is a task which has the lowest priority and is never blocked. It is always ready to execute, so when all other tasks are blocked, it will run. This means that we don't have to deal with the case in the scheduler when there is no tasks to execute since there will always be a task.
 
@@ -268,34 +274,38 @@ Implementation\: kos_run and kos_schedule
 
 Next we have the kos_run function\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    void kos_run(void)
-    {
-        kos_schedule();
-    }
+
+
+   void kos_run(void)
+   {
+       kos_schedule();
+   }
 
 Well that's simple\: it just calls the scheduler. So, let's look at kos_schedule\:
 
-.. code-block:: default
+::
 
-    void kos_schedule(void)
-    {
-        if (kos_isr_level)
-            return;
 
-        KOS_Task *task = task_head;
-        while (task->status != TASK_READY)
-            task = task->next;
 
-        if (task != kos_current_task)
-        {
-            ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-            {
-                kos_dispatch(task);
-            }
-        }
-    }
+   void kos_schedule(void)
+   {
+       if (kos_isr_level)
+           return;
+
+       KOS_Task *task = task_head;
+       while (task->status != TASK_READY)
+           task = task->next;
+
+       if (task != kos_current_task)
+       {
+           ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+           {
+               kos_dispatch(task);
+           }
+       }
+   }
 
 
 The very first thing to notice is the kos_isr_level reference. This solves a very specific problem that occurs with ISRs which I talk about in the next section. Other than that bit, however, this is also simple. Because our tasks in the linked list are ordered by priority, we can simply start at the top and move along the linked list until we locate the first task that is ready (unblocked). Once that task is found, we will call the dispatcher if the task we found is not the currently executing task.
@@ -358,19 +368,21 @@ As straightforward as that may seem, that isn't the intended behavior. Imagine i
 
 Because of the inconsistency and the fact that the ISR "priority" when viewed by the scheduler is determined by possibly random ISRs (making it non-deterministic), we need fix this. The solution I went with was to make two methods\: kos_enter_isr and kos_exit_isr. These should be called when an ISR begins and when an ISR ends to temporarily hold off calling the scheduler until the very end of the ISR. This has the effect of giving an ISR an apparently high priority since it will not switch to another task until it has completely finished. So, although the idle task may be running when the ISR occurs, while the ISR is running no context switches will occur until the very end. Here is some code\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static uint8_t kos_isr_level = 0;
-    void kos_isr_enter(void)
-    {
-        kos_isr_level++;
-    }
 
-    void kos_isr_exit(void)
-    {
-        kos_isr_level--;
-        kos_schedule();
-    }
+
+   static uint8_t kos_isr_level = 0;
+   void kos_isr_enter(void)
+   {
+       kos_isr_level++;
+   }
+
+   void kos_isr_exit(void)
+   {
+       kos_isr_level--;
+       kos_schedule();
+   }
 
 As seen in kos_schedule, we use the kos_isr_level variable to indicate to the scheduler whether we are in an ISR or not. When kos_isr_level finally returns to 0, the scheduler will actually perform scheduling when it is called at the end of kos_isr_exit. The second set of events described earlier will now happen every time, even if the idle task is interrupted.
 
@@ -383,117 +395,119 @@ Implementation\: kos_dispatch
 
 The dispatcher is written basically entirely in inline assembly because it does the actual stack manipulation\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    void kos_dispatch(KOS_Task *task)
-    {
-        // the call to this function should push the return address into the stack.
-        // we will now construct saving context. The entire context needs to be
-        // saved because it is very possible that this could be called from within
-        // an isr that doesn't use the call-used registers and therefore doesn't
-        // save them.
-        asm volatile (
-                "push r31 \n\t"
-                "push r30 \n\t"
-                "push r29 \n\t"
-                "push r28 \n\t"
-                "push r27 \n\t"
-                "push r26 \n\t"
-                "push r25 \n\t"
-                "push r24 \n\t"
-                "push r23 \n\t"
-                "push r22 \n\t"
-                "push r21 \n\t"
-                "push r20 \n\t"
-                "push r19 \n\t"
-                "push r18 \n\t"
-                "push r17 \n\t"
-                "push r16 \n\t"
-                "push r15 \n\t"
-                "push r14 \n\t"
-                "push r13 \n\t"
-                "push r12 \n\t"
-                "push r11 \n\t"
-                "push r10 \n\t"
-                "push r9 \n\t"
-                "push r8 \n\t"
-                "push r7 \n\t"
-                "push r6 \n\t"
-                "push r5 \n\t"
-                "push r4 \n\t"
-                "push r3 \n\t"
-                "push r2 \n\t"
-                "push r1 \n\t"
-                "push r0 \n\t"
-                "in   r0, %[_SREG_] \n\t" //push sreg
-                "push r0 \n\t"
-                "lds  r26, kos_current_task \n\t"
-                "lds  r27, kos_current_task+1 \n\t"
-                "sbiw r26, 0 \n\t"
-                "breq 1f \n\t" //null check, skip next section
-                "in   r0, %[_SPL_] \n\t"
-                "st   X+, r0 \n\t"
-                "in   r0, %[_SPH_] \n\t"
-                "st   X+, r0 \n\t"
-                "1:" //begin dispatching
-                "mov  r26, %A[_next_task_] \n\t"
-                "mov  r27, %B[_next_task_] \n\t"
-                "sts  kos_current_task, r26 \n\t" //set current task
-                "sts  kos_current_task+1, r27 \n\t"
-                "ld   r0, X+ \n\t" //load stack pointer
-                "out  %[_SPL_], r0 \n\t"
-                "ld   r0, X+ \n\t"
-                "out  %[_SPH_], r0 \n\t"
-                "pop  r31 \n\t" //status into r31: andi requires register above 15
-                "bst  r31, %[_I_] \n\t" //we don't want to enable interrupts just yet, so store the interrupt status in T
-                "bld  r31, %[_T_] \n\t" //T flag is on the call clobber list and tasks are only blocked as a result of a function call
-                "andi r31, %[_nI_MASK_] \n\t" //I is now stored in T, so clear I
-                "out  %[_SREG_], r31 \n\t"
-                "pop  r0 \n\t"
-                "pop  r1 \n\t"
-                "pop  r2 \n\t"
-                "pop  r3 \n\t"
-                "pop  r4 \n\t"
-                "pop  r5 \n\t"
-                "pop  r6 \n\t"
-                "pop  r7 \n\t"
-                "pop  r8 \n\t"
-                "pop  r9 \n\t"
-                "pop  r10 \n\t"
-                "pop  r11 \n\t"
-                "pop  r12 \n\t"
-                "pop  r13 \n\t"
-                "pop  r14 \n\t"
-                "pop  r15 \n\t"
-                "pop  r16 \n\t"
-                "pop  r17 \n\t"
-                "pop  r18 \n\t"
-                "pop  r19 \n\t"
-                "pop  r20 \n\t"
-                "pop  r21 \n\t"
-                "pop  r22 \n\t"
-                "pop  r23 \n\t"
-                "pop  r24 \n\t"
-                "pop  r25 \n\t"
-                "pop  r26 \n\t"
-                "pop  r27 \n\t"
-                "pop  r28 \n\t"
-                "pop  r29 \n\t"
-                "pop  r30 \n\t"
-                "pop  r31 \n\t"
-                "brtc 2f \n\t" //if the T flag is clear, do the non-interrupt enable return
-                "reti \n\t"
-                "2: \n\t"
-                "ret \n\t"
-                "" ::
-                [_SREG_] "i" _SFR_IO_ADDR(SREG),
-                [_I_] "i" SREG_I,
-                [_T_] "i" SREG_T,
-                [_nI_MASK_] "i" (~(1 << SREG_I)),
-                [_SPL_] "i" _SFR_IO_ADDR(SPL),
-                [_SPH_] "i" _SFR_IO_ADDR(SPH),
-                [_next_task_] "r" (task));
-    }
+
+
+   void kos_dispatch(KOS_Task *task)
+   {
+       // the call to this function should push the return address into the stack.
+       // we will now construct saving context. The entire context needs to be
+       // saved because it is very possible that this could be called from within
+       // an isr that doesn't use the call-used registers and therefore doesn't
+       // save them.
+       asm volatile (
+               "push r31 \n\t"
+               "push r30 \n\t"
+               "push r29 \n\t"
+               "push r28 \n\t"
+               "push r27 \n\t"
+               "push r26 \n\t"
+               "push r25 \n\t"
+               "push r24 \n\t"
+               "push r23 \n\t"
+               "push r22 \n\t"
+               "push r21 \n\t"
+               "push r20 \n\t"
+               "push r19 \n\t"
+               "push r18 \n\t"
+               "push r17 \n\t"
+               "push r16 \n\t"
+               "push r15 \n\t"
+               "push r14 \n\t"
+               "push r13 \n\t"
+               "push r12 \n\t"
+               "push r11 \n\t"
+               "push r10 \n\t"
+               "push r9 \n\t"
+               "push r8 \n\t"
+               "push r7 \n\t"
+               "push r6 \n\t"
+               "push r5 \n\t"
+               "push r4 \n\t"
+               "push r3 \n\t"
+               "push r2 \n\t"
+               "push r1 \n\t"
+               "push r0 \n\t"
+               "in   r0, %[_SREG_] \n\t" //push sreg
+               "push r0 \n\t"
+               "lds  r26, kos_current_task \n\t"
+               "lds  r27, kos_current_task+1 \n\t"
+               "sbiw r26, 0 \n\t"
+               "breq 1f \n\t" //null check, skip next section
+               "in   r0, %[_SPL_] \n\t"
+               "st   X+, r0 \n\t"
+               "in   r0, %[_SPH_] \n\t"
+               "st   X+, r0 \n\t"
+               "1:" //begin dispatching
+               "mov  r26, %A[_next_task_] \n\t"
+               "mov  r27, %B[_next_task_] \n\t"
+               "sts  kos_current_task, r26 \n\t" //set current task
+               "sts  kos_current_task+1, r27 \n\t"
+               "ld   r0, X+ \n\t" //load stack pointer
+               "out  %[_SPL_], r0 \n\t"
+               "ld   r0, X+ \n\t"
+               "out  %[_SPH_], r0 \n\t"
+               "pop  r31 \n\t" //status into r31: andi requires register above 15
+               "bst  r31, %[_I_] \n\t" //we don't want to enable interrupts just yet, so store the interrupt status in T
+               "bld  r31, %[_T_] \n\t" //T flag is on the call clobber list and tasks are only blocked as a result of a function call
+               "andi r31, %[_nI_MASK_] \n\t" //I is now stored in T, so clear I
+               "out  %[_SREG_], r31 \n\t"
+               "pop  r0 \n\t"
+               "pop  r1 \n\t"
+               "pop  r2 \n\t"
+               "pop  r3 \n\t"
+               "pop  r4 \n\t"
+               "pop  r5 \n\t"
+               "pop  r6 \n\t"
+               "pop  r7 \n\t"
+               "pop  r8 \n\t"
+               "pop  r9 \n\t"
+               "pop  r10 \n\t"
+               "pop  r11 \n\t"
+               "pop  r12 \n\t"
+               "pop  r13 \n\t"
+               "pop  r14 \n\t"
+               "pop  r15 \n\t"
+               "pop  r16 \n\t"
+               "pop  r17 \n\t"
+               "pop  r18 \n\t"
+               "pop  r19 \n\t"
+               "pop  r20 \n\t"
+               "pop  r21 \n\t"
+               "pop  r22 \n\t"
+               "pop  r23 \n\t"
+               "pop  r24 \n\t"
+               "pop  r25 \n\t"
+               "pop  r26 \n\t"
+               "pop  r27 \n\t"
+               "pop  r28 \n\t"
+               "pop  r29 \n\t"
+               "pop  r30 \n\t"
+               "pop  r31 \n\t"
+               "brtc 2f \n\t" //if the T flag is clear, do the non-interrupt enable return
+               "reti \n\t"
+               "2: \n\t"
+               "ret \n\t"
+               "" ::
+               [_SREG_] "i" _SFR_IO_ADDR(SREG),
+               [_I_] "i" SREG_I,
+               [_T_] "i" SREG_T,
+               [_nI_MASK_] "i" (~(1 << SREG_I)),
+               [_SPL_] "i" _SFR_IO_ADDR(SPL),
+               [_SPH_] "i" _SFR_IO_ADDR(SPH),
+               [_next_task_] "r" (task));
+   }
 
 
 So, a lot is happening here. There are 4 basic steps\: Save the current context, update the current task's stack pointer, change the stack pointer to the next task, and restore the next task's context.
@@ -519,18 +533,20 @@ Implementation\: Results by code size
 
 So, at this point we have implemented a task scheduler and dispatcher. Here is how it weighs in with avr-size when compiled for an ATMega48A running just the idle task\:
 
-.. code-block:: default
+::
 
-    avr-size -C --mcu=atmega48a bin/kos.elf
-    AVR Memory Usage
-    ----------------
-    Device: atmega48a
 
-    Program:     474 bytes (11.6% Full)
-    (.text + .data + .bootloader)
 
-    Data:        105 bytes (20.5% Full)
-    (.data + .bss + .noinit)
+   avr-size -C --mcu=atmega48a bin/kos.elf
+   AVR Memory Usage
+   ----------------
+   Device: atmega48a
+
+   Program:     474 bytes (11.6% Full)
+   (.text + .data + .bootloader)
+
+   Data:        105 bytes (20.5% Full)
+   (.data + .bss + .noinit)
 
 
 Not the best, but its reasonable. The data usage could be taken down by reducing the number of maximum tasks. There are other RTOS available for AVR which can compile smaller. We could do several optimizations which I will discuss in the conclusion
@@ -546,78 +562,82 @@ As a demonstration, I'm going to implement a simple semaphore. I won't go into h
 
 Header contents\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    typedef struct {
-        int8_t value;
-    } KOS_Semaphore;
 
-    /**
-     * Initializes a new semaphore
-     */
-    KOS_Semaphore *kos_semaphore_init(int8_t value);
 
-    /**
-     * Posts to a semaphore
-     */
-    void kos_semaphore_post(KOS_Semaphore *sem);
+   typedef struct {
+       int8_t value;
+   } KOS_Semaphore;
 
-    /**
-     * Pends from a semaphore
-     */
-    void kos_semaphore_pend(KOS_Semaphore *sem);
+   /**
+    * Initializes a new semaphore
+    */
+   KOS_Semaphore *kos_semaphore_init(int8_t value);
+
+   /**
+    * Posts to a semaphore
+    */
+   void kos_semaphore_post(KOS_Semaphore *sem);
+
+   /**
+    * Pends from a semaphore
+    */
+   void kos_semaphore_pend(KOS_Semaphore *sem);
 
 Source contents\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static KOS_Semaphore semaphores[KOS_MAX_SEMAPHORES + 1];
-    static uint8_t next_semaphore = 0;
 
-    KOS_Semaphore *kos_semaphore_init(int8_t value)
-    {
-        KOS_Semaphore *s = &semaphores[next_semaphore++];
-        s->value = value;
-        return s;
-    }
 
-    void kos_semaphore_post(KOS_Semaphore *semaphore)
-    {
-        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-        {
-            KOS_Task *task;
-            semaphore->value++;
+   static KOS_Semaphore semaphores[KOS_MAX_SEMAPHORES + 1];
+   static uint8_t next_semaphore = 0;
 
-            //allow one task to be resumed which is waiting on this semaphore
-            task = task_head;
-            while (task)
-            {
-                if (task->status == TASK_SEMAPHORE && task->status_pointer == semaphore)
-                    break; //this is the task to be restored
-                task = task->next;
-            }
+   KOS_Semaphore *kos_semaphore_init(int8_t value)
+   {
+       KOS_Semaphore *s = &semaphores[next_semaphore++];
+       s->value = value;
+       return s;
+   }
 
-            task->status = TASK_READY;
-            kos_schedule();
-        }
-    }
+   void kos_semaphore_post(KOS_Semaphore *semaphore)
+   {
+       ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+       {
+           KOS_Task *task;
+           semaphore->value++;
 
-    void kos_semaphore_pend(KOS_Semaphore *semaphore)
-    {
-        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-        {
-            int8_t val = semaphore->value--; //val is value before decrement
+           //allow one task to be resumed which is waiting on this semaphore
+           task = task_head;
+           while (task)
+           {
+               if (task->status == TASK_SEMAPHORE && task->status_pointer == semaphore)
+                   break; //this is the task to be restored
+               task = task->next;
+           }
 
-            if (val <= 0)
-            {
-                //we need to wait on the semaphore
-                kos_current_task->status_pointer = semaphore;
-                kos_current_task->status = TASK_SEMAPHORE;
+           task->status = TASK_READY;
+           kos_schedule();
+       }
+   }
 
-                kos_schedule();
-            }
-        }
-    }
+   void kos_semaphore_pend(KOS_Semaphore *semaphore)
+   {
+       ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+       {
+           int8_t val = semaphore->value--; //val is value before decrement
+
+           if (val <= 0)
+           {
+               //we need to wait on the semaphore
+               kos_current_task->status_pointer = semaphore;
+               kos_current_task->status = TASK_SEMAPHORE;
+
+               kos_schedule();
+           }
+       }
+   }
 
 So, our semaphore will cause a task to become blocked when kos_semaphore_pend is called (and the semaphore value was <= 0) and when kos_semaphore_post is called, the highest priority task that is blocked on the particular semaphore will be made ready.
 
@@ -643,104 +663,108 @@ Just so this makes sense, let's go through an example sequence of events\:
 
 Here's a program that does just this\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Main file for OS demo
-     */
 
-    #include "kos.h"
 
-    #include <avr/io.h>
-    #include <avr/interrupt.h>
+   /**
+    * Main file for OS demo
+    */
 
-    #include "avr_mcu_section.h" //these two lines are for simavr
-    AVR_MCU(F_CPU, "atmega48");
+   #include "kos.h"
 
-    static KOS_Semaphore *sem;
+   #include <avr/io.h>
+   #include <avr/interrupt.h>
 
-    static uint8_t val;
+   #include "avr_mcu_section.h" //these two lines are for simavr
+   AVR_MCU(F_CPU, "atmega48");
 
-    static uint8_t st[128];
-    void the_task(void)
-    {
-        TCCR0B |= (1 << CS00);
-        TIMSK0 |= (1 << TOIE0);
-        while (1)
-        {
-            kos_semaphore_pend(sem);
-            TCCR0B = 0;
+   static KOS_Semaphore *sem;
 
-            val++;
-        }
-    }
+   static uint8_t val;
 
-    int main(void)
-    {
-        kos_init();
+   static uint8_t st[128];
+   void the_task(void)
+   {
+       TCCR0B |= (1 << CS00);
+       TIMSK0 |= (1 << TOIE0);
+       while (1)
+       {
+           kos_semaphore_pend(sem);
+           TCCR0B = 0;
 
-        sem = kos_semaphore_init(0);
+           val++;
+       }
+   }
 
-        kos_new_task(&the_task, &st[127]);
+   int main(void)
+   {
+       kos_init();
 
-        kos_run();
+       sem = kos_semaphore_init(0);
 
-        return 0;
-    }
+       kos_new_task(&the_task, &st[127]);
 
-    ISR(TIMER0_OVF_vect)
-    {
-        kos_isr_enter();
-        kos_semaphore_post(sem);
-        kos_isr_exit();
-    }
+       kos_run();
+
+       return 0;
+   }
+
+   ISR(TIMER0_OVF_vect)
+   {
+       kos_isr_enter();
+       kos_semaphore_post(sem);
+       kos_isr_exit();
+   }
 
 
 Running this with avr-gdb and simavr we can see this in action. I placed breakpoints at the val++ line and the kos_semaphore_post line. Here's the output with me pressing Ctrl-C at the end once it got into and stayed in the infinite loop in the idle task\:
 
-.. code-block:: default
+::
 
-    (gdb) break main.c:27
-    Breakpoint 1 at 0x35a: file src/main.c, line 27.
-    (gdb) break main.c:47
-    Breakpoint 2 at 0x38a: file src/main.c, line 47.
-    (gdb) continue
-    Continuing.
-    Note: automatically using hardware breakpoints for read-only addresses.
 
-    Breakpoint 2, __vector_16 () at src/main.c:47
-    47	    kos_semaphore_post(sem);
-    (gdb) continue
-    Continuing.
 
-    Breakpoint 2, __vector_16 () at src/main.c:47
-    47	    kos_semaphore_post(sem);
-    (gdb) continue
-    Continuing.
+   (gdb) break main.c:27
+   Breakpoint 1 at 0x35a: file src/main.c, line 27.
+   (gdb) break main.c:47
+   Breakpoint 2 at 0x38a: file src/main.c, line 47.
+   (gdb) continue
+   Continuing.
+   Note: automatically using hardware breakpoints for read-only addresses.
 
-    Breakpoint 2, __vector_16 () at src/main.c:47
-    47	    kos_semaphore_post(sem);
-    (gdb) continue
-    Continuing.
+   Breakpoint 2, __vector_16 () at src/main.c:47
+   47	    kos_semaphore_post(sem);
+   (gdb) continue
+   Continuing.
 
-    Breakpoint 1, the_task () at src/main.c:27
-    27	        val++;
-    (gdb) continue
-    Continuing.
+   Breakpoint 2, __vector_16 () at src/main.c:47
+   47	    kos_semaphore_post(sem);
+   (gdb) continue
+   Continuing.
 
-    Breakpoint 1, the_task () at src/main.c:27
-    27	        val++;
-    (gdb) continue
-    Continuing.
+   Breakpoint 2, __vector_16 () at src/main.c:47
+   47	    kos_semaphore_post(sem);
+   (gdb) continue
+   Continuing.
 
-    Breakpoint 1, the_task () at src/main.c:27
-    27	        val++;
-    (gdb) continue
-    Continuing.
-    ^C
-    Program received signal SIGTRAP, Trace/breakpoint trap.
-    kos_idle_task () at src/kos.c:27
-    27	{
+   Breakpoint 1, the_task () at src/main.c:27
+   27	        val++;
+   (gdb) continue
+   Continuing.
+
+   Breakpoint 1, the_task () at src/main.c:27
+   27	        val++;
+   (gdb) continue
+   Continuing.
+
+   Breakpoint 1, the_task () at src/main.c:27
+   27	        val++;
+   (gdb) continue
+   Continuing.
+   ^C
+   Program received signal SIGTRAP, Trace/breakpoint trap.
+   kos_idle_task () at src/kos.c:27
+   27	{
 
 
 You may have noticed that the interrupt was called three times before we even got to val++. The reason for this is that timer0 is an 8-bit timer and I used no prescaler for its clock, so the interrupt will happen every 255 cycles. Given that the dispatcher is nearly 100 instructions and the scheduler isn't exactly short either, the interrupt could easily be called three times before it manages to resume the task after it blocks (including the time it takes to block it).

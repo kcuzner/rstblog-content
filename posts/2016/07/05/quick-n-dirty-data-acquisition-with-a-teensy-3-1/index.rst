@@ -20,31 +20,33 @@ I've never used the ADC before on the Teensy 3.1. I don't use the Teensy Cores H
 
 The ADC on the Teensy 3.1 (or the Kinetis MK20DX256) is capable of doing 16-bit conversions at 400-ish ksps. It is also quite complex and can do conversions in many different ways. It is one of the larger and more configurable peripherals on the device, probably rivaled only by the USB module. The module does not come pre-calibrated and requires a calibration cycle to be performed before its accuracy will match that specified in the datasheet. My initialization code is as follows\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    //Enable ADC0 module
-    SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
 
-    //Set up conversion precision and clock speed for calibration
-    ADC0_CFG1 = ADC_CFG1_MODE(0x1) | ADC_CFG1_ADIV(0x1) | ADC_CFG1_ADICLK(0x3); //12 bit conversion, adc async clock, div by 2 (<3MHz)
-    ADC0_CFG2 = ADC_CFG2_ADACKEN_MASK; //enable async clock
 
-    //Enable hardware averaging and set up for calibration
-    ADC0_SC3 = ADC_SC3_CAL_MASK | ADC_SC3_AVGS(0x3);
-    while (ADC0_SC3 & ADC_SC3_CAL_MASK) { }
-    if (ADC0_SC3 & ADC_SC3_CALF_MASK) //calibration failed. Quit now while we're ahead.
-        return;
-    temp = ADC0_CLP0 + ADC0_CLP1 + ADC0_CLP2 + ADC0_CLP3 + ADC0_CLP4 + ADC0_CLPS;
-    temp /= 2;
-    temp |= 0x1000;
-    ADC0_PG = temp;
-    temp = ADC0_CLM0 + ADC0_CLM1 + ADC0_CLM2 + ADC0_CLM3 + ADC0_CLM4 + ADC0_CLMS;
-    temp /= 2;
-    temp |= 0x1000;
-    ADC0_MG = temp;
+   //Enable ADC0 module
+   SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
 
-    //Set clock speed for measurements (no division)
-    ADC0_CFG1 = ADC_CFG1_MODE(0x1) | ADC_CFG1_ADICLK(0x3); //12 bit conversion, adc async clock, no divide
+   //Set up conversion precision and clock speed for calibration
+   ADC0_CFG1 = ADC_CFG1_MODE(0x1) | ADC_CFG1_ADIV(0x1) | ADC_CFG1_ADICLK(0x3); //12 bit conversion, adc async clock, div by 2 (<3MHz)
+   ADC0_CFG2 = ADC_CFG2_ADACKEN_MASK; //enable async clock
+
+   //Enable hardware averaging and set up for calibration
+   ADC0_SC3 = ADC_SC3_CAL_MASK | ADC_SC3_AVGS(0x3);
+   while (ADC0_SC3 & ADC_SC3_CAL_MASK) { }
+   if (ADC0_SC3 & ADC_SC3_CALF_MASK) //calibration failed. Quit now while we're ahead.
+       return;
+   temp = ADC0_CLP0 + ADC0_CLP1 + ADC0_CLP2 + ADC0_CLP3 + ADC0_CLP4 + ADC0_CLPS;
+   temp /= 2;
+   temp |= 0x1000;
+   ADC0_PG = temp;
+   temp = ADC0_CLM0 + ADC0_CLM1 + ADC0_CLM2 + ADC0_CLM3 + ADC0_CLM4 + ADC0_CLMS;
+   temp /= 2;
+   temp |= 0x1000;
+   ADC0_MG = temp;
+
+   //Set clock speed for measurements (no division)
+   ADC0_CFG1 = ADC_CFG1_MODE(0x1) | ADC_CFG1_ADICLK(0x3); //12 bit conversion, adc async clock, no divide
 
 Following the recommendations in the datasheet, I selected a clock that would bring the ADC clock speed down to <4MHz and turned on hardware averaging before starting the calibration. The calibration is initiated by setting a flag in ADC0_SC3 and when completed, the calibration results will be found in the several ADC0_CL\* registers. I'm not 100% certain how this calibration works, but I believe what it is doing is computing some values which will trim some value in the `SAR <https://en.wikipedia.org/wiki/Successive_approximation_ADC>`_ logic (probably something in the internal DAC) in order to shift the converted values into spec.
 
@@ -57,42 +59,44 @@ Quick and dirty USB device-side driver
 
 For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`_. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static uint8_t tx_buffer[256];
 
-    /**
-     * Endpoint 0 setup handler
-     */
-    static void usb_endp0_handle_setup(setup_t* packet)
-    {
-        const descriptor_entry_t* entry;
-        const uint8_t* data = NULL;
-        uint8_t data_length = 0;
-        uint32_t size = 0;
-        uint16_t *arryBuf = (uint16_t*)tx_buffer;
-        uint8_t i = 0;
 
-        switch(packet->wRequestAndType)
-        {
-    ...USB Protocol Stuff...
-        case 0x01c0: //get adc channel value (wIndex)
-            *((uint16_t*)tx_buffer) = adc_get_value(packet->wIndex);
-            data = tx_buffer;
-            data_length = 2;
-            break;
-        default:
-            goto stall;
-        }
+   static uint8_t tx_buffer[256];
 
-        //if we are sent here, we need to send some data
-        send:
-    ...Send Logic...
+   /**
+    * Endpoint 0 setup handler
+    */
+   static void usb_endp0_handle_setup(setup_t* packet)
+   {
+       const descriptor_entry_t* entry;
+       const uint8_t* data = NULL;
+       uint8_t data_length = 0;
+       uint32_t size = 0;
+       uint16_t *arryBuf = (uint16_t*)tx_buffer;
+       uint8_t i = 0;
 
-        //if we make it here, we are not able to send data and have stalled
-        stall:
-    ...Stall logic...
-    }
+       switch(packet->wRequestAndType)
+       {
+   ...USB Protocol Stuff...
+       case 0x01c0: //get adc channel value (wIndex)
+           *((uint16_t*)tx_buffer) = adc_get_value(packet->wIndex);
+           data = tx_buffer;
+           data_length = 2;
+           break;
+       default:
+           goto stall;
+       }
+
+       //if we are sent here, we need to send some data
+       send:
+   ...Send Logic...
+
+       //if we make it here, we are not able to send data and have stalled
+       stall:
+   ...Stall logic...
+   }
 
 
 I added a control request (0x01) which uses the wIndex (not to be confused with the cleaning product) value to select a channel to read. The host software can now issue a vendor control request 0x01, setting the wIndex value accordingly, and get the raw value last read from a particular analog channel. In order to keep things easy, I labeled the analog channels using the same format as the standard Teensy 3.1 layout. Thus, wIndex 0 corresponds to A0, wIndex 1 corresponds to A1, and so forth. The adc_get_value function reads the last read ADC value for a particular channel. Sampling is done by the ADC continuously, so the USB read doesn't initiate a conversion or anything like that. It just reads what happened on the channel during the most recent conversion.
@@ -102,68 +106,70 @@ Host software
 
 Since libusb is easy to use with Python, via PyUSB, I decided to write out the whole thing in Python. Originally I planned on some sort of fancy gui until I realized that it would far simpler just to output a CSV and use MATLAB or Excel to process the data. The software is simple enough that I can just put the entire thing here\:
 
-.. code-block:: python
+.. code-block:: {lang}
 
-    #!/usr/bin/env python3
 
-    # Python Host for EZDAQ
-    # Kevin Cuzner
-    #
-    # Requires PyUSB
 
-    import usb.core, usb.util
-    import argparse, time, struct
+   #!/usr/bin/env python3
 
-    idVendor = 0x16c0
-    idProduct = 0x05dc
-    sManufacturer = 'kevincuzner.com'
-    sProduct = 'EZDAQ'
+   # Python Host for EZDAQ
+   # Kevin Cuzner
+   #
+   # Requires PyUSB
 
-    VOLTS_PER = 3.3/4096 # 3.3V reference is being used
+   import usb.core, usb.util
+   import argparse, time, struct
 
-    def find_device():
-        for dev in usb.core.find(find_all=True, idVendor=idVendor, idProduct=idProduct):
-            if usb.util.get_string(dev, dev.iManufacturer) == sManufacturer and \
-                    usb.util.get_string(dev, dev.iProduct) == sProduct:
-                return dev
+   idVendor = 0x16c0
+   idProduct = 0x05dc
+   sManufacturer = 'kevincuzner.com'
+   sProduct = 'EZDAQ'
 
-    def get_value(dev, channel):
-        rt = usb.util.build_request_type(usb.util.CTRL_IN, usb.util.CTRL_TYPE_VENDOR, usb.util.CTRL_RECIPIENT_DEVICE)
-        raw_data = dev.ctrl_transfer(rt, 0x01, wIndex=channel, data_or_wLength=256)
-        data = struct.unpack('H', raw_data)
-        return data[0] * VOLTS_PER;
+   VOLTS_PER = 3.3/4096 # 3.3V reference is being used
 
-    def get_values(dev, channels):
-        return [get_value(dev, ch) for ch in channels]
+   def find_device():
+       for dev in usb.core.find(find_all=True, idVendor=idVendor, idProduct=idProduct):
+           if usb.util.get_string(dev, dev.iManufacturer) == sManufacturer and \
+                   usb.util.get_string(dev, dev.iProduct) == sProduct:
+               return dev
 
-    def main():
-        # Parse arguments
-        parser = argparse.ArgumentParser(description='EZDAQ host software writing values to stdout in CSV format')
-        parser.add_argument('-t', '--time', help='Set time between samples', type=float, default=0.5)
-        parser.add_argument('-a', '--attenuation', help='Set channel attentuation level', type=float, nargs=2, default=[], action='append', metavar=('CHANNEL', 'ATTENUATION'))
-        parser.add_argument('channels', help='Channel number to record', type=int, nargs='+', choices=range(0, 10))
-        args = parser.parse_args()
+   def get_value(dev, channel):
+       rt = usb.util.build_request_type(usb.util.CTRL_IN, usb.util.CTRL_TYPE_VENDOR, usb.util.CTRL_RECIPIENT_DEVICE)
+       raw_data = dev.ctrl_transfer(rt, 0x01, wIndex=channel, data_or_wLength=256)
+       data = struct.unpack('H', raw_data)
+       return data[0] * VOLTS_PER;
 
-        # Set up attentuation dictionary
-        att = args.attenuation if len(args.attenuation) else [[ch, 1] for ch in args.channels]
-        att = dict([(l[0], l[1]) for l in att])
-        for ch in args.channels:
-            if ch not in att:
-                att[ch] = 1
+   def get_values(dev, channels):
+       return [get_value(dev, ch) for ch in channels]
 
-        # Perform data logging
-        dev = find_device()
-        if dev is None:
-            raise ValueError('No EZDAQ Found')
-        dev.set_configuration()
-        print(','.join(['Time']+['Channel ' + str(ch) for ch in args.channels]))
-        while True:
-            values = get_values(dev, args.channels)
-            print(','.join([str(time.time())] + [str(v[1] * (1/att[v[0]])) for v in zip(args.channels, values)]))
-            time.sleep(args.time)
+   def main():
+       # Parse arguments
+       parser = argparse.ArgumentParser(description='EZDAQ host software writing values to stdout in CSV format')
+       parser.add_argument('-t', '--time', help='Set time between samples', type=float, default=0.5)
+       parser.add_argument('-a', '--attenuation', help='Set channel attentuation level', type=float, nargs=2, default=[], action='append', metavar=('CHANNEL', 'ATTENUATION'))
+       parser.add_argument('channels', help='Channel number to record', type=int, nargs='+', choices=range(0, 10))
+       args = parser.parse_args()
 
-    if __name__ == '__main__':
-        main()
+       # Set up attentuation dictionary
+       att = args.attenuation if len(args.attenuation) else [[ch, 1] for ch in args.channels]
+       att = dict([(l[0], l[1]) for l in att])
+       for ch in args.channels:
+           if ch not in att:
+               att[ch] = 1
+
+       # Perform data logging
+       dev = find_device()
+       if dev is None:
+           raise ValueError('No EZDAQ Found')
+       dev.set_configuration()
+       print(','.join(['Time']+['Channel ' + str(ch) for ch in args.channels]))
+       while True:
+           values = get_values(dev, args.channels)
+           print(','.join([str(time.time())] + [str(v[1] * (1/att[v[0]])) for v in zip(args.channels, values)]))
+           time.sleep(args.time)
+
+   if __name__ == '__main__':
+       main()
 
 Basically, I just use the argparse module to take some command line inputs, find the device using PyUSB, and spit out the requested channel values in a CSV format to stdout every so often.
 
@@ -171,29 +177,37 @@ In addition to simply displaying the data, the program also processes the raw AD
 
 For example, if I plugged my 50%-ish resistor divider on channel A0 into 3.3V, I would run the following command\:
 
-.. code-block::
+::
 
 
-    .. code-block::
 
-        $ ./ezdaq 0
-        Time,Channel 0
-        1467771464.9665403,1.7990478515625
-        ...
+
+   ::
+
+
+
+      $ ./ezdaq 0
+      Time,Channel 0
+      1467771464.9665403,1.7990478515625
+      ...
 
 
 
 We now have 1.799 for the "voltage" seen at the pin with an attenuation factor of 1. If we divide 1.799 by 3.3 we get 0.545 for our attenuation value. Now we run the following to get our newly calibrated value\:
 
-.. code-block::
+::
 
 
-    .. code-block::
 
-        $ ./ezdaq -a 0 0.545 0
-        Time,Channel 0
-        1467771571.2447994,3.301005232
-        ...
+
+   ::
+
+
+
+      $ ./ezdaq -a 0 0.545 0
+      Time,Channel 0
+      1467771571.2447994,3.301005232
+      ...
 
 
 
@@ -209,9 +223,11 @@ Conclusion
 
 After hooking everything up and getting everything to run, it was fairly simple for me to take some two-channel measurements\:
 
-.. code-block:: default
+::
 
-    $ ./ezdaq -t 5 -a 0 0.465 -a 1 0.477 0 1 > ~/Projects/AVR/the-project/test/charge.csv 
+
+
+   $ ./ezdaq -t 5 -a 0 0.465 -a 1 0.477 0 1 > ~/Projects/AVR/the-project/test/charge.csv 
 
 
 This will dump the output of my program into the charge.csv file (which is measuring the charge cycle on the battery). I will get samples every 5 seconds. Later, I can use this data to make sure my circuit is working properly and observe its behavior over long periods of time. While crude, this quick and dirty DAQ solution works quite well for my purposes.

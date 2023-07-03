@@ -56,34 +56,36 @@ A working description of this can be found in the Makefile in my github reposito
 
 Makefiles work by defining a series of "targets" which have "dependencies". Every dependency can also be the name of a target and a target may have multiple ways of being resolved (this I never realized before). So, here is the parts of the Makefile which enable searching in src for both c and cpp and doing specific actions for each, comping them into the obj directory\:
 
-.. code-block::
+::
 
-    # Project C & C++ files which are to be compiled
-    CPP_FILES = $(wildcard $(SRCDIR)/*.cpp)
-    C_FILES = $(wildcard $(SRCDIR)/*.c)
 
-    # Change project C & C++ files into object files
-    OBJ_FILES := $(addprefix $(OBJDIR)/,$(notdir $(CPP_FILES:.cpp=.o))) $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 
-    # Example build target
-    build: $(OUTPUTDIR)/$(PROJECT).elf
+   # Project C & C++ files which are to be compiled
+   CPP_FILES = $(wildcard $(SRCDIR)/*.cpp)
+   C_FILES = $(wildcard $(SRCDIR)/*.c)
 
-    # Linker invocation
-    $(OUTPUTDIR)/$(PROJECT).elf: $(OBJ_FILES)
-        @mkdir -p $(dir $@)
-        $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
+   # Change project C & C++ files into object files
+   OBJ_FILES := $(addprefix $(OBJDIR)/,$(notdir $(CPP_FILES:.cpp=.o))) $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 
-    # C file compilation for some object file
-    $(OBJDIR)/%.o : $(SRCDIR)/%.c
-        @echo Compiling $<, writing to $@...
-        @mkdir -p $(dir $@)
-        $(CC) $(GCFLAGS) -c $< -o $@ > $(basename $@).lst
+   # Example build target
+   build: $(OUTPUTDIR)/$(PROJECT).elf
 
-    # C++ file compilation for some object file
-    $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-        @mkdir -p $(dir $@)
-        @echo Compiling $<, writing to $@...
-        $(CC) $(GCFLAGS) -c $< -o $@
+   # Linker invocation
+   $(OUTPUTDIR)/$(PROJECT).elf: $(OBJ_FILES)
+       @mkdir -p $(dir $@)
+       $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
+
+   # C file compilation for some object file
+   $(OBJDIR)/%.o : $(SRCDIR)/%.c
+       @echo Compiling $<, writing to $@...
+       @mkdir -p $(dir $@)
+       $(CC) $(GCFLAGS) -c $< -o $@ > $(basename $@).lst
+
+   # C++ file compilation for some object file
+   $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+       @mkdir -p $(dir $@)
+       @echo Compiling $<, writing to $@...
+       $(CC) $(GCFLAGS) -c $< -o $@
 
 Each section above has a specific purpose and the order can be rather important. The first part uses $(wildcard ...) to pick up all of the C++ and C files. The CPP_FILES variable, for example, will become "src/file1.cpp src/file2.cpp src/etc.cpp" if we had "file1.cpp", "file2.cpp" and "etc.cpp" in the src directory. Similarly, the C_FILES would pick up any files in src with a c file extension. Next, the filenames are transformed into object filenames living in the obj directory. This is done by first changing the file extension of the files to .o using the $(CPP_FILES\:.cpp=.o) or $(C_FILES\:.c=.o) syntax. However, these files still look like they are in the src directory (e.g. src/file1.o) so the directory is next stripped off each file using $(nodir...). Removing the directory doesn't allow for a nested src directory, but that wasn't one of our objectives here. At this point, the files are just names with no directories (e.g. file1.o) and so the last step is to change them to live in the obj directory using $(addprefix $(OBJDIR)/,..). This completes our transformation, populating OBJ_FILES to look like "obj/file1.o obj/file2.o" etc.
 
@@ -98,24 +100,26 @@ Outputting everything to bin
 
 Compared to the pattern matching and multiple target definitions that we discussed above, this is comparatively simple. We simply get to prefix all of our "binary" output files with some directory which is set as $(OUTPUTDIR) in my Makefile. Here is an example\:
 
-.. code-block::
+::
 
-    all:: $(OUTPUTDIR)/$(PROJECT).hex $(OUTPUTDIR)/$(PROJECT).bin stats dump
 
-    $(OUTPUTDIR)/$(PROJECT).bin: $(OUTPUTDIR)/$(PROJECT).elf
-        $(OBJCOPY) -O binary -j .text -j .data $(OUTPUTDIR)/$(PROJECT).elf $(OUTPUTDIR)/$(PROJECT).bin
 
-    $(OUTPUTDIR)/$(PROJECT).hex: $(OUTPUTDIR)/$(PROJECT).elf
-        $(OBJCOPY) -R .stack -O ihex $(OUTPUTDIR)/$(PROJECT).elf $(OUTPUTDIR)/$(PROJECT).hex
+   all:: $(OUTPUTDIR)/$(PROJECT).hex $(OUTPUTDIR)/$(PROJECT).bin stats dump
 
-    #  Linker invocation
-    $(OUTPUTDIR)/$(PROJECT).elf: $(OBJ_FILES)
-        @mkdir -p $(dir $@)
-        $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
+   $(OUTPUTDIR)/$(PROJECT).bin: $(OUTPUTDIR)/$(PROJECT).elf
+       $(OBJCOPY) -O binary -j .text -j .data $(OUTPUTDIR)/$(PROJECT).elf $(OUTPUTDIR)/$(PROJECT).bin
 
-    stats:
+   $(OUTPUTDIR)/$(PROJECT).hex: $(OUTPUTDIR)/$(PROJECT).elf
+       $(OBJCOPY) -R .stack -O ihex $(OUTPUTDIR)/$(PROJECT).elf $(OUTPUTDIR)/$(PROJECT).hex
 
-    dump:
+   #  Linker invocation
+   $(OUTPUTDIR)/$(PROJECT).elf: $(OBJ_FILES)
+       @mkdir -p $(dir $@)
+       $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
+
+   stats:
+
+   dump:
 
 We see here that any output that we are creating as a result of the compilation (.elf, .hex, .bin) is going to end up in $(OUTPUTDIR). Futher, we see that our "all" target asks the Makefile to create both a bin file and a hex file along with two other targets called "stats" and "dump". These are just scripts that execute the "size" and "objdump" commands on our bin file.
 
@@ -130,25 +134,31 @@ The most important file we need is called "mk20dx128.c". This sets up a lot of t
 
 My first mistake was explicitly using the linker to link all of my object files (wait...aren't we supposed to use the linker? Read on.). Since arm-none-eabi is not dependent on a specific architecture, it doesn't know which standard library (libc) to use. This results in an undefined reference to "__libc_init_array()", a function used during the initialization phase of a program which is not often invoked in code outside the standard library itself. mk20dx128.c uses this function in its custom startup code which prepares the processor for running our program. To solve this, I wanted to tell the linker that I was using a cortex-m4 cpu so that it would know which libc to include and thereby resolve the reference. However, this proved difficult to do when directly invoking the linker. Instead, I took a hint from the Makefile that comes with Teensyduino and used the following command to link the objects\:
 
-.. code-block::
+::
 
-    $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
+
+
+   $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
 
 Which more or less translates to (using our example from earlier)\:
 
-.. code-block::
+::
 
-    arm-none-eabi-gcc obj/file1.o obj/file2.o obj/etc.o obj/mk20dx128.o $(LDFLAGS) -o bin/$(PROJECT).elf
+
+
+   arm-none-eabi-gcc obj/file1.o obj/file2.o obj/etc.o obj/mk20dx128.o $(LDFLAGS) -o bin/$(PROJECT).elf
 
 We would have thought that we should be using arm-none-eabi-ld instead of arm-none-eabi-gcc. However, by using arm-non-eabi-gcc I was able to pass the argument "-mcpu=cortex-m4" which then allowed GCC to instruct the linker which standard library to use. Wonderful, right? So all of our problems are solved? Not yet.
 
 The next thing is that mk20dx128.c has a lot of external dependencies. It uses a function defined in pins_teensy.c which in turn requires functions defined in both analog.c and usb_dev.c which opens another can of worms. Ugh. I didn't want this many dependencies and I couldn't see a way to escape compiling nearly the entire Teensyduino library just to run my simple blinking program. Then, it dawned on me\: I could use the same technique that mk20dx128.c uses to define its ISRs to "define" the functions that pins_teensy.c was calling that I didn't really want. So, I made a file called "shim.c" which contained the following\:
 
-.. code-block::
+::
 
-    void unused_void(void) { }
 
-    void usb_init(void) __attribute__ ((weak, alias("unused_void")));
+
+   void unused_void(void) { }
+
+   void usb_init(void) __attribute__ ((weak, alias("unused_void")));
 
 I decided that I would include "yield.c" and "analog.c" since those weren't too big. This left just the usb stuff. The only function that was actually called from pins_teensy.c was "usb_init". What the above statement says to the compiler is "I am defining usb_init(void) here (which points to unused_void(void)) unless you find another definition of usb_init(void) somewhere". The "weak" attribute makes this "strong" symbol of usb_init a "weak" symbol reference to which is basically the same as just making a declaration (in contrast to the definition a function, which is usually a strong reference). Sidenote\: A program can have any number of weak symbol references to a specific function/variable (declarations), but only one strong symbol reference (definition) of that function/variable. The "alias" attribute allows us to say "when I say usb_init I really mean unused_void". The end result of this is that if nobody defines usb_init(void) anywhere, as would be situation if I were to decide not to include usb_dev.c, any calls to usb_init(void) will actually call unused_void(void). However, if somebody did define usb_init(void), my definition of usb_init would be ignored in favor of using their definition. This lets me include usb support in the future if I wanted to. Isn't that cool? That fixed all of my reference issues and let me actually build the project.
 

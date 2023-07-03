@@ -36,59 +36,65 @@ One of my most favorite features has been `Attributed Metadata <https://github.c
 
 For my example I will use a "extendible" letter formatting program that adds some text to the content of a "letter". I define the following interface\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    interface ILetterFormatter
-    {
-        string FormatLetter(string content);
-    }
+
+
+   interface ILetterFormatter
+   {
+       string FormatLetter(string content);
+   }
 
 This interface is for something that can "format" a letter in some way. For starters, I will define two implementations\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    class ImpersonalLetterFormatter : ILetterFormatter
-    {
-        public string MakeLetter(string content)
-        {
-            return "To Whom It May Concern:nn" + content;
-        }
-    }
 
-    class PersonalLetterFormatter : ILetterFormatter
-    {
-        public string MakeLetter(string content)
-        {
-            return "Dear Individual,nn" + content;
-        }
-    }
+
+   class ImpersonalLetterFormatter : ILetterFormatter
+   {
+       public string MakeLetter(string content)
+       {
+           return "To Whom It May Concern:nn" + content;
+       }
+   }
+
+   class PersonalLetterFormatter : ILetterFormatter
+   {
+       public string MakeLetter(string content)
+       {
+           return "Dear Individual,nn" + content;
+       }
+   }
 
 Now, here is a simple program that will use these formatters\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    class MainClass
-    {
-        public static void Main (string[] args)
-        {
-            var builder = new ContainerBuilder();
 
-            //register all ILetterFormatters in this assembly
-            builder.RegisterAssemblyTypes(typeof(MainClass).Assembly)
-                .Where(c => c.IsAssignableTo<ILetterFormatter>())
-                .AsImplementedInterfaces();
 
-            var container = builder.Build();
+   class MainClass
+   {
+       public static void Main (string[] args)
+       {
+           var builder = new ContainerBuilder();
 
-            using (var scope = container.BeginLifetimeScope())
-            {
-                //resolve all formatters
-                IEnumerable<ILetterFormatter> formatters = scope.Resolve<IEnumerable<ILetterFormatter>>();
+           //register all ILetterFormatters in this assembly
+           builder.RegisterAssemblyTypes(typeof(MainClass).Assembly)
+               .Where(c => c.IsAssignableTo<ILetterFormatter>())
+               .AsImplementedInterfaces();
 
-                //What do we do now??? So many formatters...which is which?
-            }
-        }
-    }
+           var container = builder.Build();
+
+           using (var scope = container.BeginLifetimeScope())
+           {
+               //resolve all formatters
+               IEnumerable<ILetterFormatter> formatters = scope.Resolve<IEnumerable<ILetterFormatter>>();
+
+               //What do we do now??? So many formatters...which is which?
+           }
+       }
+   }
 
 Ok, so we have ran into a problem\: We have a list of formatters, but we don't know which is which. There are a couple different solutions\:
 * Use the "is" test or do a "soft cast" using the "as" operator to a specific type. This is bad because it requires that the resolver know about the specific implementations of the interface (which is what we are trying to avoid)
@@ -106,86 +112,96 @@ Ok, so we have ran into a problem\: We have a list of formatters, but we don't k
 
 We define another class\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    [MetadataAttribute]
-    sealed class LetterFormatterAttribute : Attribute
-    {
-        public string Name { get; private set; }
 
-        public LetterFormatterAttribute(string name)
-        {
-            this.Name = name;
-        }
-    }
+
+   [MetadataAttribute]
+   sealed class LetterFormatterAttribute : Attribute
+   {
+       public string Name { get; private set; }
+
+       public LetterFormatterAttribute(string name)
+       {
+           this.Name = name;
+       }
+   }
 
 Marking it with System.ComponetModel.Composition.MetadataAttributeAttribute (no, that's not a typo) will make the Attributed Metadata module place the public properties of the Attribute into the metadata dictionary that is associated with the class at registration time.
 
 We mark the classes as follows\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    [LetterFormatter("Impersonal")]
-    class ImpersonalLetterFormatter : ILetterFormatter
-    ...
 
-    [LetterFormatter("Personal")]
-    class PersonalLetterFormatter : ILetterFormatter
-    ...
+
+   [LetterFormatter("Impersonal")]
+   class ImpersonalLetterFormatter : ILetterFormatter
+   ...
+
+   [LetterFormatter("Personal")]
+   class PersonalLetterFormatter : ILetterFormatter
+   ...
 
 
 
 And then we change the builder to take into account the metadata by asking it to register the Autofac.Extras.Attributed.AttributedMetadataModule. This will cause the Attributed Metadata extensions to scan all of the registered types (past, present, and future) for MetadataAttribute-marked attributes and use the public properties as metadata\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    var builder = new ContainerBuilder();
 
-    builder.RegisterModule<AttributedMetadataModule>();
 
-    builder.RegisterAssemblyTypes(typeof(MainClass).Assembly)
-        .Where(c => c.IsAssignableTo<ILetterFormatter>())
-        .AsImplementedInterfaces();
+   var builder = new ContainerBuilder();
+
+   builder.RegisterModule<AttributedMetadataModule>();
+
+   builder.RegisterAssemblyTypes(typeof(MainClass).Assembly)
+       .Where(c => c.IsAssignableTo<ILetterFormatter>())
+       .AsImplementedInterfaces();
 
 Now, when we resolve the ILetterFormatter classes, we can either use Autofac.Features.Meta<TImplementation> or Autofac.Features.Meta<TImplementation, TMetadata>. I'm a personal fan of the "strong" metadata, or the latter. It causes the metadata dictionary to be "forced" into a class rather than just directly accessing the metadata dictionary. This removes any uncertainty about types and such. So, I will create a class that will hold the metadata when the implementations are resolved\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    class LetterMetadata
-    {
-        public string Name { get; set; }
-    }
+
+
+   class LetterMetadata
+   {
+       public string Name { get; set; }
+   }
 
 It would worthwhile to note that the individual properties must have a value in the metadata dictionary unless the DefaultValue attribute is applied to the property. For example, if I had an integer property called Foo an exception would be thrown when metadata was resolved since I have no corresponding Foo metadata. However, if I put DefaultValue(6) on the Foo property, no exception would be thrown and Foo would be set to 6.
 
 So, we now have the following inside our using statement that controls our scope in the main method\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    //resolve all formatters
-    IEnumerable<Meta<ILetterFormatter, LetterMetadata>> formatters = scope.Resolve<IEnumerable<Meta<ILetterFormatter, LetterMetadata>>>();
 
-    //we will ask how the letter should be formatted
-    Console.WriteLine("Formatters:");
-    foreach (var formatter in formatters)
-    {
-        Console.Write("- ");
-        Console.WriteLine(formatter.Metadata.Name);
-    }
 
-    ILetterFormatter chosen = null;
-    while (chosen == null)
-    {
-        Console.WriteLine("Choose a formatter:");
-        string name = Console.ReadLine();
-        chosen = formatters.Where(f => f.Metadata.Name == name).Select(f => f.Value).FirstOrDefault();
+   //resolve all formatters
+   IEnumerable<Meta<ILetterFormatter, LetterMetadata>> formatters = scope.Resolve<IEnumerable<Meta<ILetterFormatter, LetterMetadata>>>();
 
-        if (chosen == null)
-            Console.WriteLine(string.Format("Invalid formatter: {0}", name));
-    }
+   //we will ask how the letter should be formatted
+   Console.WriteLine("Formatters:");
+   foreach (var formatter in formatters)
+   {
+       Console.Write("- ");
+       Console.WriteLine(formatter.Metadata.Name);
+   }
 
-    //just for kicks, we say the first argument  is our letter, so we format it and output it to the console
-    Console.WriteLine(chosen.FormatLetter(args[0]));
+   ILetterFormatter chosen = null;
+   while (chosen == null)
+   {
+       Console.WriteLine("Choose a formatter:");
+       string name = Console.ReadLine();
+       chosen = formatters.Where(f => f.Metadata.Name == name).Select(f => f.Value).FirstOrDefault();
+
+       if (chosen == null)
+           Console.WriteLine(string.Format("Invalid formatter: {0}", name));
+   }
+
+   //just for kicks, we say the first argument  is our letter, so we format it and output it to the console
+   Console.WriteLine(chosen.FormatLetter(args[0]));
 
 
 The IMetadataProvider Interface
@@ -199,30 +215,32 @@ I decided to remedy this and after submitting an idea for autofac `via a pull re
 
 To get an idea of what this would look like, here is a metadata attribute which implements this interface\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    [MetadataAttribute]
-    class LetterFormatterAttribute : Attribute, IMetadataProvider
-    {
-        public string Name { get; private set; }
 
-        public LetterFormatterAttribute(string name)
-        {
-            this.Name = name;
-        }
 
-        #region IMetadataProvider implementation
+   [MetadataAttribute]
+   class LetterFormatterAttribute : Attribute, IMetadataProvider
+   {
+       public string Name { get; private set; }
 
-        public IDictionary<string, object> GetMetadata(Type targetType)
-        {
-            return new Dictionary<string, object>()
-            {
-                { "Name", this.Name }
-            };
-        }
+       public LetterFormatterAttribute(string name)
+       {
+           this.Name = name;
+       }
 
-        #endregion
-    }
+       #region IMetadataProvider implementation
+
+       public IDictionary<string, object> GetMetadata(Type targetType)
+       {
+           return new Dictionary<string, object>()
+           {
+               { "Name", this.Name }
+           };
+       }
+
+       #endregion
+   }
 
 This metadata doesn't do much more than the original. It actually returns exactly what would be created via property scanning. However, this allows much more flexibility in how MetadataAttributes can provide metadata. They can scan the type for other attributes, create arbitrary objects, and many other fun things that I can't even think of.
 
@@ -231,115 +249,119 @@ IMetadataProvider\: Making a set of objects
 
 Perhaps the simplest application of this new IMetadataProvider is having the metadata contain a list of objects. Building on our last example, we saw that the "personal" letter formatter just said "Dear Individual" every time. What if we could change that so that there was some way to pass in some "properties" or "options" provided by the caller of the formatting function? We can do this using an IMetadataProvider. We make the following changes\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    class FormatOptionValue
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-    }
 
-    interface IFormatOption
-    {
-        string Name { get; }
-        string Description { get; }
-    }
 
-    interface IFormatOptionProvider
-    {
-        IFormatOption GetOption();
-    }
+   class FormatOptionValue
+   {
+       public string Name { get; set; }
+       public object Value { get; set; }
+   }
 
-    interface ILetterFormatter
-    {
-        string FormatLetter(string content, IEnumerable<FormatOptionValue> options);
-    }
+   interface IFormatOption
+   {
+       string Name { get; }
+       string Description { get; }
+   }
 
-    [MetadataAttribute]
-    sealed class LetterFormatterAttribute : Attribute, IMetadataProvider
-    {
-        public string Name { get; private set; }
+   interface IFormatOptionProvider
+   {
+       IFormatOption GetOption();
+   }
 
-        public LetterFormatterAttribute(string name)
-        {
-            this.Name = name;
-        }
+   interface ILetterFormatter
+   {
+       string FormatLetter(string content, IEnumerable<FormatOptionValue> options);
+   }
 
-        public IDictionary<string, object> GetMetadata(Type targetType)
-        {
-            var options = targetType.GetCustomAttributes(typeof(IFormatOptionProvider), true)
-                .Cast<IFormatOptionProvider>()
-                .Select(p => p.GetOption())
-                .ToList();
+   [MetadataAttribute]
+   sealed class LetterFormatterAttribute : Attribute, IMetadataProvider
+   {
+       public string Name { get; private set; }
 
-            return new Dictionary<string, object>()
-            {
-                { "Name", this.Name },
-                { "Options", options }
-            };
-        }
-    }
+       public LetterFormatterAttribute(string name)
+       {
+           this.Name = name;
+       }
 
-    //note the lack of the [MetadataAttribute] here. We don't want autofac to scan this for properties
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    sealed class StringOptionAttribute : Attribute, IFormatOptionProvider
-    {
-        public string Name { get; private set; }
+       public IDictionary<string, object> GetMetadata(Type targetType)
+       {
+           var options = targetType.GetCustomAttributes(typeof(IFormatOptionProvider), true)
+               .Cast<IFormatOptionProvider>()
+               .Select(p => p.GetOption())
+               .ToList();
 
-        public string Description { get; private set; }
+           return new Dictionary<string, object>()
+           {
+               { "Name", this.Name },
+               { "Options", options }
+           };
+       }
+   }
 
-        public StringOptionAttribute(string name, string description)
-        {
-            this.Name = name;
-            this.Description = description;
-        }
+   //note the lack of the [MetadataAttribute] here. We don't want autofac to scan this for properties
+   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+   sealed class StringOptionAttribute : Attribute, IFormatOptionProvider
+   {
+       public string Name { get; private set; }
 
-        public IFormatOption GetOption()
-        {
-            return new StringOption()
-            {
-                Name = this.Name,
-                Description = this.Description
-            };
-        }
-    }
+       public string Description { get; private set; }
 
-    public class StringOption : IFormatOption
-    {
-        public string Name { get; set; }
+       public StringOptionAttribute(string name, string description)
+       {
+           this.Name = name;
+           this.Description = description;
+       }
 
-        public string Description { get; set; }
+       public IFormatOption GetOption()
+       {
+           return new StringOption()
+           {
+               Name = this.Name,
+               Description = this.Description
+           };
+       }
+   }
 
-        //note that we could easily define other properties that
-        //do not appear in the interface
-    }
+   public class StringOption : IFormatOption
+   {
+       public string Name { get; set; }
 
-    class LetterMetadata
-    {
-        public string Name { get; set; }
+       public string Description { get; set; }
 
-        public IEnumerable<IFormatOption> Options { get; set; }
-    }
+       //note that we could easily define other properties that
+       //do not appear in the interface
+   }
+
+   class LetterMetadata
+   {
+       public string Name { get; set; }
+
+       public IEnumerable<IFormatOption> Options { get; set; }
+   }
 
 Ok, so this is just a little bit more complicated. There are two changes to pay attention to\: Firstly, the FormatLetter function now takes a list of FormatOptionValues. The second change is what enables the caller of FormatLetter to know which options to pass in. The LetterFormatterAttribute now scans the type in order to construct its metadata dictionary by looking for attributes that describe what options it needs. I feel like the usage of this is best illustrated by decorating our PersonalLetterFormatter for it to have some metadata describing the options that it requires\:
 
-.. code-block:: c#
+.. code-block:: {lang}
 
-    [LetterFormatter("Personal")]
-    [StringOption(ToOptionName, "Name of the individual to address the letter to")]
-    class PersonalLetterFormatter : ILetterFormatter
-    {
-        const string ToOptionName = "To";
 
-        public string FormatLetter(string content, IEnumerable<FormatOptionValue> options)
-        {
-            var toName = options.Where(o => o.Name == ToOptionName).Select(o => o.Value).FirstOrDefault() as string;
-            if (toName == null)
-                throw new ArgumentException("The " + ToOptionName + " string option is required");
 
-            return "Dear " + toName + ",nn" + content;
-        }
-    }
+   [LetterFormatter("Personal")]
+   [StringOption(ToOptionName, "Name of the individual to address the letter to")]
+   class PersonalLetterFormatter : ILetterFormatter
+   {
+       const string ToOptionName = "To";
+
+       public string FormatLetter(string content, IEnumerable<FormatOptionValue> options)
+       {
+           var toName = options.Where(o => o.Name == ToOptionName).Select(o => o.Value).FirstOrDefault() as string;
+           if (toName == null)
+               throw new ArgumentException("The " + ToOptionName + " string option is required");
+
+           return "Dear " + toName + ",nn" + content;
+       }
+   }
 
 When the metadata for the PersonalLetterFormatter is resolved, it will contain an IFormatOption which represents the To option. The resolver can attempt to cast the IFormatOption to a StringOption to find out what type it should pass in using the FormatOptionValue.
 

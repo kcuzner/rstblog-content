@@ -260,36 +260,38 @@ Ok, so we need to write a program for this microcontroller. We are going to simp
 
 Here is my super-simple main program that does all of the above\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * STM32F103C8 Blink Demonstration
-     *
-     * Kevin Cuzner
-     */
 
-    #include "stm32f1xx.h"
 
-    int main(void)
-    {
-        //Step 1: Enable the clock to PORT B
-        RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+   /**
+    * STM32F103C8 Blink Demonstration
+    *
+    * Kevin Cuzner
+    */
 
-        //Step 2: Change PB0's mode to 0x3 (output) and cfg to 0x0 (push-pull)
-        GPIOB->CRL = GPIO_CRL_MODE0_0 | GPIO_CRL_MODE0_1;
+   #include "stm32f1xx.h"
 
-        while (1)
-        {
-            //Step 3: Set PB0 high
-            GPIOB->BSRR = GPIO_BSRR_BS0;
-            for (uint16_t i = 0; i != 0xffff; i++) { }
-            //Step 4: Reset PB0 low
-            GPIOB->BSRR = GPIO_BSRR_BR0;
-            for (uint16_t i = 0; i != 0xffff; i++) { }
-        }
+   int main(void)
+   {
+       //Step 1: Enable the clock to PORT B
+       RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
 
-        return 0;
-    }
+       //Step 2: Change PB0's mode to 0x3 (output) and cfg to 0x0 (push-pull)
+       GPIOB->CRL = GPIO_CRL_MODE0_0 | GPIO_CRL_MODE0_1;
+
+       while (1)
+       {
+           //Step 3: Set PB0 high
+           GPIOB->BSRR = GPIO_BSRR_BS0;
+           for (uint16_t i = 0; i != 0xffff; i++) { }
+           //Step 4: Reset PB0 low
+           GPIOB->BSRR = GPIO_BSRR_BR0;
+           for (uint16_t i = 0; i != 0xffff; i++) { }
+       }
+
+       return 0;
+   }
 
 
 If we turn to our trusty family reference manual, we will see that the clock gating functionality is located in the Reset and Clock Control (RCC) module (section 7 of the manual). The gates to the various peripherals are sorted by the exact data bus they are connected to and have appropriately named registers. The PORTB module is located on the APB2 bus, and so we use the RCC->APB2ENR to turn on the clock for port B (section 7.3.7 of the manual).
@@ -302,109 +304,111 @@ It's not a complicated program. Half the battle is knowing where all the pieces 
 
 So, the next step is to compile the program. See the `makefile <https://github.com/kcuzner/stm32f103c8-blink/blob/master/Makefile>`_ in the repository. Basically what we are going to do is first compile the main source file, the assembly file we pulled in from the STM32Cube library, and the C file we pulled in from the STM32Cube library. We will then link them using the linker script from the STM32Cube and then dump the output into a binary file.
 
-.. code-block:: default
-
-    # Makefile for the STM32F103C8 blink program
-    #
-    # Kevin Cuzner
-    #
-
-    PROJECT = blink
-
-    # Project Structure
-    SRCDIR = src
-    COMDIR = common
-    BINDIR = bin
-    OBJDIR = obj
-    INCDIR = include
-
-    # Project target
-    CPU = cortex-m3
-
-    # Sources
-    SRC = $(wildcard $(SRCDIR)/*.c) $(wildcard $(COMDIR)/*.c)
-    ASM = $(wildcard $(SRCDIR)/*.s) $(wildcard $(COMDIR)/*.s)
-
-    # Include directories
-    INCLUDE  = -I$(INCDIR) -Icmsis
-
-    # Linker 
-    LSCRIPT = STM32F103X8_FLASH.ld
-
-    # C Flags
-    GCFLAGS  = -Wall -fno-common -mthumb -mcpu=$(CPU) -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=$(addprefix $(OBJDIR)/,$(notdir $(<:.c=.lst)))
-    GCFLAGS += $(INCLUDE)
-    LDFLAGS += -T$(LSCRIPT) -mthumb -mcpu=$(CPU) --specs=nosys.specs 
-    ASFLAGS += -mcpu=$(CPU)
-
-    # Flashing
-    OCDFLAGS = -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
-    		   -f /usr/share/openocd/scripts/target/stm32f1x.cfg \
-    		   -f openocd.cfg
-
-    # Tools
-    CC = arm-none-eabi-gcc
-    AS = arm-none-eabi-as
-    AR = arm-none-eabi-ar
-    LD = arm-none-eabi-ld
-    OBJCOPY = arm-none-eabi-objcopy
-    SIZE = arm-none-eabi-size
-    OBJDUMP = arm-none-eabi-objdump
-    OCD = openocd
-
-    RM = rm -rf
-
-    ## Build process
-
-    OBJ := $(addprefix $(OBJDIR)/,$(notdir $(SRC:.c=.o)))
-    OBJ += $(addprefix $(OBJDIR)/,$(notdir $(ASM:.s=.o)))
+::
 
 
-    all:: $(BINDIR)/$(PROJECT).bin
 
-    Build: $(BINDIR)/$(PROJECT).bin
+   # Makefile for the STM32F103C8 blink program
+   #
+   # Kevin Cuzner
+   #
 
-    install: $(BINDIR)/$(PROJECT).bin
-    	$(OCD) $(OCDFLAGS)
+   PROJECT = blink
 
-    $(BINDIR)/$(PROJECT).hex: $(BINDIR)/$(PROJECT).elf
-    	$(OBJCOPY) -R .stack -O ihex $(BINDIR)/$(PROJECT).elf $(BINDIR)/$(PROJECT).hex
+   # Project Structure
+   SRCDIR = src
+   COMDIR = common
+   BINDIR = bin
+   OBJDIR = obj
+   INCDIR = include
 
-    $(BINDIR)/$(PROJECT).bin: $(BINDIR)/$(PROJECT).elf
-    	$(OBJCOPY) -R .stack -O binary $(BINDIR)/$(PROJECT).elf $(BINDIR)/$(PROJECT).bin
+   # Project target
+   CPU = cortex-m3
 
-    $(BINDIR)/$(PROJECT).elf: $(OBJ)
-    	@mkdir -p $(dir $@)
-    	$(CC) $(OBJ) $(LDFLAGS) -o $(BINDIR)/$(PROJECT).elf
-    	$(OBJDUMP) -D $(BINDIR)/$(PROJECT).elf > $(BINDIR)/$(PROJECT).lst
-    	$(SIZE) $(BINDIR)/$(PROJECT).elf
+   # Sources
+   SRC = $(wildcard $(SRCDIR)/*.c) $(wildcard $(COMDIR)/*.c)
+   ASM = $(wildcard $(SRCDIR)/*.s) $(wildcard $(COMDIR)/*.s)
 
-    macros:
-    	$(CC) $(GCFLAGS) -dM -E - < /dev/null
+   # Include directories
+   INCLUDE  = -I$(INCDIR) -Icmsis
 
-    cleanBuild: clean
+   # Linker 
+   LSCRIPT = STM32F103X8_FLASH.ld
 
-    clean:
-    	$(RM) $(BINDIR)
-    	$(RM) $(OBJDIR)
+   # C Flags
+   GCFLAGS  = -Wall -fno-common -mthumb -mcpu=$(CPU) -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=$(addprefix $(OBJDIR)/,$(notdir $(<:.c=.lst)))
+   GCFLAGS += $(INCLUDE)
+   LDFLAGS += -T$(LSCRIPT) -mthumb -mcpu=$(CPU) --specs=nosys.specs 
+   ASFLAGS += -mcpu=$(CPU)
 
-    # Compilation
-    $(OBJDIR)/%.o: $(SRCDIR)/%.c
-    	@mkdir -p $(dir $@)
-    	$(CC) $(GCFLAGS) -c $< -o $@
+   # Flashing
+   OCDFLAGS = -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
+   		   -f /usr/share/openocd/scripts/target/stm32f1x.cfg \
+   		   -f openocd.cfg
 
-    $(OBJDIR)/%.o: $(SRCDIR)/%.s
-    	@mkdir -p $(dir $@)
-    	$(AS) $(ASFLAGS) -o $@ $<
+   # Tools
+   CC = arm-none-eabi-gcc
+   AS = arm-none-eabi-as
+   AR = arm-none-eabi-ar
+   LD = arm-none-eabi-ld
+   OBJCOPY = arm-none-eabi-objcopy
+   SIZE = arm-none-eabi-size
+   OBJDUMP = arm-none-eabi-objdump
+   OCD = openocd
+
+   RM = rm -rf
+
+   ## Build process
+
+   OBJ := $(addprefix $(OBJDIR)/,$(notdir $(SRC:.c=.o)))
+   OBJ += $(addprefix $(OBJDIR)/,$(notdir $(ASM:.s=.o)))
 
 
-    $(OBJDIR)/%.o: $(COMDIR)/%.c
-    	@mkdir -p $(dir $@)
-    	$(CC) $(GCFLAGS) -c $< -o $@
+   all:: $(BINDIR)/$(PROJECT).bin
 
-    $(OBJDIR)/%.o: $(COMDIR)/%.s
-    	@mkdir -p $(dir $@)
-    	$(AS) $(ASFLAGS) -o $@ $<
+   Build: $(BINDIR)/$(PROJECT).bin
+
+   install: $(BINDIR)/$(PROJECT).bin
+   	$(OCD) $(OCDFLAGS)
+
+   $(BINDIR)/$(PROJECT).hex: $(BINDIR)/$(PROJECT).elf
+   	$(OBJCOPY) -R .stack -O ihex $(BINDIR)/$(PROJECT).elf $(BINDIR)/$(PROJECT).hex
+
+   $(BINDIR)/$(PROJECT).bin: $(BINDIR)/$(PROJECT).elf
+   	$(OBJCOPY) -R .stack -O binary $(BINDIR)/$(PROJECT).elf $(BINDIR)/$(PROJECT).bin
+
+   $(BINDIR)/$(PROJECT).elf: $(OBJ)
+   	@mkdir -p $(dir $@)
+   	$(CC) $(OBJ) $(LDFLAGS) -o $(BINDIR)/$(PROJECT).elf
+   	$(OBJDUMP) -D $(BINDIR)/$(PROJECT).elf > $(BINDIR)/$(PROJECT).lst
+   	$(SIZE) $(BINDIR)/$(PROJECT).elf
+
+   macros:
+   	$(CC) $(GCFLAGS) -dM -E - < /dev/null
+
+   cleanBuild: clean
+
+   clean:
+   	$(RM) $(BINDIR)
+   	$(RM) $(OBJDIR)
+
+   # Compilation
+   $(OBJDIR)/%.o: $(SRCDIR)/%.c
+   	@mkdir -p $(dir $@)
+   	$(CC) $(GCFLAGS) -c $< -o $@
+
+   $(OBJDIR)/%.o: $(SRCDIR)/%.s
+   	@mkdir -p $(dir $@)
+   	$(AS) $(ASFLAGS) -o $@ $<
+
+
+   $(OBJDIR)/%.o: $(COMDIR)/%.c
+   	@mkdir -p $(dir $@)
+   	$(CC) $(GCFLAGS) -c $< -o $@
+
+   $(OBJDIR)/%.o: $(COMDIR)/%.s
+   	@mkdir -p $(dir $@)
+   	$(AS) $(ASFLAGS) -o $@ $<
 
 
 The result of this makefile is that it will create a file called "bin/blink.bin" which contains our compiled program. We can then flash this to our microcontroller using openocd.
@@ -416,72 +420,78 @@ Source for this step\: `https\://github.com/rogerclarkmelbourne/Arduino_STM32/w
 
 This is the very last step. We get to do some openocd configuration. Firstly, we need to write a small configuration script that will tell openocd how to flash our program. Here it is\:
 
-.. code-block:: default
+::
 
-    # Configuration for flashing the blink program
-    init
-    reset halt
-    flash write_image erase bin/blink.bin 0x08000000
-    reset run
-    shutdown
+
+
+   # Configuration for flashing the blink program
+   init
+   reset halt
+   flash write_image erase bin/blink.bin 0x08000000
+   reset run
+   shutdown
 
 
 Firstly, we init and halt the processor (reset halt). When the processor is first powered up, it is going to be running whatever program was previously flashed onto the microcontroller. We want to stop this execution before we overwrite the flash. Next we execute "flash write_image erase" which will first erase the flash memory (if needed) and then write our program to it. After writing the program, we then tell the processor to execute the program we just flashed (reset run) and we shutdown openocd.
 
 Now, openocd requires knowledge of a few things. It first needs to know what programmer to use. Next, it needs to know what device is attached to the programmer. Both of these requirements must be satisfied before we can run our script above. We know that we have an stlinkv2 for a programmer and an stm32f1xx attached on the other end. It turns out that openocd actually comes with configuration files for these. On my installation these are located at "/usr/share/openocd/scripts/interface/stlink-v2.cfg" and "/usr/share/openocd/scripts/target/stm32f1x.cfg", respectively. We can execute all three files (stlink, stm32f1, and our flashing routine (which I have named "openocd.cfg")) with openocd as follows\:
 
-.. code-block:: default
+::
 
-    openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
-    		   -f /usr/share/openocd/scripts/target/stm32f1x.cfg \
-    		   -f openocd.cfg
+
+
+   openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
+   		   -f /usr/share/openocd/scripts/target/stm32f1x.cfg \
+   		   -f openocd.cfg
 
 
 So, small sidenote\: If we left off the "shutdown" command, openocd would actually continue running in "daemon" mode, listening for connections to it. If you wanted to use gdb to interact with the program running on the microcontroller, that is what you would use to do it. You would tell gdb that there is a "remote target" at port 3333 (or something like that). Openocd will be listening at that port and so when gdb starts talking to it and trying to issue debug commands, openocd will translate those through the STLinkV2 and send back the translated responses from the microcontroller. Isn't that sick?
 
 In the makefile earlier, I actually made this the "install" target, so running "sudo make install" will actually flash the microcontroller. Here is my output from that command for your reference\:
 
-.. code-block:: default
+::
 
-    kcuzner@kcuzner-laptop:~/Projects/ARM/stm32f103-blink$ sudo make install
-    arm-none-eabi-gcc -Wall -fno-common -mthumb -mcpu=cortex-m3 -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=obj/system_stm32f1xx.lst -Iinclude -Icmsis -c src/system_stm32f1xx.c -o obj/system_stm32f1xx.o
-    arm-none-eabi-gcc -Wall -fno-common -mthumb -mcpu=cortex-m3 -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=obj/main.lst -Iinclude -Icmsis -c src/main.c -o obj/main.o
-    arm-none-eabi-as -mcpu=cortex-m3 -o obj/startup_stm32f103x6.o src/startup_stm32f103x6.s
-    arm-none-eabi-gcc obj/system_stm32f1xx.o obj/main.o obj/startup_stm32f103x6.o -TSTM32F103X8_FLASH.ld -mthumb -mcpu=cortex-m3 --specs=nosys.specs  -o bin/blink.elf
-    arm-none-eabi-objdump -D bin/blink.elf > bin/blink.lst
-    arm-none-eabi-size bin/blink.elf
-       text	   data	    bss	    dec	    hex	filename
-       1756	   1092	   1564	   4412	   113c	bin/blink.elf
-    arm-none-eabi-objcopy -R .stack -O binary bin/blink.elf bin/blink.bin
-    openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg -f openocd.cfg
-    Open On-Chip Debugger 0.9.0 (2016-04-27-23:18)
-    Licensed under GNU GPL v2
-    For bug reports, read
-    	http://openocd.org/doc/doxygen/bugs.html
-    Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
-    Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
-    adapter speed: 1000 kHz
-    adapter_nsrst_delay: 100
-    none separate
-    Info : Unable to match requested speed 1000 kHz, using 950 kHz
-    Info : Unable to match requested speed 1000 kHz, using 950 kHz
-    Info : clock speed 950 kHz
-    Info : STLINK v2 JTAG v17 API v2 SWIM v4 VID 0x0483 PID 0x3748
-    Info : using stlink api v2
-    Info : Target voltage: 3.335870
-    Info : stm32f1x.cpu: hardware has 6 breakpoints, 4 watchpoints
-    target state: halted
-    target halted due to debug-request, current mode: Thread 
-    xPSR: 0x01000000 pc: 0x08000380 msp: 0x20004ffc
-    auto erase enabled
-    Info : device id = 0x20036410
-    Info : flash size = 64kbytes
-    target state: halted
-    target halted due to breakpoint, current mode: Thread 
-    xPSR: 0x61000000 pc: 0x2000003a msp: 0x20004ffc
-    wrote 3072 bytes from file bin/blink.bin in 0.249272s (12.035 KiB/s)
-    shutdown command invoked
-    kcuzner@kcuzner-laptop:~/Projects/ARM/stm32f103-blink$ 
+
+
+   kcuzner@kcuzner-laptop:~/Projects/ARM/stm32f103-blink$ sudo make install
+   arm-none-eabi-gcc -Wall -fno-common -mthumb -mcpu=cortex-m3 -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=obj/system_stm32f1xx.lst -Iinclude -Icmsis -c src/system_stm32f1xx.c -o obj/system_stm32f1xx.o
+   arm-none-eabi-gcc -Wall -fno-common -mthumb -mcpu=cortex-m3 -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=obj/main.lst -Iinclude -Icmsis -c src/main.c -o obj/main.o
+   arm-none-eabi-as -mcpu=cortex-m3 -o obj/startup_stm32f103x6.o src/startup_stm32f103x6.s
+   arm-none-eabi-gcc obj/system_stm32f1xx.o obj/main.o obj/startup_stm32f103x6.o -TSTM32F103X8_FLASH.ld -mthumb -mcpu=cortex-m3 --specs=nosys.specs  -o bin/blink.elf
+   arm-none-eabi-objdump -D bin/blink.elf > bin/blink.lst
+   arm-none-eabi-size bin/blink.elf
+      text	   data	    bss	    dec	    hex	filename
+      1756	   1092	   1564	   4412	   113c	bin/blink.elf
+   arm-none-eabi-objcopy -R .stack -O binary bin/blink.elf bin/blink.bin
+   openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg -f openocd.cfg
+   Open On-Chip Debugger 0.9.0 (2016-04-27-23:18)
+   Licensed under GNU GPL v2
+   For bug reports, read
+   	http://openocd.org/doc/doxygen/bugs.html
+   Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+   Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+   adapter speed: 1000 kHz
+   adapter_nsrst_delay: 100
+   none separate
+   Info : Unable to match requested speed 1000 kHz, using 950 kHz
+   Info : Unable to match requested speed 1000 kHz, using 950 kHz
+   Info : clock speed 950 kHz
+   Info : STLINK v2 JTAG v17 API v2 SWIM v4 VID 0x0483 PID 0x3748
+   Info : using stlink api v2
+   Info : Target voltage: 3.335870
+   Info : stm32f1x.cpu: hardware has 6 breakpoints, 4 watchpoints
+   target state: halted
+   target halted due to debug-request, current mode: Thread 
+   xPSR: 0x01000000 pc: 0x08000380 msp: 0x20004ffc
+   auto erase enabled
+   Info : device id = 0x20036410
+   Info : flash size = 64kbytes
+   target state: halted
+   target halted due to breakpoint, current mode: Thread 
+   xPSR: 0x61000000 pc: 0x2000003a msp: 0x20004ffc
+   wrote 3072 bytes from file bin/blink.bin in 0.249272s (12.035 KiB/s)
+   shutdown command invoked
+   kcuzner@kcuzner-laptop:~/Projects/ARM/stm32f103-blink$ 
 
 
 After doing that I saw the following awesomeness\:

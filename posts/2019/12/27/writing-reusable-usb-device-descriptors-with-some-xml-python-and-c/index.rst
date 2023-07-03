@@ -6,263 +6,267 @@ A recent project required me to reuse (once again) my USB HID device driver. Thi
 In this post I will present a script that turns this madness, which lives in a separate file\:
 
 
-.. code-block:: default
+::
 
-    /**
-     * Device descriptor
-     */
-    static const USB_DATA_ALIGN uint8_t dev_descriptor[] = {
-        18, //bLength
-        1, //bDescriptorType
-        0x00, 0x02, //bcdUSB
-        0x00, //bDeviceClass (defined by interfaces)
-        0x00, //bDeviceSubClass
-        0x00, //bDeviceProtocl
-        USB_CONTROL_ENDPOINT_SIZE, //bMaxPacketSize0
-        0xc0, 0x16, //idVendor
-        0xdc, 0x05, //idProduct
-        0x11, 0x00, //bcdDevice
-        1, //iManufacturer
-        2, //iProduct
-        0, //iSerialNumber,
-        1, //bNumConfigurations
-    };
 
-    static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
-        HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
-        HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
-        HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
-        HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
-        HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
-        HID_SHORT(0x94, 64), //  REPORT_COUNT(64)
-        HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
-        HID_SHORT(0xc0),       //END_COLLECTION
-    };
 
-    /**
-     * Configuration descriptor
-     */
-    static const USB_DATA_ALIGN uint8_t cfg_descriptor[] = {
-        9, //bLength
-        2, //bDescriptorType
-        9 + 9 + 9 + 7 + 7, 0x00, //wTotalLength
-        1, //bNumInterfaces
-        1, //bConfigurationValue
-        0, //iConfiguration
-        0x80, //bmAttributes
-        250, //bMaxPower
-        /* INTERFACE 0 BEGIN */
-        9, //bLength
-        4, //bDescriptorType
-        0, //bInterfaceNumber
-        0, //bAlternateSetting
-        2, //bNumEndpoints
-        0x03, //bInterfaceClass (HID)
-        0x00, //bInterfaceSubClass (0: no boot)
-        0x00, //bInterfaceProtocol (0: none)
-        0, //iInterface
-            /* HID Descriptor */
-            9, //bLength
-            0x21, //bDescriptorType (HID)
-            0x11, 0x01, //bcdHID
-            0x00, //bCountryCode
-            1, //bNumDescriptors
-            0x22, //bDescriptorType (Report)
-            sizeof(hid_report_descriptor), 0x00,
-            /* INTERFACE 0, ENDPOINT 1 BEGIN */
-            7, //bLength
-            5, //bDescriptorType
-            0x81, //bEndpointAddress (endpoint 1 IN)
-            0x03, //bmAttributes, interrupt endpoint
-            USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize,
-            10, //bInterval (10 frames)
-            /* INTERFACE 0, ENDPOINT 1 END */
-            /* INTERFACE 0, ENDPOINT 2 BEGIN */
-            7, //bLength
-            5, //bDescriptorType
-            0x02, //bEndpointAddress (endpoint 2 OUT)
-            0x03, //bmAttributes, interrupt endpoint
-            USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize
-            10, //bInterval (10 frames)
-            /* INTERFACE 0, ENDPOINT 2 END */
-        /* INTERFACE 0 END */
-    };
+   /**
+    * Device descriptor
+    */
+   static const USB_DATA_ALIGN uint8_t dev_descriptor[] = {
+       18, //bLength
+       1, //bDescriptorType
+       0x00, 0x02, //bcdUSB
+       0x00, //bDeviceClass (defined by interfaces)
+       0x00, //bDeviceSubClass
+       0x00, //bDeviceProtocl
+       USB_CONTROL_ENDPOINT_SIZE, //bMaxPacketSize0
+       0xc0, 0x16, //idVendor
+       0xdc, 0x05, //idProduct
+       0x11, 0x00, //bcdDevice
+       1, //iManufacturer
+       2, //iProduct
+       0, //iSerialNumber,
+       1, //bNumConfigurations
+   };
 
-    static const USB_DATA_ALIGN uint8_t lang_descriptor[] = {
-        4, //bLength
-        3, //bDescriptorType
-        0x09, 0x04 //wLANGID[0]
-    };
+   static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
+       HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
+       HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
+       HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
+       HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
+       HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
+       HID_SHORT(0x94, 64), //  REPORT_COUNT(64)
+       HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
+       HID_SHORT(0xc0),       //END_COLLECTION
+   };
 
-    static const USB_DATA_ALIGN uint8_t manuf_descriptor[] = {
-        2 + 15 * 2, //bLength
-        3, //bDescriptorType
-        'k', 0x00, //wString
-        'e', 0x00,
-        'v', 0x00,
-        'i', 0x00,
-        'n', 0x00,
-        'c', 0x00,
-        'u', 0x00,
-        'z', 0x00,
-        'n', 0x00,
-        'e', 0x00,
-        'r', 0x00,
-        '.', 0x00,
-        'c', 0x00,
-        'o', 0x00,
-        'm', 0x00
-    };
+   /**
+    * Configuration descriptor
+    */
+   static const USB_DATA_ALIGN uint8_t cfg_descriptor[] = {
+       9, //bLength
+       2, //bDescriptorType
+       9 + 9 + 9 + 7 + 7, 0x00, //wTotalLength
+       1, //bNumInterfaces
+       1, //bConfigurationValue
+       0, //iConfiguration
+       0x80, //bmAttributes
+       250, //bMaxPower
+       /* INTERFACE 0 BEGIN */
+       9, //bLength
+       4, //bDescriptorType
+       0, //bInterfaceNumber
+       0, //bAlternateSetting
+       2, //bNumEndpoints
+       0x03, //bInterfaceClass (HID)
+       0x00, //bInterfaceSubClass (0: no boot)
+       0x00, //bInterfaceProtocol (0: none)
+       0, //iInterface
+           /* HID Descriptor */
+           9, //bLength
+           0x21, //bDescriptorType (HID)
+           0x11, 0x01, //bcdHID
+           0x00, //bCountryCode
+           1, //bNumDescriptors
+           0x22, //bDescriptorType (Report)
+           sizeof(hid_report_descriptor), 0x00,
+           /* INTERFACE 0, ENDPOINT 1 BEGIN */
+           7, //bLength
+           5, //bDescriptorType
+           0x81, //bEndpointAddress (endpoint 1 IN)
+           0x03, //bmAttributes, interrupt endpoint
+           USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize,
+           10, //bInterval (10 frames)
+           /* INTERFACE 0, ENDPOINT 1 END */
+           /* INTERFACE 0, ENDPOINT 2 BEGIN */
+           7, //bLength
+           5, //bDescriptorType
+           0x02, //bEndpointAddress (endpoint 2 OUT)
+           0x03, //bmAttributes, interrupt endpoint
+           USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize
+           10, //bInterval (10 frames)
+           /* INTERFACE 0, ENDPOINT 2 END */
+       /* INTERFACE 0 END */
+   };
 
-    static const USB_DATA_ALIGN uint8_t product_descriptor[] = {
-        2 + 14 * 2, //bLength
-        3, //bDescriptorType
-        'L', 0x00,
-        'E', 0x00,
-        'D', 0x00,
-        ' ', 0x00,
-        'W', 0x00,
-        'r', 0x00,
-        'i', 0x00,
-        's', 0x00,
-        't', 0x00,
-        'w', 0x00,
-        'a', 0x00,
-        't', 0x00,
-        'c', 0x00,
-        'h', 0x00
-    };
+   static const USB_DATA_ALIGN uint8_t lang_descriptor[] = {
+       4, //bLength
+       3, //bDescriptorType
+       0x09, 0x04 //wLANGID[0]
+   };
 
-    const USBDescriptorEntry usb_descriptors[] = {
-        { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
-        { 0x0200, 0x0000, sizeof(cfg_descriptor), cfg_descriptor },
-        { 0x0300, 0x0000, sizeof(lang_descriptor), lang_descriptor },
-        { 0x0301, 0x0409, sizeof(manuf_descriptor), manuf_descriptor },
-        { 0x0302, 0x0409, sizeof(product_descriptor), product_descriptor },
-        { 0x2200, 0x0000, sizeof(hid_report_descriptor), hid_report_descriptor },
-        { 0x0000, 0x0000, 0x00, NULL }
-    };
+   static const USB_DATA_ALIGN uint8_t manuf_descriptor[] = {
+       2 + 15 * 2, //bLength
+       3, //bDescriptorType
+       'k', 0x00, //wString
+       'e', 0x00,
+       'v', 0x00,
+       'i', 0x00,
+       'n', 0x00,
+       'c', 0x00,
+       'u', 0x00,
+       'z', 0x00,
+       'n', 0x00,
+       'e', 0x00,
+       'r', 0x00,
+       '.', 0x00,
+       'c', 0x00,
+       'o', 0x00,
+       'm', 0x00
+   };
+
+   static const USB_DATA_ALIGN uint8_t product_descriptor[] = {
+       2 + 14 * 2, //bLength
+       3, //bDescriptorType
+       'L', 0x00,
+       'E', 0x00,
+       'D', 0x00,
+       ' ', 0x00,
+       'W', 0x00,
+       'r', 0x00,
+       'i', 0x00,
+       's', 0x00,
+       't', 0x00,
+       'w', 0x00,
+       'a', 0x00,
+       't', 0x00,
+       'c', 0x00,
+       'h', 0x00
+   };
+
+   const USBDescriptorEntry usb_descriptors[] = {
+       { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
+       { 0x0200, 0x0000, sizeof(cfg_descriptor), cfg_descriptor },
+       { 0x0300, 0x0000, sizeof(lang_descriptor), lang_descriptor },
+       { 0x0301, 0x0409, sizeof(manuf_descriptor), manuf_descriptor },
+       { 0x0302, 0x0409, sizeof(product_descriptor), product_descriptor },
+       { 0x2200, 0x0000, sizeof(hid_report_descriptor), hid_report_descriptor },
+       { 0x0000, 0x0000, 0x00, NULL }
+   };
 
 
 Into these comment blocks which can live anywhere in the source and are somewhat more readable\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * <descriptor id="device" type="0x01">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <word name="bcdUSB">0x0200</word>
-     *  <byte name="bDeviceClass">0</byte>
-     *  <byte name="bDeviceSubClass">0</byte>
-     *  <byte name="bDeviceProtocol">0</byte>
-     *  <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
-     *  <word name="idVendor">0x16c0</word>
-     *  <word name="idProduct">0x05dc</word>
-     *  <word name="bcdDevice">0x0010</word>
-     *  <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
-     *  <ref name="iProduct" type="0x03" refid="product" size="1" />
-     *  <byte name="iSerialNumber">0</byte>
-     *  <count name="bNumConfigurations" type="0x02" size="1" />
-     * </descriptor>
-     * <descriptor id="lang" type="0x03" first="first">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <foreach type="0x03" unique="unique">
-     *    <echo name="wLang" />
-     *  </foreach>
-     * </descriptor>
-     * <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
-     *  <property name="wLang" size="2">0x0409</property>
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <string name="wString">kevincuzner.com</string>
-     * </descriptor>
-     * <descriptor id="product" type="0x03" wIndex="0x0409">
-     *  <property name="wLang" size="2">0x0409</property>
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <string name="wString">LED Wristwatch</string>
-     * </descriptor>
-     * <descriptor id="configuration" type="0x02">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <length name="wTotalLength" size="2" all="all" />
-     *  <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
-     *  <byte name="bConfigurationValue">1</byte>
-     *  <byte name="iConfiguration">0</byte>
-     *  <byte name="bmAttributes">0x80</byte>
-     *  <byte name="bMaxPower">250</byte>
-     *  <children type="0x04" />
-     * </descriptor>
-     */
 
-    /**
-     * <include>usb_hid.h</include>
-     * <descriptor id="hid_interface" type="0x04" childof="configuration">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <index name="bInterfaceNumber" size="1" />
-     *  <byte name="bAlternateSetting">0</byte>
-     *  <count name="bNumEndpoints" type="0x05" associated="associated" size="1" />
-     *  <byte name="bInterfaceClass">0x03</byte>
-     *  <byte name="bInterfaceSubClass">0x00</byte>
-     *  <byte name="bInterfaceProtocol">0x00</byte>
-     *  <byte name="iInterface">0</byte>
-     *  <children type="0x21" />
-     *  <children type="0x05" />
-     * </descriptor>
-     * <descriptor id="hid" type="0x21" childof="hid_interface">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <word name="bcdHID">0x0111</word>
-     *  <byte name="bCountryCode">0x00</byte>
-     *  <count name="bNumDescriptors" type="0x22" size="1" associated="associated" />
-     *  <foreach type="0x22" associated="associated">
-     *    <echo name="bDescriptorType" />
-     *    <echo name="wLength" />
-     *  </foreach>
-     * </descriptor>
-     * <descriptor id="hid_in_endpoint" type="0x05" childof="hid_interface">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <inendpoint name="bEndpointAddress" define="HID_IN_ENDPOINT" />
-     *  <byte name="bmAttributes">0x03</byte>
-     *  <word name="wMaxPacketSize">USB_HID_ENDPOINT_SIZE</word>
-     *  <byte name="bInterval">10</byte>
-     * </descriptor>
-     * <descriptor id="hid_out_endpoint" type="0x05" childof="hid_interface">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <outendpoint name="bEndpointAddress" define="HID_OUT_ENDPOINT" />
-     *  <byte name="bmAttributes">0x03</byte>
-     *  <word name="wMaxPacketSize">USB_HID_ENDPOINT_SIZE</word>
-     *  <byte name="bInterval">10</byte>
-     * </descriptor>
-     * <descriptor id="hid_report" childof="hid" top="top" type="0x22" order="1" wIndexType="0x04">
-     *  <hidden name="bDescriptorType" size="1">0x22</hidden>
-     *  <hidden name="wLength" size="2">sizeof(hid_report)</hidden>
-     *  <raw>
-     *  HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
-     *  HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
-     *  HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
-     *  HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-     *  HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
-     *  HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
-     *  HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
-     *  HID_SHORT(0x94, 64), //  REPORT_COUNT(64)
-     *  HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
-     *  HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-     *  HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
-     *  HID_SHORT(0xc0),       //END_COLLECTION
-     *  </raw>
-     * </descriptor>
-     */
+
+   /**
+    * <descriptor id="device" type="0x01">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <word name="bcdUSB">0x0200</word>
+    *  <byte name="bDeviceClass">0</byte>
+    *  <byte name="bDeviceSubClass">0</byte>
+    *  <byte name="bDeviceProtocol">0</byte>
+    *  <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
+    *  <word name="idVendor">0x16c0</word>
+    *  <word name="idProduct">0x05dc</word>
+    *  <word name="bcdDevice">0x0010</word>
+    *  <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
+    *  <ref name="iProduct" type="0x03" refid="product" size="1" />
+    *  <byte name="iSerialNumber">0</byte>
+    *  <count name="bNumConfigurations" type="0x02" size="1" />
+    * </descriptor>
+    * <descriptor id="lang" type="0x03" first="first">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <foreach type="0x03" unique="unique">
+    *    <echo name="wLang" />
+    *  </foreach>
+    * </descriptor>
+    * <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
+    *  <property name="wLang" size="2">0x0409</property>
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <string name="wString">kevincuzner.com</string>
+    * </descriptor>
+    * <descriptor id="product" type="0x03" wIndex="0x0409">
+    *  <property name="wLang" size="2">0x0409</property>
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <string name="wString">LED Wristwatch</string>
+    * </descriptor>
+    * <descriptor id="configuration" type="0x02">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <length name="wTotalLength" size="2" all="all" />
+    *  <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
+    *  <byte name="bConfigurationValue">1</byte>
+    *  <byte name="iConfiguration">0</byte>
+    *  <byte name="bmAttributes">0x80</byte>
+    *  <byte name="bMaxPower">250</byte>
+    *  <children type="0x04" />
+    * </descriptor>
+    */
+
+   /**
+    * <include>usb_hid.h</include>
+    * <descriptor id="hid_interface" type="0x04" childof="configuration">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <index name="bInterfaceNumber" size="1" />
+    *  <byte name="bAlternateSetting">0</byte>
+    *  <count name="bNumEndpoints" type="0x05" associated="associated" size="1" />
+    *  <byte name="bInterfaceClass">0x03</byte>
+    *  <byte name="bInterfaceSubClass">0x00</byte>
+    *  <byte name="bInterfaceProtocol">0x00</byte>
+    *  <byte name="iInterface">0</byte>
+    *  <children type="0x21" />
+    *  <children type="0x05" />
+    * </descriptor>
+    * <descriptor id="hid" type="0x21" childof="hid_interface">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <word name="bcdHID">0x0111</word>
+    *  <byte name="bCountryCode">0x00</byte>
+    *  <count name="bNumDescriptors" type="0x22" size="1" associated="associated" />
+    *  <foreach type="0x22" associated="associated">
+    *    <echo name="bDescriptorType" />
+    *    <echo name="wLength" />
+    *  </foreach>
+    * </descriptor>
+    * <descriptor id="hid_in_endpoint" type="0x05" childof="hid_interface">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <inendpoint name="bEndpointAddress" define="HID_IN_ENDPOINT" />
+    *  <byte name="bmAttributes">0x03</byte>
+    *  <word name="wMaxPacketSize">USB_HID_ENDPOINT_SIZE</word>
+    *  <byte name="bInterval">10</byte>
+    * </descriptor>
+    * <descriptor id="hid_out_endpoint" type="0x05" childof="hid_interface">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <outendpoint name="bEndpointAddress" define="HID_OUT_ENDPOINT" />
+    *  <byte name="bmAttributes">0x03</byte>
+    *  <word name="wMaxPacketSize">USB_HID_ENDPOINT_SIZE</word>
+    *  <byte name="bInterval">10</byte>
+    * </descriptor>
+    * <descriptor id="hid_report" childof="hid" top="top" type="0x22" order="1" wIndexType="0x04">
+    *  <hidden name="bDescriptorType" size="1">0x22</hidden>
+    *  <hidden name="wLength" size="2">sizeof(hid_report)</hidden>
+    *  <raw>
+    *  HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
+    *  HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
+    *  HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
+    *  HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+    *  HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
+    *  HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
+    *  HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
+    *  HID_SHORT(0x94, 64), //  REPORT_COUNT(64)
+    *  HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
+    *  HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+    *  HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
+    *  HID_SHORT(0xc0),       //END_COLLECTION
+    *  </raw>
+    * </descriptor>
+    */
 
 
 
@@ -370,105 +374,107 @@ The way my script works, block comments in any source file can contain XML which
 For example, here is the "main.c" file of my `midi-fader device <https://github.com/kcuzner/midi-fader>`_\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * USB Midi-Fader
-     *
-     * Kevin Cuzner
-     *
-     * Main Application
-     */
 
-    #include "usb.h"
-    #include "usb_app.h"
-    #include "usb_hid.h"
-    #include "usb_midi.h"
-    #include "osc.h"
-    #include "error.h"
-    #include "storage.h"
-    #include "fader.h"
-    #include "buttons.h"
-    #include "systick.h"
-    #include "mackie.h"
 
-    #include "stm32f0xx.h"
+   /**
+    * USB Midi-Fader
+    *
+    * Kevin Cuzner
+    *
+    * Main Application
+    */
 
-    #include "_gen_usb_desc.h"
+   #include "usb.h"
+   #include "usb_app.h"
+   #include "usb_hid.h"
+   #include "usb_midi.h"
+   #include "osc.h"
+   #include "error.h"
+   #include "storage.h"
+   #include "fader.h"
+   #include "buttons.h"
+   #include "systick.h"
+   #include "mackie.h"
 
-    /**
-     * <descriptor id="device" type="0x01">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <word name="bcdUSB">0x0200</word>
-     *  <byte name="bDeviceClass">0</byte>
-     *  <byte name="bDeviceSubClass">0</byte>
-     *  <byte name="bDeviceProtocol">0</byte>
-     *  <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
-     *  <word name="idVendor">0x16c0</word>
-     *  <word name="idProduct">0x05dc</word>
-     *  <word name="bcdDevice">0x0010</word>
-     *  <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
-     *  <ref name="iProduct" type="0x03" refid="product" size="1" />
-     *  <byte name="iSerialNumber">0</byte>
-     *  <count name="bNumConfigurations" type="0x02" size="1" />
-     * </descriptor>
-     * <descriptor id="lang" type="0x03" first="first">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <foreach type="0x03" unique="unique">
-     *    <echo name="wLang" />
-     *  </foreach>
-     * </descriptor>
-     * <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
-     *  <property name="wLang" size="2">0x0409</property>
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <string name="wString">kevincuzner.com</string>
-     * </descriptor>
-     * <descriptor id="product" type="0x03" wIndex="0x0409">
-     *  <property name="wLang" size="2">0x0409</property>
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <string name="wString">Midi-Fader</string>
-     * </descriptor>
-     * <descriptor id="configuration" type="0x02">
-     *  <length name="bLength" size="1" />
-     *  <type name="bDescriptorType" size="1" />
-     *  <length name="wTotalLength" size="2" all="all" />
-     *  <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
-     *  <byte name="bConfigurationValue">1</byte>
-     *  <byte name="iConfiguration">0</byte>
-     *  <byte name="bmAttributes">0x80</byte>
-     *  <byte name="bMaxPower">250</byte>
-     *  <children type="0x04" />
-     * </descriptor>
-     */
+   #include "stm32f0xx.h"
 
-    #include <stddef.h>
+   #include "_gen_usb_desc.h"
 
-    static const USBInterfaceListNode midi_interface_node = {
-        .interface = &midi_interface,
-        .next = NULL,
-    };
+   /**
+    * <descriptor id="device" type="0x01">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <word name="bcdUSB">0x0200</word>
+    *  <byte name="bDeviceClass">0</byte>
+    *  <byte name="bDeviceSubClass">0</byte>
+    *  <byte name="bDeviceProtocol">0</byte>
+    *  <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
+    *  <word name="idVendor">0x16c0</word>
+    *  <word name="idProduct">0x05dc</word>
+    *  <word name="bcdDevice">0x0010</word>
+    *  <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
+    *  <ref name="iProduct" type="0x03" refid="product" size="1" />
+    *  <byte name="iSerialNumber">0</byte>
+    *  <count name="bNumConfigurations" type="0x02" size="1" />
+    * </descriptor>
+    * <descriptor id="lang" type="0x03" first="first">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <foreach type="0x03" unique="unique">
+    *    <echo name="wLang" />
+    *  </foreach>
+    * </descriptor>
+    * <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
+    *  <property name="wLang" size="2">0x0409</property>
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <string name="wString">kevincuzner.com</string>
+    * </descriptor>
+    * <descriptor id="product" type="0x03" wIndex="0x0409">
+    *  <property name="wLang" size="2">0x0409</property>
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <string name="wString">Midi-Fader</string>
+    * </descriptor>
+    * <descriptor id="configuration" type="0x02">
+    *  <length name="bLength" size="1" />
+    *  <type name="bDescriptorType" size="1" />
+    *  <length name="wTotalLength" size="2" all="all" />
+    *  <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
+    *  <byte name="bConfigurationValue">1</byte>
+    *  <byte name="iConfiguration">0</byte>
+    *  <byte name="bmAttributes">0x80</byte>
+    *  <byte name="bMaxPower">250</byte>
+    *  <children type="0x04" />
+    * </descriptor>
+    */
 
-    static const USBInterfaceListNode hid_interface_node = {
-        .interface = &hid_interface,
-        .next = &midi_interface_node,
-    };
+   #include <stddef.h>
 
-    const USBApplicationSetup setup = {
-        .interface_list = &hid_interface_node,
-    };
+   static const USBInterfaceListNode midi_interface_node = {
+       .interface = &midi_interface,
+       .next = NULL,
+   };
 
-    const USBApplicationSetup *usb_app_setup = &setup;
+   static const USBInterfaceListNode hid_interface_node = {
+       .interface = &hid_interface,
+       .next = &midi_interface_node,
+   };
 
-    uint8_t buf[16];
-    int main()
-    {
-    ...
-        return 0;
-    }
+   const USBApplicationSetup setup = {
+       .interface_list = &hid_interface_node,
+   };
+
+   const USBApplicationSetup *usb_app_setup = &setup;
+
+   uint8_t buf[16];
+   int main()
+   {
+   ...
+       return 0;
+   }
 
 
 It only needs to declare the main device descriptor with the manufacturer and model strings. I have two other interfaces (usb_hid and usb_midi) in this project, but there's no trace of them here except for the bits where I hook them into the overall application. I'll talk a little more about that at the end, but the main point of this post is to show my new method for handling USB descriptors.
@@ -499,76 +505,78 @@ The script consists of a 800-ish line python script (current version\: `https\:/
 The C file that this generates is placed in the obj folder during compilation and treated as a non-source-controlled component. It is regenerated every time the makefile is run. Here is a snippet of how my makefile invokes this script. I hope this makes some sense. My makefile style has changed somewhat for this project enable multiple targets, but hopefully this communicates the gist of how I made the Makefile execute the python script before compiling any other objects.
 
 
-.. code-block:: sh
+.. code-block:: {lang}
 
-    # These are spread out among several files, but are concatenated here for easy
-    # reading
 
-    #
-    # These are declared in a Makefile meant as a header:
-    #
 
-    # Project structure
-    SRCDIRS = src
-    GENSRCDIRS = src
-    BINDIR = bin
-    OBJDIR = obj
-    GENDIR = obj/gen
-    CSRCDIRS = $(SRCDIRS)
-    SSRCDIRS = $(SRCDIRS)
+   # These are spread out among several files, but are concatenated here for easy
+   # reading
 
-    # Sources
-    GENERATE =
-    SRC = $(foreach DIR,$(CSRCDIRS),$(wildcard $(DIR)/*.c))
-    GENSRC = $(foreach DIR,$(GENSRCDIRS),$(wildcard $(DIR)/*.c))
-    STORAGESRC = $(foreach DIR,$(CSRCDIRS),$(wildcard $(DIR)/*.storage.xml))
-    ASM = $(foreach DIR,$(SSRCDIRS),$(wildcard $(DIR)/*.s))
+   #
+   # These are declared in a Makefile meant as a header:
+   #
 
-    #
-    # These are declared in the per-project makefile that configures the build
-    # process:
-    #
+   # Project structure
+   SRCDIRS = src
+   GENSRCDIRS = src
+   BINDIR = bin
+   OBJDIR = obj
+   GENDIR = obj/gen
+   CSRCDIRS = $(SRCDIRS)
+   SSRCDIRS = $(SRCDIRS)
 
-    SRCDIRS = src
-    GENSRCDIRS = src
+   # Sources
+   GENERATE =
+   SRC = $(foreach DIR,$(CSRCDIRS),$(wildcard $(DIR)/*.c))
+   GENSRC = $(foreach DIR,$(GENSRCDIRS),$(wildcard $(DIR)/*.c))
+   STORAGESRC = $(foreach DIR,$(CSRCDIRS),$(wildcard $(DIR)/*.storage.xml))
+   ASM = $(foreach DIR,$(SSRCDIRS),$(wildcard $(DIR)/*.s))
 
-    # This will cause the USB descriptor to be generated
-    GENERATE = USB_DESCRIPTOR
+   #
+   # These are declared in the per-project makefile that configures the build
+   # process:
+   #
 
-    #
-    # These are declared in a Makefile meant as a footer that declares all recipes:
-    #
+   SRCDIRS = src
+   GENSRCDIRS = src
 
-    GENERATE_USB_DESCRIPTOR=USB_DESCRIPTOR
-    GENERATE_USB_DESCRIPTOR_SRC=_gen_usb_desc.c
-    GENERATE_USB_DESCRIPTOR_HDR=_gen_usb_desc.h
+   # This will cause the USB descriptor to be generated
+   GENERATE = USB_DESCRIPTOR
 
-    OBJ := $(addprefix $(OBJDIR)/,$(notdir $(SRC:.c=.o)))
-    OBJ += $(addprefix $(OBJDIR)/,$(notdir $(ASM:.s=.o)))
+   #
+   # These are declared in a Makefile meant as a footer that declares all recipes:
+   #
 
-    # If the USB descriptor generation is requested, add it to the list of targets
-    # which will run during code generation
-    ifneq ($(filter $(GENERATE), $(GENERATE_USB_DESCRIPTOR)),)
-    	GEN_OBJ += $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_SRC:.c=.o)
-    	GEN_TARGETS += $(GENERATE_USB_DESCRIPTOR)
-    endif
+   GENERATE_USB_DESCRIPTOR=USB_DESCRIPTOR
+   GENERATE_USB_DESCRIPTOR_SRC=_gen_usb_desc.c
+   GENERATE_USB_DESCRIPTOR_HDR=_gen_usb_desc.h
 
-    ALL_OBJ := $(OBJ) $(GEN_OBJ)
+   OBJ := $(addprefix $(OBJDIR)/,$(notdir $(SRC:.c=.o)))
+   OBJ += $(addprefix $(OBJDIR)/,$(notdir $(ASM:.s=.o)))
 
-    # Invoke the python script to generate the USB descriptor
-    $(GENERATE_USB_DESCRIPTOR):
-    	@mkdir -p $(GENDIR)
-    	$(DESCRIPTORGEN) -os $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_SRC) \
-    		-oh $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_HDR) \
-    		$(GENSRC)
+   # If the USB descriptor generation is requested, add it to the list of targets
+   # which will run during code generation
+   ifneq ($(filter $(GENERATE), $(GENERATE_USB_DESCRIPTOR)),)
+   	GEN_OBJ += $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_SRC:.c=.o)
+   	GEN_TARGETS += $(GENERATE_USB_DESCRIPTOR)
+   endif
 
-    # Ensure generated objects get run first
-    $(OBJ): | $(GEN_TARGETS)
+   ALL_OBJ := $(OBJ) $(GEN_OBJ)
 
-    #
-    # Later, the $(ALL_OBJ) variable is used in the linking step to include the
-    # generated C source files.
-    #
+   # Invoke the python script to generate the USB descriptor
+   $(GENERATE_USB_DESCRIPTOR):
+   	@mkdir -p $(GENDIR)
+   	$(DESCRIPTORGEN) -os $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_SRC) \
+   		-oh $(GENDIR)/$(GENERATE_USB_DESCRIPTOR_HDR) \
+   		$(GENSRC)
+
+   # Ensure generated objects get run first
+   $(OBJ): | $(GEN_TARGETS)
+
+   #
+   # Later, the $(ALL_OBJ) variable is used in the linking step to include the
+   # generated C source files.
+   #
 
 
 
@@ -606,54 +614,56 @@ USB Descriptor XML
 As the python script is run, it searches the source files for XML which describes the USB descriptors. To demonstrate the XML format, here is the simplest USB descriptor. This will just declare a device, add product and model strings, and declare a simple configuration that requires maximum USB power\:
 
 
-.. code-block:: xhtml
+.. code-block:: {lang}
 
-    <descriptor id="device" type="0x01">
-      <length name="bLength" size="1" />
-      <type name="bDescriptorType" size="1" />
-      <word name="bcdUSB">0x0200</word>
-      <byte name="bDeviceClass">0</byte>
-      <byte name="bDeviceSubClass">0</byte>
-      <byte name="bDeviceProtocol">0</byte>
-      <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
-      <word name="idVendor">0x16c0</word>
-      <word name="idProduct">0x05dc</word>
-      <word name="bcdDevice">0x0010</word>
-      <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
-      <ref name="iProduct" type="0x03" refid="product" size="1" />
-      <byte name="iSerialNumber">0</byte>
-      <count name="bNumConfigurations" type="0x02" size="1" />
-    </descriptor>
-    <descriptor id="lang" type="0x03" first="first">
-      <length name="bLength" size="1" />
-      <type name="bDescriptorType" size="1" />
-      <foreach type="0x03" unique="unique">
-        <echo name="wLang" />
-      </foreach>
-    </descriptor>
-    <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
-      <property name="wLang" size="2">0x0409</property>
-      <length name="bLength" size="1" />
-      <type name="bDescriptorType" size="1" />
-      <string name="wString">kevincuzner.com</string>
-    </descriptor>
-    <descriptor id="product" type="0x03" wIndex="0x0409">
-      <property name="wLang" size="2">0x0409</property>
-      <length name="bLength" size="1" />
-      <type name="bDescriptorType" size="1" />
-      <string name="wString">Midi-Fader</string>
-    </descriptor>
-    <descriptor id="configuration" type="0x02">
-      <length name="bLength" size="1" />
-      <type name="bDescriptorType" size="1" />
-      <length name="wTotalLength" size="2" all="all" />
-      <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
-      <byte name="bConfigurationValue">1</byte>
-      <byte name="iConfiguration">0</byte>
-      <byte name="bmAttributes">0x80</byte>
-      <byte name="bMaxPower">250</byte>
-      <children type="0x04" />
-    </descriptor>
+
+
+   <descriptor id="device" type="0x01">
+     <length name="bLength" size="1" />
+     <type name="bDescriptorType" size="1" />
+     <word name="bcdUSB">0x0200</word>
+     <byte name="bDeviceClass">0</byte>
+     <byte name="bDeviceSubClass">0</byte>
+     <byte name="bDeviceProtocol">0</byte>
+     <byte name="bMaxPacketSize0">USB_CONTROL_ENDPOINT_SIZE</byte>
+     <word name="idVendor">0x16c0</word>
+     <word name="idProduct">0x05dc</word>
+     <word name="bcdDevice">0x0010</word>
+     <ref name="iManufacturer" type="0x03" refid="manufacturer" size="1" />
+     <ref name="iProduct" type="0x03" refid="product" size="1" />
+     <byte name="iSerialNumber">0</byte>
+     <count name="bNumConfigurations" type="0x02" size="1" />
+   </descriptor>
+   <descriptor id="lang" type="0x03" first="first">
+     <length name="bLength" size="1" />
+     <type name="bDescriptorType" size="1" />
+     <foreach type="0x03" unique="unique">
+       <echo name="wLang" />
+     </foreach>
+   </descriptor>
+   <descriptor id="manufacturer" type="0x03" wIndex="0x0409">
+     <property name="wLang" size="2">0x0409</property>
+     <length name="bLength" size="1" />
+     <type name="bDescriptorType" size="1" />
+     <string name="wString">kevincuzner.com</string>
+   </descriptor>
+   <descriptor id="product" type="0x03" wIndex="0x0409">
+     <property name="wLang" size="2">0x0409</property>
+     <length name="bLength" size="1" />
+     <type name="bDescriptorType" size="1" />
+     <string name="wString">Midi-Fader</string>
+   </descriptor>
+   <descriptor id="configuration" type="0x02">
+     <length name="bLength" size="1" />
+     <type name="bDescriptorType" size="1" />
+     <length name="wTotalLength" size="2" all="all" />
+     <count name="bNumInterfaces" type="0x04" associated="associated" size="1" />
+     <byte name="bConfigurationValue">1</byte>
+     <byte name="iConfiguration">0</byte>
+     <byte name="bmAttributes">0x80</byte>
+     <byte name="bMaxPower">250</byte>
+     <children type="0x04" />
+   </descriptor>
 
 
 
@@ -751,44 +761,48 @@ The next step to having something fully portable is to have an easy way to hook 
 These are usually defined like this in the calling module\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
-    {
-        return USB_CTL_STALL; //default: Stall on an unhandled request
-    }
-    void __attribute__ ((weak)) hook_usb_control_complete(USBSetupPacket const *setup) { }
-    void __attribute__ ((weak)) hook_usb_reset(void) { }
-    void __attribute__ ((weak)) hook_usb_sof(void) { }
-    void __attribute__ ((weak)) hook_usb_set_configuration(uint16_t configuration) { }
-    void __attribute__ ((weak)) hook_usb_set_interface(uint16_t interface) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len) { }
-    void __attribute__ ((weak)) hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len) { }
+
+
+   USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
+   {
+       return USB_CTL_STALL; //default: Stall on an unhandled request
+   }
+   void __attribute__ ((weak)) hook_usb_control_complete(USBSetupPacket const *setup) { }
+   void __attribute__ ((weak)) hook_usb_reset(void) { }
+   void __attribute__ ((weak)) hook_usb_sof(void) { }
+   void __attribute__ ((weak)) hook_usb_set_configuration(uint16_t configuration) { }
+   void __attribute__ ((weak)) hook_usb_set_interface(uint16_t interface) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_setup(uint8_t endpoint, USBSetupPacket const *setup) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len) { }
+   void __attribute__ ((weak)) hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len) { }
 
 
 Application code can then interface to these hooks like so (example from my HID driver)\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len)
-    {
-        USBTransferData report = { buf, len };
-        if (endpoint == HID_IN_ENDPOINT)
-        {
-            hook_usb_hid_in_report_sent(&report);
-        }
-    }
 
-    void hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len)
-    {
-        USBTransferData report = { buf, len };
-        if (endpoint == HID_OUT_ENDPOINT)
-        {
-            hook_usb_hid_out_report_received(&report);
-        }
-    }
+
+   void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len)
+   {
+       USBTransferData report = { buf, len };
+       if (endpoint == HID_IN_ENDPOINT)
+       {
+           hook_usb_hid_in_report_sent(&report);
+       }
+   }
+
+   void hook_usb_endpoint_received(uint8_t endpoint, void *buf, uint16_t len)
+   {
+       USBTransferData report = { buf, len };
+       if (endpoint == HID_OUT_ENDPOINT)
+       {
+           hook_usb_hid_out_report_received(&report);
+       }
+   }
 
 
 The problem with this is that since the **hook_** function can only be defined in a single place, every time I add an interface that needs to know when an endpoint receives a packet I need to modify the function. For composite devices (such as the midi-fader I'm using as an example here), this is really problematic and annoying for porting things between projects.
@@ -797,125 +811,133 @@ The problem with this is that since the **hook_** function can only be defined i
 To remedy this, I created a "usb_app" layer which implements these **hook_** functions and then dispatches them to handlers. I define these handlers by way of some structs (which are const, so they get stored in flash rather than RAM)\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Structure instantiated by each interface
-     *
-     * This is intended to usually be a static constant, but it could also
-     * be created on the fly.
-     */
-    typedef struct {
-        /**
-         * Hook function called when a USB reset occurs
-         */
-        USBNoParameterHook hook_usb_reset;
-        /**
-         * Hook function called when a setup request is received
-         */
-        USBHandleControlSetupHook hook_usb_handle_setup_request;
-        /**
-         * Hook function called when the status stage of a setup request is
-         * completed on endpoint zero.
-         */
-        USBHandleControlCompleteHook hook_usb_control_complete;
-        /**
-         * Hook function called when a SOF is received
-         */
-        USBNoParameterHook hook_usb_sof;
-        /**
-         * Hook function called when a SET_CONFIGURATION is received
-         */
-        USBSetConfigurationHook hook_usb_set_configuration;
-        /**
-         * Hook function called when a SET_INTERFACE is received
-         */
-        USBSetInterfaceHook hook_usb_set_interface;
-        /**
-         * Hook function called when data is received on a USB endpoint
-         */
-        USBEndpointReceivedHook hook_usb_endpoint_received;
-        /**
-         * Hook function called when data is sent on a USB endpoint
-         */
-        USBEndpointSentHook hook_usb_endpoint_sent;
-    } USBInterface;
 
-    /**
-     * Node structure for interfaces attached to the USB device
-     */
-    typedef struct USBInterfaceListNode {
-        const USBInterface *interface;
-        const struct USBInterfaceListNode *next;
-    } USBInterfaceListNode;
 
-    typedef struct {
-        /**
-         * Hook function called when the USB peripheral is reset
-         */
-        USBNoParameterHook hook_usb_reset;
-        /**
-         * Hook function called when a SOF is received.
-         */
-        USBNoParameterHook hook_usb_sof;
-        /**
-         * Head of the interface list. This node will be visited first
-         */
-        const USBInterfaceListNode *interface_list;
-    } USBApplicationSetup;
+   /**
+    * Structure instantiated by each interface
+    *
+    * This is intended to usually be a static constant, but it could also
+    * be created on the fly.
+    */
+   typedef struct {
+       /**
+        * Hook function called when a USB reset occurs
+        */
+       USBNoParameterHook hook_usb_reset;
+       /**
+        * Hook function called when a setup request is received
+        */
+       USBHandleControlSetupHook hook_usb_handle_setup_request;
+       /**
+        * Hook function called when the status stage of a setup request is
+        * completed on endpoint zero.
+        */
+       USBHandleControlCompleteHook hook_usb_control_complete;
+       /**
+        * Hook function called when a SOF is received
+        */
+       USBNoParameterHook hook_usb_sof;
+       /**
+        * Hook function called when a SET_CONFIGURATION is received
+        */
+       USBSetConfigurationHook hook_usb_set_configuration;
+       /**
+        * Hook function called when a SET_INTERFACE is received
+        */
+       USBSetInterfaceHook hook_usb_set_interface;
+       /**
+        * Hook function called when data is received on a USB endpoint
+        */
+       USBEndpointReceivedHook hook_usb_endpoint_received;
+       /**
+        * Hook function called when data is sent on a USB endpoint
+        */
+       USBEndpointSentHook hook_usb_endpoint_sent;
+   } USBInterface;
 
-    /**
-     * USB setup constant
-     *
-     * Define this elsewhere, such as main
-     */
-    extern const USBApplicationSetup *usb_app_setup;
+   /**
+    * Node structure for interfaces attached to the USB device
+    */
+   typedef struct USBInterfaceListNode {
+       const USBInterface *interface;
+       const struct USBInterfaceListNode *next;
+   } USBInterfaceListNode;
+
+   typedef struct {
+       /**
+        * Hook function called when the USB peripheral is reset
+        */
+       USBNoParameterHook hook_usb_reset;
+       /**
+        * Hook function called when a SOF is received.
+        */
+       USBNoParameterHook hook_usb_sof;
+       /**
+        * Head of the interface list. This node will be visited first
+        */
+       const USBInterfaceListNode *interface_list;
+   } USBApplicationSetup;
+
+   /**
+    * USB setup constant
+    *
+    * Define this elsewhere, such as main
+    */
+   extern const USBApplicationSetup *usb_app_setup;
 
 
 Every module that has a USB descriptor and some interface can then declare an **extern const USBInterface** in its header. The application using the module can then just attach it to the **usb_app_setup** for the project. For example, my HID interface declares this in its header\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * USB interface object for the app
-     */
-    extern const USBInterface hid_interface;
+
+
+   /**
+    * USB interface object for the app
+    */
+   extern const USBInterface hid_interface;
 
 
 And then in my main.c, I link it (along with any other interfaces) into the rest of my application like so (using the usb_app framework)\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static const USBInterfaceListNode midi_interface_node = {
-        .interface = &midi_interface,
-        .next = NULL,
-    };
 
-    static const USBInterfaceListNode hid_interface_node = {
-        .interface = &hid_interface, //this comes from usb_hid.h
-        .next = &midi_interface_node,
-    };
 
-    const USBApplicationSetup setup = {
-        .interface_list = &hid_interface_node,
-    };
+   static const USBInterfaceListNode midi_interface_node = {
+       .interface = &midi_interface,
+       .next = NULL,
+   };
 
-    const USBApplicationSetup *usb_app_setup = &setup;
+   static const USBInterfaceListNode hid_interface_node = {
+       .interface = &hid_interface, //this comes from usb_hid.h
+       .next = &midi_interface_node,
+   };
+
+   const USBApplicationSetup setup = {
+       .interface_list = &hid_interface_node,
+   };
+
+   const USBApplicationSetup *usb_app_setup = &setup;
 
 
 Meanwhile, in my usb_hid.c I have defined **hid_interface** to look like this (all the referenced functions are also pretty short, but I haven't included them for brevity). If a hook is unused, I just leave it null\:
 
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    const USBInterface hid_interface = {
-        .hook_usb_handle_setup_request = &hid_usb_handle_setup_request,
-        .hook_usb_set_configuration = &hid_usb_set_configuration,
-        .hook_usb_endpoint_sent = &hid_usb_endpoint_sent,
-        .hook_usb_endpoint_received = &hid_usb_endpoint_received,
-    };
+
+
+   const USBInterface hid_interface = {
+       .hook_usb_handle_setup_request = &hid_usb_handle_setup_request,
+       .hook_usb_set_configuration = &hid_usb_set_configuration,
+       .hook_usb_endpoint_sent = &hid_usb_endpoint_sent,
+       .hook_usb_endpoint_received = &hid_usb_endpoint_received,
+   };
 
 
 Aside from the runtime overhead of now needing to walk a linked list to handle hooks, I now have a pretty low-resource method for making my modules portable. I can now take my self-contained module C file and header, drop them into a project (simply dropping them in tends to make the descriptor be generated), and then hook them up in main.c to the **usb_app_setup** object. Nice and easy.

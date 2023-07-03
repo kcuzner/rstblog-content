@@ -70,38 +70,40 @@ The webapp side of this whole project I decided to do in Python because it seeme
 
 I am 99% sure I picked the wrong way to do a video stream, but it seems to work for me. Here's the entirety of the Flask endpoint that produces a continuous video stream\:
 
-.. code-block:: python
+.. code-block:: {lang}
 
-    @app.route('/video')
-    def video_feed():
-        """
-        Streams images from the server
-        """
-        db_stream = open_redis(settings)
-        db_image = open_redis(settings)
-        ps = db_stream.pubsub()
-        ps.subscribe('__keyspace@0__:image')
 
-        streamon = True
 
-        def generate():
-            while streamon:
-                for message in ps.listen():
-                    if message['channel'] == b'__keyspace@0__:image' and\
-                            message['data'] == b'set':
-                        data = db_image.get('image')
-                        yield (b'--frame\r\n'
-                                b'Content-Type: image/jpeg\r\n\r\n' + data + b'\r\n')
+   @app.route('/video')
+   def video_feed():
+       """
+       Streams images from the server
+       """
+       db_stream = open_redis(settings)
+       db_image = open_redis(settings)
+       ps = db_stream.pubsub()
+       ps.subscribe('__keyspace@0__:image')
 
-        response = Response(generate(),
-                mimetype='multipart/x-mixed-replace; boundary=frame')
+       streamon = True
 
-        @response.call_on_close
-        def done():
-            streamon = False
-            ps.close()
+       def generate():
+           while streamon:
+               for message in ps.listen():
+                   if message['channel'] == b'__keyspace@0__:image' and\
+                           message['data'] == b'set':
+                       data = db_image.get('image')
+                       yield (b'--frame\r\n'
+                               b'Content-Type: image/jpeg\r\n\r\n' + data + b'\r\n')
 
-    return response
+       response = Response(generate(),
+               mimetype='multipart/x-mixed-replace; boundary=frame')
+
+       @response.call_on_close
+       def done():
+           streamon = False
+           ps.close()
+
+   return response
 
 This works by way of the "multipart/x-mixed-replace" content type. I hadn't even heard of this content type before I found a `blog post <https://blog.miguelgrinberg.com/post/video-streaming-with-flask>`_ describing it for use in a video stream. How it works is that a "boundary" string is defined and all data between that boundary string and the next is considered one "frame" of the image. When Chrome or Firefox (sorry IE) receive something with this type whose content-type ends up being image/jpeg, they will replace the image with the latest one received. In flask, I simply supply a generator that occasionally yields bytes containing the next frame. This works really well so far, but there are a couple downsides and quirks with this approach\:
 * Each video stream has its own Redis connection. I did this on purpose so that a single slow client wouldn't slow everyone down. The downside here is that I now rely on Redis' dropping slow clients.

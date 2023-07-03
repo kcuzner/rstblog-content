@@ -7,80 +7,84 @@ Example
 
 Javascript (note that this assumes usage of jQuery for things like AJAX)\:
 
-.. code-block::
+::
 
-    function ItemModel(id, name) {
-        var self = this;
-        this.id = id;
-        this.name = ko.observable(name);
-        this.editing = ko.observable(false);
-        this.save = function () {
-            //logic that creates a new item if the id is null or just saves the item otherwise
-            //through a call to $.ajax
-        }
-    }
 
-    function ItemContainerModel(id, name, items) {
-        var self = this;
-        this.id = id;
-        this.name = ko.observable(name);
-        this.editing(true);
-        this.items = ko.observableArray(items);
-        this.save = function () {
-            //logic that creates a new item container if the id is null or just saves the item container otherwise
-            //through a call to $.ajax
-        }
-        this.add = function() {
-            var aNewItem = new ItemModel(null, null);
-            aNewItem.editing(true);
-            self.items.push(aNewItem);
-        }
-        this.remove = function (item) {
-            //$.ajax call to the server to remove the item
-            self.items.remove(item);
-        }
-    }
 
-    function ViewModel() {
-        var self = this;
-        this.containers = ko.observableArray();
-        var blankContainer = new ItemContainerModel(null, null, []);
-        this.selected = ko.observable(blankContainer);
-        this.add = function () {
-            var aNewContainer = new ItemContainerModel(null, null, []);
-            aNewContainer.editing(true);
-            self.containers.push(aNewContainer);
-        }
-        this.remove = function(container) {
-            //$.ajax call to the server to remove the container
-            self.containers.remove(container);
-        }
-        this.select = function(container) {
-            self.selected(container);
-        }
-    }
+   function ItemModel(id, name) {
+       var self = this;
+       this.id = id;
+       this.name = ko.observable(name);
+       this.editing = ko.observable(false);
+       this.save = function () {
+           //logic that creates a new item if the id is null or just saves the item otherwise
+           //through a call to $.ajax
+       }
+   }
 
-    $(document).ready( function() {
-        var vm = new ViewModel();
-        ko.applyBindings(vm);
-    });
+   function ItemContainerModel(id, name, items) {
+       var self = this;
+       this.id = id;
+       this.name = ko.observable(name);
+       this.editing(true);
+       this.items = ko.observableArray(items);
+       this.save = function () {
+           //logic that creates a new item container if the id is null or just saves the item container otherwise
+           //through a call to $.ajax
+       }
+       this.add = function() {
+           var aNewItem = new ItemModel(null, null);
+           aNewItem.editing(true);
+           self.items.push(aNewItem);
+       }
+       this.remove = function (item) {
+           //$.ajax call to the server to remove the item
+           self.items.remove(item);
+       }
+   }
+
+   function ViewModel() {
+       var self = this;
+       this.containers = ko.observableArray();
+       var blankContainer = new ItemContainerModel(null, null, []);
+       this.selected = ko.observable(blankContainer);
+       this.add = function () {
+           var aNewContainer = new ItemContainerModel(null, null, []);
+           aNewContainer.editing(true);
+           self.containers.push(aNewContainer);
+       }
+       this.remove = function(container) {
+           //$.ajax call to the server to remove the container
+           self.containers.remove(container);
+       }
+       this.select = function(container) {
+           self.selected(container);
+       }
+   }
+
+   $(document).ready( function() {
+       var vm = new ViewModel();
+       ko.applyBindings(vm);
+   });
 
 Now for a really simple view (sorry for lack of styling or the edit capability, but hopefully the point will be clear)\:
 
-.. code-block::
+::
 
-    <a data-bind="click: add" href="#">Add container</a>
-    <ul data-bind="foreach: containers">
-        <li><span data-bind="text: name"></span> <a data-bind="click: save" href="#">Save</a> <a data-bind="click: $parent.remove" href="#">Remove</a></li>
-    </ul>
-    <div data-bind="with: selected">
-        <a data-bind="click: add" href="#">Add item</a>
-        <div data-bind="foreach: items">
-            <div data-bind="text: name"></div>
-            <a data-bind="click: save" href="#"></a>
-            <a data-bind="click: $parent.remove" href="#">Remove</a>
-        </div>
-    </div>
+
+
+   <a data-bind="click: add" href="#">Add container</a>
+   <ul data-bind="foreach: containers">
+       <li><span data-bind="text: name"></span> <a data-bind="click: save" href="#">Save</a> <a data-bind="click: $parent.remove" href="#">Remove</a></li>
+   </ul>
+   <div data-bind="with: selected">
+       <a data-bind="click: add" href="#">Add item</a>
+       <div data-bind="foreach: items">
+           <div data-bind="text: name"></div>
+           <a data-bind="click: save" href="#"></a>
+           <a data-bind="click: $parent.remove" href="#">Remove</a>
+       </div>
+   </div>
 
 
 The Problem
@@ -103,65 +107,69 @@ When an event binding like 'click' is called, the binding will pass an argument 
 
 First, we must remove all functions from the models that will be duplicated often. This means that the add, remove, and save functions in the ItemContainer and the save function in the Item models have to go. Next, we create back references so that each contained object outside the viewmodel and its direct children knows who its daddy is. Here is an example\:
 
-.. code-block::
+::
 
-    function ItemModel(id, name, container) {
-        //note the addition of the container argument
 
-        //...keep the same variables as before, but remove the this.save stuff
 
-        this.container = container; //add this as our back reference
-    }
+   function ItemModel(id, name, container) {
+       //note the addition of the container argument
 
-    function ItemContainerModel(id, name) {
-        //NOTE 1: this didn't need an argument for a back reference. This is because it is a direct child of the root model and
-        //since the root model contains the functions dealing with adding and removing containers, it already knows the array to
-        //manipulate
+       //...keep the same variables as before, but remove the this.save stuff
 
-        //NOTE 2: the items argument has been removed. This is so that the container can be created before the items and the back
-        //reference above can be completed. So, the process for creating a container with items is now: create container, create
-        //items with a reference to the container, and then add the items to the container by doing container.items(arrayOfItems);
+       this.container = container; //add this as our back reference
+   }
 
-        //remove all the functions from this model as well
-    }
+   function ItemContainerModel(id, name) {
+       //NOTE 1: this didn't need an argument for a back reference. This is because it is a direct child of the root model and
+       //since the root model contains the functions dealing with adding and removing containers, it already knows the array to
+       //manipulate
 
-    function ViewModel() {
-        //all the stuff we already had here from the example above stays
+       //NOTE 2: the items argument has been removed. This is so that the container can be created before the items and the back
+       //reference above can be completed. So, the process for creating a container with items is now: create container, create
+       //items with a reference to the container, and then add the items to the container by doing container.items(arrayOfItems);
 
-        //we add the following:
-        this.saveItem = function (item) {
-            //instead of using self.id and self.name() when creating our ajax request, we use item.id and item.name()
-        }
-        this.saveContainer = function(container) {
-            //instead of using self.id and self.name() when creating our ajax request, we use item.id and item.name()
-        }
-        this.addItem = function(container) {
-            var aNewItem = new ItemModel(null, null, container);
-            aNewItem.editing(true);
-            container.items.push(aNewItem);
-        }
-        this.removeItem = function(item) {
-            //create a $.ajax request to remove the item based on its id
-            item.container.items.remove(item); //using our back reference, we can remove the item from its parent container
-        }
-    }
+       //remove all the functions from this model as well
+   }
+
+   function ViewModel() {
+       //all the stuff we already had here from the example above stays
+
+       //we add the following:
+       this.saveItem = function (item) {
+           //instead of using self.id and self.name() when creating our ajax request, we use item.id and item.name()
+       }
+       this.saveContainer = function(container) {
+           //instead of using self.id and self.name() when creating our ajax request, we use item.id and item.name()
+       }
+       this.addItem = function(container) {
+           var aNewItem = new ItemModel(null, null, container);
+           aNewItem.editing(true);
+           container.items.push(aNewItem);
+       }
+       this.removeItem = function(item) {
+           //create a $.ajax request to remove the item based on its id
+           item.container.items.remove(item); //using our back reference, we can remove the item from its parent container
+       }
+   }
 
 The view will now look like so (note that the bindings to functions now reference $root\: the main ViewModel)\:
 
-.. code-block::
+::
 
-    <a data-bind="click: add" href="#">Add container</a>
-    <ul data-bind="foreach: containers">
-        <li><span data-bind="text: name"></span> <a data-bind="click: $root.saveContainer href="#">Save</a> <a data-bind="click: $root.remove" href="#">Remove</a></li>
-    </ul>
-    <div data-bind="with: selected">
-        <a data-bind="click: $root.addItem" href="#">Add item</a>
-        <div data-bind="foreach: items">
-            <div data-bind="text: name"></div>
-            <a data-bind="click: $root.saveItem" href="#"></a>
-            <a data-bind="click: $root.removeItem" href="#">Remove</a>
-        </div>
-    </div>
+
+
+   <a data-bind="click: add" href="#">Add container</a>
+   <ul data-bind="foreach: containers">
+       <li><span data-bind="text: name"></span> <a data-bind="click: $root.saveContainer href="#">Save</a> <a data-bind="click: $root.remove" href="#">Remove</a></li>
+   </ul>
+   <div data-bind="with: selected">
+       <a data-bind="click: $root.addItem" href="#">Add item</a>
+       <div data-bind="foreach: items">
+           <div data-bind="text: name"></div>
+           <a data-bind="click: $root.saveItem" href="#"></a>
+           <a data-bind="click: $root.removeItem" href="#">Remove</a>
+       </div>
+   </div>
 
 Now, that wasn't so hard was it? What we just did was we made it so that we only use memory for the variables and don't have to create any closures for functions. By moving the individual model functions down to the ViewModel we kept the same functionality as before, did not increase our code size, and significantly reduced memory usage when the model starts to get really big. If we were to create 2 containers with 3 items each, we create no additional functions from the 4 inside the ViewModel. The only memory consumed by each model is the space needed for storing the actual values represented (id, name, etc).
 

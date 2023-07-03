@@ -42,51 +42,53 @@ After cloning the repo and installing those packages, run the "./boostrap" scrip
 
 To check to see if the avrdude you have is the right one, you should see an output similar to the following if you run this command (tiny-tim is the name of my Raspberry Pi until I think of something better)\:
 
-.. code-block::
+::
 
-    kcuzner@tiny-tim:~/avrdude/avrdude$ avrdude -c ?type
 
-    Valid programmer types are:
-      arduino          = Arduino programmer
-      avr910           = Serial programmers using protocol described in application note AVR910
-      avrftdi          = Interface to the MPSSE Engine of FTDI Chips using libftdi.
-      buspirate        = Using the Bus Pirate's SPI interface for programming
-      buspirate_bb     = Using the Bus Pirate's bitbang interface for programming
-      butterfly        = Atmel Butterfly evaluation board; Atmel AppNotes AVR109, AVR911
-      butterfly_mk     = Mikrokopter.de Butterfly
-      dragon_dw        = Atmel AVR Dragon in debugWire mode
-      dragon_hvsp      = Atmel AVR Dragon in HVSP mode
-      dragon_isp       = Atmel AVR Dragon in ISP mode
-      dragon_jtag      = Atmel AVR Dragon in JTAG mode
-      dragon_pdi       = Atmel AVR Dragon in PDI mode
-      dragon_pp        = Atmel AVR Dragon in PP mode
-      ftdi_syncbb      = FT245R/FT232R Synchronous BitBangMode Programmer
-      jtagmki          = Atmel JTAG ICE mkI
-      jtagmkii         = Atmel JTAG ICE mkII
-      jtagmkii_avr32   = Atmel JTAG ICE mkII in AVR32 mode
-      jtagmkii_dw      = Atmel JTAG ICE mkII in debugWire mode
-      jtagmkii_isp     = Atmel JTAG ICE mkII in ISP mode
-      jtagmkii_pdi     = Atmel JTAG ICE mkII in PDI mode
-      jtagice3         = Atmel JTAGICE3
-      jtagice3_pdi     = Atmel JTAGICE3 in PDI mode
-      jtagice3_dw      = Atmel JTAGICE3 in debugWire mode
-      jtagice3_isp     = Atmel JTAGICE3 in ISP mode
-      linuxgpio        = GPIO bitbanging using the Linux sysfs interface (not available)
-      linuxspi         = SPI using Linux spidev driver
-      par              = Parallel port bitbanging
-      pickit2          = Microchip's PICkit2 Programmer
-      serbb            = Serial port bitbanging
-      stk500           = Atmel STK500 Version 1.x firmware
-      stk500generic    = Atmel STK500, autodetect firmware version
-      stk500v2         = Atmel STK500 Version 2.x firmware
-      stk500hvsp       = Atmel STK500 V2 in high-voltage serial programming mode
-      stk500pp         = Atmel STK500 V2 in parallel programming mode
-      stk600           = Atmel STK600
-      stk600hvsp       = Atmel STK600 in high-voltage serial programming mode
-      stk600pp         = Atmel STK600 in parallel programming mode
-      usbasp           = USBasp programmer, see http://www.fischl.de/usbasp/
-      usbtiny          = Driver for "usbtiny"-type programmers
-      wiring           = http://wiring.org.co/, Basically STK500v2 protocol, with some glue to trigger the bootloader.
+
+   kcuzner@tiny-tim:~/avrdude/avrdude$ avrdude -c ?type
+
+   Valid programmer types are:
+     arduino          = Arduino programmer
+     avr910           = Serial programmers using protocol described in application note AVR910
+     avrftdi          = Interface to the MPSSE Engine of FTDI Chips using libftdi.
+     buspirate        = Using the Bus Pirate's SPI interface for programming
+     buspirate_bb     = Using the Bus Pirate's bitbang interface for programming
+     butterfly        = Atmel Butterfly evaluation board; Atmel AppNotes AVR109, AVR911
+     butterfly_mk     = Mikrokopter.de Butterfly
+     dragon_dw        = Atmel AVR Dragon in debugWire mode
+     dragon_hvsp      = Atmel AVR Dragon in HVSP mode
+     dragon_isp       = Atmel AVR Dragon in ISP mode
+     dragon_jtag      = Atmel AVR Dragon in JTAG mode
+     dragon_pdi       = Atmel AVR Dragon in PDI mode
+     dragon_pp        = Atmel AVR Dragon in PP mode
+     ftdi_syncbb      = FT245R/FT232R Synchronous BitBangMode Programmer
+     jtagmki          = Atmel JTAG ICE mkI
+     jtagmkii         = Atmel JTAG ICE mkII
+     jtagmkii_avr32   = Atmel JTAG ICE mkII in AVR32 mode
+     jtagmkii_dw      = Atmel JTAG ICE mkII in debugWire mode
+     jtagmkii_isp     = Atmel JTAG ICE mkII in ISP mode
+     jtagmkii_pdi     = Atmel JTAG ICE mkII in PDI mode
+     jtagice3         = Atmel JTAGICE3
+     jtagice3_pdi     = Atmel JTAGICE3 in PDI mode
+     jtagice3_dw      = Atmel JTAGICE3 in debugWire mode
+     jtagice3_isp     = Atmel JTAGICE3 in ISP mode
+     linuxgpio        = GPIO bitbanging using the Linux sysfs interface (not available)
+     linuxspi         = SPI using Linux spidev driver
+     par              = Parallel port bitbanging
+     pickit2          = Microchip's PICkit2 Programmer
+     serbb            = Serial port bitbanging
+     stk500           = Atmel STK500 Version 1.x firmware
+     stk500generic    = Atmel STK500, autodetect firmware version
+     stk500v2         = Atmel STK500 Version 2.x firmware
+     stk500hvsp       = Atmel STK500 V2 in high-voltage serial programming mode
+     stk500pp         = Atmel STK500 V2 in parallel programming mode
+     stk600           = Atmel STK600
+     stk600hvsp       = Atmel STK600 in high-voltage serial programming mode
+     stk600pp         = Atmel STK600 in parallel programming mode
+     usbasp           = USBasp programmer, see http://www.fischl.de/usbasp/
+     usbtiny          = Driver for "usbtiny"-type programmers
+     wiring           = http://wiring.org.co/, Basically STK500v2 protocol, with some glue to trigger the bootloader.
 
 Note that right under "linuxgpio" there is now a "linuxspi" driver. If it says "(not available)" after the "linuxspi" description, "./configure" was not able to find the "linux/spi/spidev.h" file and did not compile the linuxspi programmer into avrdude.
 
@@ -95,14 +97,16 @@ Configuration
 
 There is a little bit of configuration that happens here on the Raspberry Pi side before proceeding to wiring it up. You must now decide which GPIO to sacrifice to be the reset pin. I chose 25 because it is next to the normal chip enable pins, but it doesn't matter which you choose. To change which pin is to be used, you need to edit "/usr/local/etc/avrdude.conf" (it will be just "/etc/avrdude.conf" if it wasn't built and installed manually like above). Find the section of the file that looks like so\:
 
-.. code-block::
+::
 
-    programmer
-      id = "linuxspi";
-      desc = "Use Linux SPI device in /dev/spidev*";
-      type = "linuxspi";
-      reset = 25;
-    ;
+
+
+   programmer
+     id = "linuxspi";
+     desc = "Use Linux SPI device in /dev/spidev*";
+     type = "linuxspi";
+     reset = 25;
+   ;
 
 The "reset = " line needs to be changed to have the number of the GPIO that you have decided to turn into the reset pin for the programmer. The default is 25, but that's just because of my selfishness in not wanting to set it to something more generic and having to then edit the file every time I re-installed avrdude. Perhaps a better default would be "0" since that will cause the programmer to say that it hasn't been set up yet.
 
@@ -111,40 +115,42 @@ Wiring
 
 After setting up avrdude.conf to your desired configuration, you can now connect the appropriate wires from your Raspberry Pi's header to your microchip. **A word of extreme caution\:**** The Raspberry Pi's GPIOs are NOT 5V tolerant, and that includes the SPI pins**. You must do either one of two things\: a) Run the AVR and everything around it at 3.3V so that you never see 5V on ANY of the Raspberry Pi pins at any time (including after programming is completed and the device is running) or b) Use a level translator between the AVR and the SPI. I happen to have a level translator lying around (its a fun little TSSOP I soldered to a breakout board a few years back), but I decided to go the 3.3V route since I was trying to get this thing to work. If you have not ever had to hook up in-circuit serial programming to your AVR before, perhaps this would be a great time to learn. You need to consult the datasheet for your AVR and find the pins named RESET (bar above it), MOSI, MISO, and SCK. These 4 pins are connected so that RESET goes to your GPIO with a pullup resistor to the Vcc on your AVR, MOSI goes to the similarly named MOSI on the Raspberry Pi header, MISO goes to the like-named pin on the header, and SCK goes to the SPI clock pin (named SCLK on the diagram on elinux.org). After doing this and **double checking to make sure 5V will never be present to the Raspberry Pi**, you can power on your AVR and it should be able to be programmed through avrdude. Here is a demonstration of me loading a simple test program I made that flashes the PORTD LEDs\:
 
-.. code-block::
+::
 
-    kcuzner@tiny-tim:~/avrdude/avrdude$ sudo avrdude -c linuxspi -p m48 -P /dev/spidev0.0 -U flash:w:../blink.hex 
-    [sudo] password for kcuzner: 
 
-    avrdude: AVR device initialized and ready to accept instructions
 
-    Reading | ################################################## | 100% 0.00s
+   kcuzner@tiny-tim:~/avrdude/avrdude$ sudo avrdude -c linuxspi -p m48 -P /dev/spidev0.0 -U flash:w:../blink.hex 
+   [sudo] password for kcuzner: 
 
-    avrdude: Device signature = 0x1e9205
-    avrdude: NOTE: "flash" memory has been specified, an erase cycle will be performed
-             To disable this feature, specify the -D option.
-    avrdude: erasing chip
-    avrdude: reading input file "../blink.hex"
-    avrdude: input file ../blink.hex auto detected as Intel Hex
-    avrdude: writing flash (2282 bytes):
+   avrdude: AVR device initialized and ready to accept instructions
 
-    Writing | ################################################## | 100% 0.75s
+   Reading | ################################################## | 100% 0.00s
 
-    avrdude: 2282 bytes of flash written
-    avrdude: verifying flash memory against ../blink.hex:
-    avrdude: load data flash data from input file ../blink.hex:
-    avrdude: input file ../blink.hex auto detected as Intel Hex
-    avrdude: input file ../blink.hex contains 2282 bytes
-    avrdude: reading on-chip flash data:
+   avrdude: Device signature = 0x1e9205
+   avrdude: NOTE: "flash" memory has been specified, an erase cycle will be performed
+            To disable this feature, specify the -D option.
+   avrdude: erasing chip
+   avrdude: reading input file "../blink.hex"
+   avrdude: input file ../blink.hex auto detected as Intel Hex
+   avrdude: writing flash (2282 bytes):
 
-    Reading | ################################################## | 100% 0.56s
+   Writing | ################################################## | 100% 0.75s
 
-    avrdude: verifying ...
-    avrdude: 2282 bytes of flash verified
+   avrdude: 2282 bytes of flash written
+   avrdude: verifying flash memory against ../blink.hex:
+   avrdude: load data flash data from input file ../blink.hex:
+   avrdude: input file ../blink.hex auto detected as Intel Hex
+   avrdude: input file ../blink.hex contains 2282 bytes
+   avrdude: reading on-chip flash data:
 
-    avrdude: safemode: Fuses OK
+   Reading | ################################################## | 100% 0.56s
 
-    avrdude done.  Thank you.
+   avrdude: verifying ...
+   avrdude: 2282 bytes of flash verified
+
+   avrdude: safemode: Fuses OK
+
+   avrdude done.  Thank you.
 
 There are two major things to note here\:
 * I set the programmer type (-c option) to be "linuxspi". This tells avrdude to use my addition as the programming interface

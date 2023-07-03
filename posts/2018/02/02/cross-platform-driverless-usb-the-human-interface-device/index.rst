@@ -129,17 +129,19 @@ In general, hosts won't issue requests for descriptor type 0x21, but type 0x22 w
 
 In my LED watch with its API, I just have a read-only table of descriptors that has the expected wValue, wIndex, and a pointer to the data. My descriptor table looks like so\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    const USBDescriptorEntry usb_descriptors[] = {
-        { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
-        { 0x0200, 0x0000, sizeof(cfg_descriptor), cfg_descriptor },
-        { 0x0300, 0x0000, sizeof(lang_descriptor), lang_descriptor },
-        { 0x0301, 0x0409, sizeof(manuf_descriptor), manuf_descriptor },
-        { 0x0302, 0x0409, sizeof(product_descriptor), product_descriptor },
-        { 0x2200, 0x0000, sizeof(hid_report_descriptor), hid_report_descriptor }, //new descriptor for HID
-        { 0x0000, 0x0000, 0x00, NULL }
-    };
+
+
+   const USBDescriptorEntry usb_descriptors[] = {
+       { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
+       { 0x0200, 0x0000, sizeof(cfg_descriptor), cfg_descriptor },
+       { 0x0300, 0x0000, sizeof(lang_descriptor), lang_descriptor },
+       { 0x0301, 0x0409, sizeof(manuf_descriptor), manuf_descriptor },
+       { 0x0302, 0x0409, sizeof(product_descriptor), product_descriptor },
+       { 0x2200, 0x0000, sizeof(hid_report_descriptor), hid_report_descriptor }, //new descriptor for HID
+       { 0x0000, 0x0000, 0x00, NULL }
+   };
 
 Now, in addition to extending GET_DESCRIPTOR, the HID specification requires one new setup request be supported\: Class-specific request 0x01 (bRequest = 0x01, bmRequestType = 0x01), known as GET_REPORT. This provides a control-request way to get HID reports. Now, I've actually found that both Windows and Linux don't mind if this isn't implemented. However, it may be good to implement anyway. It has the following arguments\:
 * wValue\: Report Type (IN, OUT, FEATURE) in the high byte, report ID in the low byte.
@@ -151,27 +153,29 @@ Now, in addition to extending GET_DESCRIPTOR, the HID specification requires one
 
 In my LED Watch, the USB setup request handler will call hook_usb_handle_setup_request when it receives a request that the base driver can't handle. Here is my implementation\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Implementation of hook_usb_handle_setup_request which implements HID class
-     * requests
-     */
-    USBControlResult hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
-    {
-        uint8_t *report_ptr;
-        uint16_t report_len;
-        switch (setup->wRequestAndType)
-        {
-            case USB_REQ(0x01, USB_REQ_DIR_IN | USB_REQ_TYPE_CLS | USB_REQ_RCP_IFACE):
-                //Get report request
-    ...determine which report is needed and get a pointer to it...
-                nextTransfer->addr = report_ptr;
-                nextTransfer->len = report_len;
-                return USB_CTL_OK;
-        }
-        return USB_CTL_STALL;
-    }
+
+
+   /**
+    * Implementation of hook_usb_handle_setup_request which implements HID class
+    * requests
+    */
+   USBControlResult hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
+   {
+       uint8_t *report_ptr;
+       uint16_t report_len;
+       switch (setup->wRequestAndType)
+       {
+           case USB_REQ(0x01, USB_REQ_DIR_IN | USB_REQ_TYPE_CLS | USB_REQ_RCP_IFACE):
+               //Get report request
+   ...determine which report is needed and get a pointer to it...
+               nextTransfer->addr = report_ptr;
+               nextTransfer->len = report_len;
+               return USB_CTL_OK;
+       }
+       return USB_CTL_STALL;
+   }
 
 
 And with that, your device is now prepared to handle the host setup requests. The next step is going to be actually writing the descriptors.
@@ -254,56 +258,58 @@ If you want to implement multiple separate HID devices in the same device (makin
 
 Here is an example of a completed configuration descriptor that declares a single HID interface with both IN and OUT endpoints\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * Configuration descriptor
-     */
-    static const uint8_t cfg_descriptor[] = {
-        9, //bLength
-        2, //bDescriptorType
-        9 + 9 + 9 + 7 + 7, 0x00, //wTotalLength
-        1, //bNumInterfaces
-        1, //bConfigurationValue
-        0, //iConfiguration
-        0x80, //bmAttributes
-        250, //bMaxPower
-        /* INTERFACE 0 BEGIN */
-        9, //bLength
-        4, //bDescriptorType
-        0, //bInterfaceNumber
-        0, //bAlternateSetting
-        2, //bNumEndpoints
-        0x03, //bInterfaceClass (HID)
-        0x00, //bInterfaceSubClass (0: no boot)
-        0x00, //bInterfaceProtocol (0: none)
-        0, //iInterface
-            /* HID Descriptor */
-            9, //bLength
-            0x21, //bDescriptorType (HID)
-            0x11, 0x01, //bcdHID
-            0x00, //bCountryCode
-            1, //bNumDescriptors
-            0x22, //bDescriptorType (Report)
-            sizeof(hid_report_descriptor), 0x00,
-            /* INTERFACE 0, ENDPOINT 1 BEGIN */
-            7, //bLength
-            5, //bDescriptorType
-            0x81, //bEndpointAddress (endpoint 1 IN)
-            0x03, //bmAttributes, interrupt endpoint
-            USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize,
-            10, //bInterval (10 frames)
-            /* INTERFACE 0, ENDPOINT 1 END */
-            /* INTERFACE 0, ENDPOINT 2 BEGIN */
-            7, //bLength
-            5, //bDescriptorType
-            0x02, //bEndpointAddress (endpoint 2 OUT)
-            0x03, //bmAttributes, interrupt endpoint
-            USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize
-            10, //bInterval (10 frames)
-            /* INTERFACE 0, ENDPOINT 2 END */
-        /* INTERFACE 0 END */
-    };
+
+
+   /**
+    * Configuration descriptor
+    */
+   static const uint8_t cfg_descriptor[] = {
+       9, //bLength
+       2, //bDescriptorType
+       9 + 9 + 9 + 7 + 7, 0x00, //wTotalLength
+       1, //bNumInterfaces
+       1, //bConfigurationValue
+       0, //iConfiguration
+       0x80, //bmAttributes
+       250, //bMaxPower
+       /* INTERFACE 0 BEGIN */
+       9, //bLength
+       4, //bDescriptorType
+       0, //bInterfaceNumber
+       0, //bAlternateSetting
+       2, //bNumEndpoints
+       0x03, //bInterfaceClass (HID)
+       0x00, //bInterfaceSubClass (0: no boot)
+       0x00, //bInterfaceProtocol (0: none)
+       0, //iInterface
+           /* HID Descriptor */
+           9, //bLength
+           0x21, //bDescriptorType (HID)
+           0x11, 0x01, //bcdHID
+           0x00, //bCountryCode
+           1, //bNumDescriptors
+           0x22, //bDescriptorType (Report)
+           sizeof(hid_report_descriptor), 0x00,
+           /* INTERFACE 0, ENDPOINT 1 BEGIN */
+           7, //bLength
+           5, //bDescriptorType
+           0x81, //bEndpointAddress (endpoint 1 IN)
+           0x03, //bmAttributes, interrupt endpoint
+           USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize,
+           10, //bInterval (10 frames)
+           /* INTERFACE 0, ENDPOINT 1 END */
+           /* INTERFACE 0, ENDPOINT 2 BEGIN */
+           7, //bLength
+           5, //bDescriptorType
+           0x02, //bEndpointAddress (endpoint 2 OUT)
+           0x03, //bmAttributes, interrupt endpoint
+           USB_HID_ENDPOINT_SIZE, 0x00, //wMaxPacketSize
+           10, //bInterval (10 frames)
+           /* INTERFACE 0, ENDPOINT 2 END */
+       /* INTERFACE 0 END */
+   };
 
 
 
@@ -338,15 +344,17 @@ The most difficult part about writing report descriptors is that they are not ea
 
 The first thing I'm going to describe are my helper macros, actually\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    /**
-     * HID Descriptor Helpers
-     */
-    #define HID_SHORT_ZERO(TAGTYPE) (TAGTYPE | 0)
-    #define HID_SHORT_MANY(TAGTYPE, ...) (TAGTYPE | (NUMARGS(__VA_ARGS__) & 0x3)), __VA_ARGS__
-    #define GET_HID_SHORT(_1, _2, _3, _4, _5, NAME, ...) NAME
-    #define HID_SHORT(...) GET_HID_SHORT(__VA_ARGS__, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)(__VA_ARGS__)
+
+
+   /**
+    * HID Descriptor Helpers
+    */
+   #define HID_SHORT_ZERO(TAGTYPE) (TAGTYPE | 0)
+   #define HID_SHORT_MANY(TAGTYPE, ...) (TAGTYPE | (NUMARGS(__VA_ARGS__) & 0x3)), __VA_ARGS__
+   #define GET_HID_SHORT(_1, _2, _3, _4, _5, NAME, ...) NAME
+   #define HID_SHORT(...) GET_HID_SHORT(__VA_ARGS__, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)(__VA_ARGS__)
 
 All HID tokens have a common format. They are a sequence of bytes with the first byte describing how many of the bytes following are part of the token, up to five bytes total. The first byte has the following format\:
 * Bits 7-2\: Tag Type
@@ -405,22 +413,24 @@ I'm not going to go through the token types exhaustively since those are in the 
 
 Since the easiest way to get started with these is with some examples, let's start off with a report descriptor that describes two reports\: an IN report that is 64 bytes long and an OUT report that is 64 bytes long. The 64 bytes in both of these reports have a "vendor defined" usage and thus can be used for general buffers. The OS won't try to hook them into any input system.
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static const uint8_t hid_report_descriptor[] = {
-        HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
-        HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
-        HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
-        HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
-        HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
-        HID_SHORT(0x94, 64),   //  REPORT_COUNT(64)
-        HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
-        HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
-        HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
-        HID_SHORT(0xc0),       //END_COLLECTION
-    };
+
+
+   static const uint8_t hid_report_descriptor[] = {
+       HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
+       HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
+       HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
+       HID_SHORT(0x24, 0xFF, 0x00), //LOGICAL_MAXIMUM (0x00FF)
+       HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
+       HID_SHORT(0x94, 64),   //  REPORT_COUNT(64)
+       HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
+       HID_SHORT(0x08, 0x01), //  USAGE (Vendor 1)
+       HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
+       HID_SHORT(0xc0),       //END_COLLECTION
+   };
 
 Let's dig into this report descriptor a little\:
 * Right off the bat, we change the USAGE_PAGE to page 0xFF00, which is "Vendor Defined". All the usages on this page are "Vendor <number>".
@@ -463,35 +473,37 @@ When a REPORT_ID token appears in a report descriptor, it changes how reports ar
 
 Here's an example descriptor that declares *three* reports\:
 
-.. code-block:: c
+.. code-block:: {lang}
 
-    static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
-        HID_SHORT(0x04, 0x01), //USAGE_PAGE (Generic Desktop)
-        HID_SHORT(0x08, 0x05), //USAGE (Game Pad)
-        HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
-        HID_SHORT(0x84, 0x01), //  REPORT_ID (1)
-        HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
-        HID_SHORT(0x24, 0x01), //  LOGICAL_MAXIMUM (1)
-        HID_SHORT(0x74, 0x01), //  REPORT_SIZE (1)
-        HID_SHORT(0x94, 4),    //  REPORT_COUNT(4)
-        HID_SHORT(0x18, 0x90), //  USAGE_MINIMUM (D-pad up)
-        HID_SHORT(0x28, 0x93), //  USAGE_MAXIMUM (D-pad left)
-        HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
-        HID_SHORT(0x80, 0x03), //  INPUT (Const, Var, Abs)
-        HID_SHORT(0x04, 0x08), //  USAGE_PAGE (LED)
-        HID_SHORT(0x08, 0x4B), //  USAGE (Generic Indicator)
-        HID_SHORT(0x94, 8),    //  REPORT_COUNT(8)
-        HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
-        HID_SHORT(0x84, 0x02), //  REPORT_ID (2)
-        HID_SHORT(0x14, 0xFF), //  LOGICAL_MINIMUM (-128)
-        HID_SHORT(0x24, 0x7F), //  LOGICAL_MAXIMUM (127)
-        HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
-        HID_SHORT(0x94, 2),    //  REPORT_COUNT (2)
-        HID_SHORT(0x04, 0x01), //  USAGE_PAGE (Generic Desktop)
-        HID_SHORT(0x08, 0x38), //  USAGE (Wheel)
-        HID_SHORT(0x80, 0x06), //  INPUT (Data, Var, Rel)
-        HID_SHORT(0xc0),       //END_COLLECTION
-    };
+
+
+   static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
+       HID_SHORT(0x04, 0x01), //USAGE_PAGE (Generic Desktop)
+       HID_SHORT(0x08, 0x05), //USAGE (Game Pad)
+       HID_SHORT(0xa0, 0x01), //COLLECTION (Application)
+       HID_SHORT(0x84, 0x01), //  REPORT_ID (1)
+       HID_SHORT(0x14, 0x00), //  LOGICAL_MINIMUM (0)
+       HID_SHORT(0x24, 0x01), //  LOGICAL_MAXIMUM (1)
+       HID_SHORT(0x74, 0x01), //  REPORT_SIZE (1)
+       HID_SHORT(0x94, 4),    //  REPORT_COUNT(4)
+       HID_SHORT(0x18, 0x90), //  USAGE_MINIMUM (D-pad up)
+       HID_SHORT(0x28, 0x93), //  USAGE_MAXIMUM (D-pad left)
+       HID_SHORT(0x80, 0x02), //  INPUT (Data, Var, Abs)
+       HID_SHORT(0x80, 0x03), //  INPUT (Const, Var, Abs)
+       HID_SHORT(0x04, 0x08), //  USAGE_PAGE (LED)
+       HID_SHORT(0x08, 0x4B), //  USAGE (Generic Indicator)
+       HID_SHORT(0x94, 8),    //  REPORT_COUNT(8)
+       HID_SHORT(0x90, 0x02), //  OUTPUT (Data, Var, Abs)
+       HID_SHORT(0x84, 0x02), //  REPORT_ID (2)
+       HID_SHORT(0x14, 0xFF), //  LOGICAL_MINIMUM (-128)
+       HID_SHORT(0x24, 0x7F), //  LOGICAL_MAXIMUM (127)
+       HID_SHORT(0x74, 0x08), //  REPORT_SIZE (8)
+       HID_SHORT(0x94, 2),    //  REPORT_COUNT (2)
+       HID_SHORT(0x04, 0x01), //  USAGE_PAGE (Generic Desktop)
+       HID_SHORT(0x08, 0x38), //  USAGE (Wheel)
+       HID_SHORT(0x80, 0x06), //  INPUT (Data, Var, Rel)
+       HID_SHORT(0xc0),       //END_COLLECTION
+   };
 
 The three reports defined here are\:
 * IN report 1\: Contains 4 bits of D-pad information (up through left) and 4 bits of constant data (basically just filler bits).

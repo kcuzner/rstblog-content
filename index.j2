@@ -5,6 +5,7 @@
     {% for page in index_posts %}
         <h3><a href="/{{ page.url }}">{{ page.title }}</a></h3>
         <div>{{ page.doc_preview }}</div>
+        <p><a href="/{{ page.url }}">Continue Reading &rarr;</a></p>
     {% endfor %}
     <div class="clearfix">
     {% if index_number %}

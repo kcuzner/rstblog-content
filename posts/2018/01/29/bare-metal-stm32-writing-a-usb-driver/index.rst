@@ -23,6 +23,8 @@ In this post I'm going to only cover a small portion of what I learned from the 
 My objective here is to walk quickly through the operation of the USB Peripheral, specifically the Packet Memory Area, then talk a bit about how the USB Peripheral does transfers, and move on to how I structured my code to abstract the USB packetizing logic away from the application.
 
 
+.. rstblog-break::
+
 
 My code is by no means good. In fact, I believe some of it might be wrong (specifically my treatment of the PMA on the STM32L052). My intent here is to show how to interact with the STM32 USB peripheral and one way to get started writing your own HAL around it, rather than relying on others' software. Feel free to leave a comment with your thoughts.
 

@@ -127,6 +127,19 @@ class TextBody:
         return f'<{type(self)} "{text}">'
 
 
+class PostBreak:
+    def __init__(self, pos):
+        self.line = pos[0]
+        self.offset = pos[1]
+
+    @property
+    def attachments(self):
+        return []
+
+    def to_rst(self, *args, **kwargs):
+        return "\n.. rstblog-break::\n"
+
+
 class TagHandler(ABC):
     HANDLERS = {}
 
@@ -706,6 +719,10 @@ class WordpressToRst(HTMLParser):
             self.stack[-1].append(TextBody(data, self.getpos()))
         else:
             self.content.append(TextBody(data, self.getpos()))
+
+    def handle_comment(self, data):
+        if data == "more":
+            self.content.append(PostBreak(self.getpos()))
 
     @property
     def attachments(self):

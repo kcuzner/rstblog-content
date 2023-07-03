@@ -28,6 +28,8 @@ In this post I'm going to go over my general design, some things I was happy wit
 
 
 
+.. rstblog-break::
+
 
 There are three main parts to the watch circuit\:
 * The power supply and battery charger.

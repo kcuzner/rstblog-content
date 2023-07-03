@@ -15,6 +15,8 @@ I intend to show exactly the following, no more and no less\:
 
 
 
+.. rstblog-break::
+
 
 What is TPI?
 ============

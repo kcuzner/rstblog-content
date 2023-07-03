@@ -23,6 +23,8 @@ Contents
 ========
 
 
+.. rstblog-break::
+
 * `Parts of a bootloader <parts>`_
 
 

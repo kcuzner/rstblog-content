@@ -32,6 +32,8 @@ The IoTree is an interface that allows anyone to control the pattern of lights s
 I'm going to go into brief detail about each of these pieces and some of the challenges I had with getting everything to work.
 
 
+.. rstblog-break::
+
 
 WS2811 Control\: A Freescale Kinetis KL26 Microcontroller
 =========================================================

@@ -26,7 +26,7 @@ Example
 
 Before going into the code, here is an example of what this abstraction can do as it stands. It directly uses the DbObject and DbQuery-inheriting objects which are shown further down in this post.
 
-code-block::
+.. code-block::
 
     from db import *
     import hashlib
@@ -84,7 +84,7 @@ Change Tracking Columns
 
 I started out with columns. I needed columns that track changes and have a mapping to an SQL column name. I came up with the following\:
 
-code-block::
+.. code-block::
 
     class ColumnSet(object):
         """
@@ -274,7 +274,7 @@ The next thing I had to create was the database querying structure. I decided th
 
 Another thing I wanted to do was avoid the usage of SQL in constructing my queries. This is similar to the way that LINQ works for C#\: A predicate is specified and later translated into an SQL query or a series of operations in memory depending on what is going on. So, in Python one of my queries looks like so\:
 
-code-block::
+.. code-block::
 
     class Table(ColumnSet):
         some_column = StringColumn("column_1", "")
@@ -287,7 +287,7 @@ code-block::
 
 This would print out a tuple ``(" WHERE x.column_1 = %s AND x.column_2 > %s", ["4", 5])``. So, how does this work? I used operator overloading to create DbQueryExpression objects. The code is like so\:
 
-code-block::
+.. code-block::
 
     class DbQueryExpression(object):
         """
@@ -430,7 +430,7 @@ This DbQueryExpression is fed into my DbQuery object which actually does the tra
 
 The DbQuery objects are implemented as follows\:
 
-code-block::
+.. code-block::
 
     class DbQueryError(Exception):
         """
@@ -628,7 +628,7 @@ Table and row objects
 
 At the highest level of this hierarchy is the DbObject. The DbObject definition actually represents a table in the database with a name and a single primary key column. Each instance represents a row. DbObjects also implement the methods for selecting records of their type and also updating themselves when they are changed. They inherit change tracking from the ColumnSet and use DbQueries to accomplish their querying goals. The code is as follows\:
 
-code-block::
+.. code-block::
 
     class DbObject(ColumnSet):
         """

@@ -56,7 +56,7 @@ A working description of this can be found in the Makefile in my github reposito
 
 Makefiles work by defining a series of "targets" which have "dependencies". Every dependency can also be the name of a target and a target may have multiple ways of being resolved (this I never realized before). So, here is the parts of the Makefile which enable searching in src for both c and cpp and doing specific actions for each, comping them into the obj directory\:
 
-code-block::
+.. code-block::
 
     # Project C & C++ files which are to be compiled
     CPP_FILES = $(wildcard $(SRCDIR)/*.cpp)
@@ -98,7 +98,7 @@ Outputting everything to bin
 
 Compared to the pattern matching and multiple target definitions that we discussed above, this is comparatively simple. We simply get to prefix all of our "binary" output files with some directory which is set as $(OUTPUTDIR) in my Makefile. Here is an example\:
 
-code-block::
+.. code-block::
 
     all:: $(OUTPUTDIR)/$(PROJECT).hex $(OUTPUTDIR)/$(PROJECT).bin stats dump
 
@@ -130,13 +130,13 @@ The most important file we need is called "mk20dx128.c". This sets up a lot of t
 
 My first mistake was explicitly using the linker to link all of my object files (wait...aren't we supposed to use the linker? Read on.). Since arm-none-eabi is not dependent on a specific architecture, it doesn't know which standard library (libc) to use. This results in an undefined reference to "__libc_init_array()", a function used during the initialization phase of a program which is not often invoked in code outside the standard library itself. mk20dx128.c uses this function in its custom startup code which prepares the processor for running our program. To solve this, I wanted to tell the linker that I was using a cortex-m4 cpu so that it would know which libc to include and thereby resolve the reference. However, this proved difficult to do when directly invoking the linker. Instead, I took a hint from the Makefile that comes with Teensyduino and used the following command to link the objects\:
 
-code-block::
+.. code-block::
 
     $(CC) $(OBJ_FILES) $(LDFLAGS) -o $(OUTPUTDIR)/$(PROJECT).elf
 
 Which more or less translates to (using our example from earlier)\:
 
-code-block::
+.. code-block::
 
     arm-none-eabi-gcc obj/file1.o obj/file2.o obj/etc.o obj/mk20dx128.o $(LDFLAGS) -o bin/$(PROJECT).elf
 
@@ -144,7 +144,7 @@ We would have thought that we should be using arm-none-eabi-ld instead of arm-no
 
 The next thing is that mk20dx128.c has a lot of external dependencies. It uses a function defined in pins_teensy.c which in turn requires functions defined in both analog.c and usb_dev.c which opens another can of worms. Ugh. I didn't want this many dependencies and I couldn't see a way to escape compiling nearly the entire Teensyduino library just to run my simple blinking program. Then, it dawned on me\: I could use the same technique that mk20dx128.c uses to define its ISRs to "define" the functions that pins_teensy.c was calling that I didn't really want. So, I made a file called "shim.c" which contained the following\:
 
-code-block::
+.. code-block::
 
     void unused_void(void) { }
 

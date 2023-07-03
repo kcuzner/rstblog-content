@@ -109,7 +109,7 @@ For the STM32F103\:
 
 The PMA is arranged as 256 16-bit words (512 bytes of PMA SRAM), but from the processor bus it must be accessed in a 32-bit aligned fashion. I think this is most easily understood with the following diagram\:
 
-code-block::
+.. code-block:: default
 
     ADDR+OFFSET: |  0x0  |  0x1  |  0x2  |  0x3  |
     -------------|-------|-------|-------|-------|
@@ -127,7 +127,7 @@ Each 16-bit word of PMA memory utilizes all four bytes of a 32-bit-aligned addre
 
 This also requires some special considerations when accessing memory. Since accesses can only happen by 32-bit word and only two bytes of that word are actually used, it is not suitable for use as general memory. If you want a nice byte buffer that your application can work with, you'll need to allocate that in general SRAM. When you're ready to send it over USB then it can be copied into the PMA with its weird access alignment rules. I ended up making the following methods to help with that (note\: USB_PMAADDR is defined to 0x40006000 elsewhere, which is the start of the PMA from the perspective of the main memory bus)\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Minimally sized data type for things in the PMA
@@ -201,7 +201,7 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
 
-code-block::
+.. code-block:: c
 
     #define USB_DATA_ALIGN __attribute__ ((aligned(2)))
 
@@ -218,7 +218,7 @@ For the STM32L052\:
 
 This microcontroller's PMA is actually far simpler than the STM32F1's. It is arranged as 512 16-bit words (so its twice the size) and also does not require access on 32-bit boundaries. The methods I defined for the STM32L103 are now instead\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Minimally sized data type for things in the PMA
@@ -303,7 +303,7 @@ One fun thing I decided to do was use the GCC linker to manage static allocation
 
 My linker script for the STM32L052 has the following MEMORY declaration (in the github repo it is somewhat different, but that's because of my bootloader among other things)\:
 
-code-block::
+.. code-block:: default
 
     MEMORY
     {
@@ -317,7 +317,7 @@ You can see that I said there's a segment of memory called FLASH that is 64K lon
 
 I'm not going to copy in my whole linker script, but to add support for allocating variables into the PMA I added the following to my SECTIONS\:
 
-code-block::
+.. code-block:: default
 
     SECTIONS
     {
@@ -341,7 +341,7 @@ I declared a segment called ".pma" which puts everything inside any sections sta
 
 Now, as for why I wanted to do this, take a look at this fun variable declaration\:
 
-code-block::
+.. code-block:: c
 
     #define PMA_SECTION ".pma,\"aw\",%nobits//" //a bit of a hack to prevent .pma from being programmed
     #define _PMA __attribute__((section (PMA_SECTION), aligned(2))) //everything needs to be 2-byte aligned
@@ -364,7 +364,7 @@ This creates a variable in the ".pma" section called "bt". Now, there are a few 
 
 
 
-code-block::
+.. code-block:: c
 
     if (!*APPLICATION_ADDR(&bt[endpoint].tx_addr))
     {
@@ -376,7 +376,7 @@ When accessing PMA variables, the address of anything that the program needs to 
 
 Another thing to note is that when the USB peripheral gets an address to something in the PMA, it does not need the 0x40006000 offset. In fact, from its perspective address 0x00000000 is the start of the PMA. This means that when we want to point the USB to the BDT (that's what the bt variable is), we have to do the following\:
 
-code-block::
+.. code-block:: c
 
     //BDT lives at the beginning of packet memory (see linker script)
     USB->BTABLE = USB_LOCAL_ADDR(bt);
@@ -439,7 +439,7 @@ The main point I want to hit on with this register is the Status fields. The USB
 
 This is where the PMA ties in. The USB Peripheral uses the Buffer Descriptor Table to look up the addresses of the buffers in the PMA. There are 8 entries in the BDT (one for each endpoint) and they have the following structure (assuming the Kind bit is set to 0...the Kind bit can enable double buffering, which is beyond the scope of this post)\:
 
-code-block::
+.. code-block:: c
 
     //single ended buffer descriptor
     typedef struct __attribute__((packed)) {
@@ -462,7 +462,7 @@ After an endpoint is initialized and the user requests a transfer on that endpoi
 
 The buffers used for transferring data in the PMA I dynamically allocate by using the symbol "_pma_end" which was defined by the linker script. When the USB device is reset, I move a "break" to point to the address of _pma_end. When the user application initializes an endpoint, I take the break and move it forward some bytes to reserve that space in the PMA for that endpoint's buffer. Here's the code\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Start of the wide open free packet memory area, provided by the linker script
@@ -515,7 +515,7 @@ The _pma_end symbol was defined by the statement "_pma_end = .;" in the linker s
 
 Now, to tie it all together, here's what happens when we initialize an endpoint\:
 
-code-block::
+.. code-block:: c
 
     void usb_endpoint_setup(uint8_t endpoint, uint8_t address, uint16_t size, USBEndpointType type, USBTransferFlags flags)
     {
@@ -565,7 +565,7 @@ To that end, I decided to use what I call the "hook" pattern because of how I na
 
 In my USB driver header file I declared the following\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Hook function implemented by the application which is called when a
@@ -632,7 +632,7 @@ code-block::
 
 And in my main USB C file I have the following\:
 
-code-block::
+.. code-block:: c
 
     USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
     {
@@ -661,7 +661,7 @@ Most of this section is taken from the code in common/usb.c and common/usb.h
 
 Ok, so here's how I organized this API. My idea was to present an interface consisting entirely of byte buffers to the application program, keeping the knowledge of packetizing and the PMA isolated to within the driver. Facing the application side, here's how it looks (read the comments for notes about how the functions are used)\:
 
-code-block::
+.. code-block:: c
 
     #define USB_CONTROL_ENDPOINT_SIZE 64
 
@@ -850,7 +850,7 @@ I'm just going to go through the transmit sequence, since the receive works in a
 
 The supporting code for this is as follows\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Endpoint status, tracked here to enable easy sending and receiving through

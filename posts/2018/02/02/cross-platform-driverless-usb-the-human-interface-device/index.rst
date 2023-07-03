@@ -129,7 +129,7 @@ In general, hosts won't issue requests for descriptor type 0x21, but type 0x22 w
 
 In my LED watch with its API, I just have a read-only table of descriptors that has the expected wValue, wIndex, and a pointer to the data. My descriptor table looks like so\:
 
-code-block::
+.. code-block:: c
 
     const USBDescriptorEntry usb_descriptors[] = {
         { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
@@ -151,7 +151,7 @@ Now, in addition to extending GET_DESCRIPTOR, the HID specification requires one
 
 In my LED Watch, the USB setup request handler will call hook_usb_handle_setup_request when it receives a request that the base driver can't handle. Here is my implementation\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Implementation of hook_usb_handle_setup_request which implements HID class
@@ -254,7 +254,7 @@ If you want to implement multiple separate HID devices in the same device (makin
 
 Here is an example of a completed configuration descriptor that declares a single HID interface with both IN and OUT endpoints\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Configuration descriptor
@@ -338,7 +338,7 @@ The most difficult part about writing report descriptors is that they are not ea
 
 The first thing I'm going to describe are my helper macros, actually\:
 
-code-block::
+.. code-block:: c
 
     /**
      * HID Descriptor Helpers
@@ -405,7 +405,7 @@ I'm not going to go through the token types exhaustively since those are in the 
 
 Since the easiest way to get started with these is with some examples, let's start off with a report descriptor that describes two reports\: an IN report that is 64 bytes long and an OUT report that is 64 bytes long. The 64 bytes in both of these reports have a "vendor defined" usage and thus can be used for general buffers. The OS won't try to hook them into any input system.
 
-code-block::
+.. code-block:: c
 
     static const uint8_t hid_report_descriptor[] = {
         HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
@@ -463,7 +463,7 @@ When a REPORT_ID token appears in a report descriptor, it changes how reports ar
 
 Here's an example descriptor that declares *three* reports\:
 
-code-block::
+.. code-block:: c
 
     static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
         HID_SHORT(0x04, 0x01), //USAGE_PAGE (Generic Desktop)

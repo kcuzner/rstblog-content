@@ -42,7 +42,7 @@ After cloning the repo and installing those packages, run the "./boostrap" scrip
 
 To check to see if the avrdude you have is the right one, you should see an output similar to the following if you run this command (tiny-tim is the name of my Raspberry Pi until I think of something better)\:
 
-code-block::
+.. code-block::
 
     kcuzner@tiny-tim:~/avrdude/avrdude$ avrdude -c ?type
 
@@ -95,7 +95,7 @@ Configuration
 
 There is a little bit of configuration that happens here on the Raspberry Pi side before proceeding to wiring it up. You must now decide which GPIO to sacrifice to be the reset pin. I chose 25 because it is next to the normal chip enable pins, but it doesn't matter which you choose. To change which pin is to be used, you need to edit "/usr/local/etc/avrdude.conf" (it will be just "/etc/avrdude.conf" if it wasn't built and installed manually like above). Find the section of the file that looks like so\:
 
-code-block::
+.. code-block::
 
     programmer
       id = "linuxspi";
@@ -111,7 +111,7 @@ Wiring
 
 After setting up avrdude.conf to your desired configuration, you can now connect the appropriate wires from your Raspberry Pi's header to your microchip. **A word of extreme caution\:**** The Raspberry Pi's GPIOs are NOT 5V tolerant, and that includes the SPI pins**. You must do either one of two things\: a) Run the AVR and everything around it at 3.3V so that you never see 5V on ANY of the Raspberry Pi pins at any time (including after programming is completed and the device is running) or b) Use a level translator between the AVR and the SPI. I happen to have a level translator lying around (its a fun little TSSOP I soldered to a breakout board a few years back), but I decided to go the 3.3V route since I was trying to get this thing to work. If you have not ever had to hook up in-circuit serial programming to your AVR before, perhaps this would be a great time to learn. You need to consult the datasheet for your AVR and find the pins named RESET (bar above it), MOSI, MISO, and SCK. These 4 pins are connected so that RESET goes to your GPIO with a pullup resistor to the Vcc on your AVR, MOSI goes to the similarly named MOSI on the Raspberry Pi header, MISO goes to the like-named pin on the header, and SCK goes to the SPI clock pin (named SCLK on the diagram on elinux.org). After doing this and **double checking to make sure 5V will never be present to the Raspberry Pi**, you can power on your AVR and it should be able to be programmed through avrdude. Here is a demonstration of me loading a simple test program I made that flashes the PORTD LEDs\:
 
-code-block::
+.. code-block::
 
     kcuzner@tiny-tim:~/avrdude/avrdude$ sudo avrdude -c linuxspi -p m48 -P /dev/spidev0.0 -U flash:w:../blink.hex 
     [sudo] password for kcuzner: 

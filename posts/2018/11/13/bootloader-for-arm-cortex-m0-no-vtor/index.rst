@@ -83,7 +83,7 @@ When an interrupt occurs, the NVIC will examine this table, read the handler add
 
 For any program meant to run on an ARM Cortex processor there'll be some assembly (or maybe C) that looks like this (this one was provided by ST's CMSIS implementation for the STM32F042)\:
 
-code-block::
+.. code-block:: asm
 
        .section .isr_vector,"a",%progbits
       .type g_pfnVectors, %object
@@ -117,7 +117,7 @@ code-block::
 
 Then in my linker script I have the "SECTIONS" portion start out like this\:
 
-code-block::
+.. code-block:: c
 
     SECTIONS
     {
@@ -152,7 +152,7 @@ code-block::
 
 The assembly snippet creates the table for the NVIC (g_pfnVectors in this example) and assigns it to the ".isr_vector" section. The linker script then locates this section right at the beginning of the flash (the "KEEP(\*(.isr_vector))" right at the beginning after some variable declarations). When the program is compiled what I end up with it something that looks like this (this is an assembly dump of the beginning of one of my binaries)\:
 
-code-block::
+.. code-block:: asm
 
     Disassembly of section .text:
 
@@ -266,7 +266,7 @@ So long as the user program doesn't go and mess with the VTOR, any interrupts th
 
 There is one step that the user program has to do, however. It needs to properly offset all of its addresses in the flash. As I mentioned in my previous post about bootloaders this is pretty easy to do in the linker script by just tricking it into thinking that the flash starts at the beginning of the user program partition (example on a 32K microcontroller)\:
 
-code-block::
+.. code-block:: c
 
     _flash_origin = 0x08002000;
     _flash_length = 24K;
@@ -280,7 +280,7 @@ code-block::
 
 The user program is now tricked into thinking that flash starts at 0x08002000 and is only 24K. We can see that this was successful if we take a look at the beginning of the disassembly of a compiled program\:
 
-code-block::
+.. code-block:: asm
 
     Disassembly of section .text:
 
@@ -367,7 +367,7 @@ I implemented this with these linker script memory modifications\:
 
 **Bootloader linker script\:**
 
-code-block::
+.. code-block:: c
 
     _flash_origin = 0x08000000;
     _flash_length = 32K;
@@ -387,7 +387,7 @@ code-block::
 
 **Device linker script\:**
 
-code-block::
+.. code-block:: c
 
     _flash_origin = 0x08002000;
     _flash_length = 24K;
@@ -406,7 +406,7 @@ code-block::
 
 And this section addition in the bootloader linker script\:
 
-code-block::
+.. code-block:: c
 
     ...
         .boot_data :
@@ -418,7 +418,7 @@ code-block::
 
 Now I have some reserved memory that the user program won't touch. I use this area to store a psuedo-VTOR\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Places a symbol into the reserved RAM section. This RAM is not
@@ -440,7 +440,7 @@ When the bootloader starts it will set this "bootloader_vtor" variable to the lo
 
 Then, if the bootloader determines that the user program exists it overwrites bootloader_vtor with the following\:
 
-code-block::
+.. code-block:: default
 
     void bootloader_init(void)
     {
@@ -470,7 +470,7 @@ code-block::
 
 Ok, so that solves the issue of "where do the user's interrupts live". The next issue is actually jumping to those. Turns out, that's not a hard problem to solve now. A quick change to the interrupt handlers makes short work of that\:
 
-code-block::
+.. code-block:: c
 
     /**
      * Entry point for all exceptions which passes off execution to the appropriate
@@ -498,7 +498,7 @@ What this does is determine which interrupt number is executing, multiply that n
 
 The bootloader also gets a rather non-trivial change to its interrupt vector table\:
 
-code-block::
+.. code-block:: asm
 
     /******************************************************************************
     *
@@ -560,7 +560,7 @@ code-block::
 
 All the interrupts point to this new Bootloader_IRQHandler except Reset. We now have another problem\: What about the interrupts for when we actually need to execute the bootloader program instead of the user program. Well, that's fairly simple now. We just move the g_pfnVectors table so that it is just like any other table\:
 
-code-block::
+.. code-block:: asm
 
     /**
      * Default vector table local to the bootloader. This is used by the
@@ -611,7 +611,7 @@ With my other bootloader which relied on the VTOR, the presence of the bootloade
 
 While I didn't overcome this issue completely and stack traces can be a little awkward if they are interrupted at just the right time, I did manage to massage gdb enough to make it somewhat usable\:
 
-code-block::
+.. code-block:: sh
 
     gdb -ex "target remote localhost:3333" -ex "add-symbol-file ./path/to/my/bootloader.elf 0x08000000" ./path/to/my/user/program.elf
 

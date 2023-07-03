@@ -454,8 +454,15 @@ class CodeTag(TagHandler):
 
     def to_rst(self, *args, **kwargs):
         kwargs["escape"] = ""  # All chars allowed without escaping
+        cls = self.attrs.get("class", "")
+        lang_match = re.search(r"(?:^|\s)lang:(\S+)(?:$|\s)", cls)
+        lang = f" {lang_match.group(1)}" if lang_match else ""
+        if not lang:
+            _log.warning(f'Can\'t find code-block language in "{cls}"')
+        if lang in ("default",):
+            lang = ""
         return (
-            "\ncode-block::\n\n"
+            f"\n.. code-block::{lang}\n\n"
             + textwrap.indent(
                 "".join([c.to_rst(*args, **kwargs) for c in self.content]), " " * 4
             )

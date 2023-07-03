@@ -16,7 +16,7 @@ Event bubbling
 
 When making my Tetris game, I wanted an easy to way to know when to update or redraw the screen rather than always redrawing it. My idea was to create an event system that would "notice" when the game changed somehow\: whether a block had moved or maybe the score changed. I remembered of two event systems that I really really liked\: C#'s event keyword plus delegate thing and Javascript's event bubbling system. Some people probably hate both of those, but I have learned to love them. Mainly, its just because I'm new to this sort of thing and am still being dazzled by their plethora of uses. Using some knowledge I gleaned from my database abstraction project about the fun data model special function names in Python, I created the following\:
 
-code-block::
+.. code-block::
 
     class EventDispatcher(object):
         """
@@ -57,7 +57,7 @@ My first thought when making this was to do it like C# events\: super flexible, 
 
 Javascript events work by specifying types of events, a "target" or object in the focus of the event, and arguments that get passed along with the event. The events then "bubble" upward through the DOM, firing first for a child and then for the parent of that child until it reaches the top element. The advantage of this is that if one wants to know, for example, if the screen has been clicked, a listener doesn't have to listen at the lowest leaf element of each branch of the DOM; it can simply listen at the top element and wait for the "click" event to "bubble" upwards through the tree. After my aforementioned issue I initially thought that I was missing events because my structure was flawed, so I ended up re-using the above class to implement event bubbling by doing the following\:
 
-code-block::
+.. code-block::
 
     class Event(object):
         """

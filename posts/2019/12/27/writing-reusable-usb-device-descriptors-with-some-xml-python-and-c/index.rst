@@ -6,7 +6,7 @@ A recent project required me to reuse (once again) my USB HID device driver. Thi
 In this post I will present a script that turns this madness, which lives in a separate file\:
 
 
-code-block::
+.. code-block:: default
 
     /**
      * Device descriptor
@@ -151,7 +151,7 @@ code-block::
 Into these comment blocks which can live anywhere in the source and are somewhat more readable\:
 
 
-code-block::
+.. code-block:: c
 
     /**
      * <descriptor id="device" type="0x01">
@@ -370,7 +370,7 @@ The way my script works, block comments in any source file can contain XML which
 For example, here is the "main.c" file of my `midi-fader device <https://github.com/kcuzner/midi-fader>`_\:
 
 
-code-block::
+.. code-block:: c
 
     /**
      * USB Midi-Fader
@@ -499,7 +499,7 @@ The script consists of a 800-ish line python script (current version\: `https\:/
 The C file that this generates is placed in the obj folder during compilation and treated as a non-source-controlled component. It is regenerated every time the makefile is run. Here is a snippet of how my makefile invokes this script. I hope this makes some sense. My makefile style has changed somewhat for this project enable multiple targets, but hopefully this communicates the gist of how I made the Makefile execute the python script before compiling any other objects.
 
 
-code-block::
+.. code-block:: sh
 
     # These are spread out among several files, but are concatenated here for easy
     # reading
@@ -606,7 +606,7 @@ USB Descriptor XML
 As the python script is run, it searches the source files for XML which describes the USB descriptors. To demonstrate the XML format, here is the simplest USB descriptor. This will just declare a device, add product and model strings, and declare a simple configuration that requires maximum USB power\:
 
 
-code-block::
+.. code-block:: xhtml
 
     <descriptor id="device" type="0x01">
       <length name="bLength" size="1" />
@@ -751,7 +751,7 @@ The next step to having something fully portable is to have an easy way to hook 
 These are usually defined like this in the calling module\:
 
 
-code-block::
+.. code-block:: c
 
     USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
     {
@@ -770,7 +770,7 @@ code-block::
 Application code can then interface to these hooks like so (example from my HID driver)\:
 
 
-code-block::
+.. code-block:: c
 
     void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len)
     {
@@ -797,7 +797,7 @@ The problem with this is that since the **hook_** function can only be defined i
 To remedy this, I created a "usb_app" layer which implements these **hook_** functions and then dispatches them to handlers. I define these handlers by way of some structs (which are const, so they get stored in flash rather than RAM)\:
 
 
-code-block::
+.. code-block:: c
 
     /**
      * Structure instantiated by each interface
@@ -875,7 +875,7 @@ code-block::
 Every module that has a USB descriptor and some interface can then declare an **extern const USBInterface** in its header. The application using the module can then just attach it to the **usb_app_setup** for the project. For example, my HID interface declares this in its header\:
 
 
-code-block::
+.. code-block:: c
 
     /**
      * USB interface object for the app
@@ -886,7 +886,7 @@ code-block::
 And then in my main.c, I link it (along with any other interfaces) into the rest of my application like so (using the usb_app framework)\:
 
 
-code-block::
+.. code-block:: c
 
     static const USBInterfaceListNode midi_interface_node = {
         .interface = &midi_interface,
@@ -908,7 +908,7 @@ code-block::
 Meanwhile, in my usb_hid.c I have defined **hid_interface** to look like this (all the referenced functions are also pretty short, but I haven't included them for brevity). If a hook is unused, I just leave it null\:
 
 
-code-block::
+.. code-block:: c
 
     const USBInterface hid_interface = {
         .hook_usb_handle_setup_request = &hid_usb_handle_setup_request,

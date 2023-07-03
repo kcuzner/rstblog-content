@@ -10,7 +10,7 @@ When writing a script for pcbnew, it is usually helpful to have some documentati
 
 Here's my script\:
 
-code-block::
+.. code-block:: python
 
     #!/usr/bin/env python2
 
@@ -61,7 +61,7 @@ Before you can use the scripts on your footprints, they need to be imported. Mak
 
 The scripting console can be found under Tools->Scripting Console. Once it is opened you will see a standard python (2) command prompt. If you placed your script in a location where the Scripting Console will search, you should be able to do something like the following\:
 
-code-block::
+.. code-block:: python
 
     PyCrust 0.9.8 - KiCAD Python Shell
     Python 2.7.13 (default, Feb 11 2017, 12:22:40) 

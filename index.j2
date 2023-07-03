@@ -4,6 +4,7 @@
 {% block content %}
     {% for page in index_posts %}
         <h3><a href="/{{ page.url }}">{{ page.title }}</a></h3>
+        <div>{{ page.doc_preview }}</div>
     {% endfor %}
     <div class="clearfix">
     {% if index_number %}

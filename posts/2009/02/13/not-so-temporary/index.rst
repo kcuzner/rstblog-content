@@ -3,6 +3,8 @@ Well I have decided to place my actual website on this server. My home server ha
 I will probably post progress on the new smith-marsden site here since that is currently my main development challenge.
 
 Additional features of the new smith-marsden site\:
+
+
 * Ability to invite other users given to everyone
 
 

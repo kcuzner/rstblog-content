@@ -3,6 +3,8 @@ After much pain and work...(ok, I had a great time; let's be honest now)...I hav
 
 
 Pursuant to the V-USB licence, I am releasing my hardware schematics and the software (which can be found `here <http://cuznersoft.com/wordpress/?p=183>`__). However, it isn't because of the licence that I feel like releasing them...it is because it was quite fun to build and I would recommend it to anyone with a lot of time on their hands. So, to start off let us list the parts\:
+
+
 * 1 ATMega48A (Digi-key\: ATMEGA48A-PU-ND)
 
 
@@ -55,6 +57,8 @@ The schematic is as follows\:
 [/caption]
 
 The parts designations are as follows\:
+
+
 * R1\: 15Ω
 
 
@@ -99,6 +103,8 @@ The parts designations are as follows\:
 
 
 As I was building this I did run into a few issues which are easy to solve, but took me some time\:
+
+
 * If the USB doesn't connect, check the connections, check to make sure the pullups are in the right spot, and check to make sure the DECOUPLING CAPACITOR is there. I got stuck on the decoupling capacitor part, added it, and voila! It connected.
 
 

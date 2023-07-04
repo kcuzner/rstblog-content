@@ -68,6 +68,8 @@ The STM32 USB Peripheral
 As I have recommended in my previous post, please visit `http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`__ to get up to speed on how USB works.
 
 Next, you will need to locate the appropriate datasheets. As I've discovered is very common for microcontrollers, you need the following\:
+
+
 * The family reference manual (very very long document, >1000 pages usually)
 
 
@@ -76,6 +78,8 @@ Next, you will need to locate the appropriate datasheets. As I've discovered is 
 
 
 ST makes these easy to find on their website. For the USB peripheral, there's a lot of common ground with the Kinetis peripheral, but there are some key differences. Here's a rundown of the features of the STM32 peripheral\:
+
+
 * The USB Peripheral manages transferring data to and from the host for up to 8 bi-directional endpoints (16 single-direction).
 
 
@@ -205,6 +209,8 @@ This also requires some special considerations when accessing memory. Since acce
 
 
 The main thing to get out of these is that the usb_pma_copy functions treat the buffer as a bunch of 16-bit values and perform all accesses 32-bit aligned. My implementation **is naive and highly insecure.** Buffers are subject to some restrictions that will cause interesting behavior if they aren't followed\:
+
+
 * **Naive\: **Buffers in general SRAM must be aligned on a 16-bit boundary. Since I copy everything by half-word by casting the void\* pointers into uint16_t\*, the compiler will optimize that and assume that void \*dest or void \*src are indeed half-word aligned. If they aren't halfword aligned, a hardfault will result since the load/store half-word instruction (LDRH, STRH) will fail. Because I didn't want to have to cast everything to a uint16_t\* or abuse the union keyword, I had to create the following and put it before every declaration of a buffer in general SRAM\:
 
 
@@ -215,6 +221,8 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
    #define USB_DATA_ALIGN __attribute__ ((aligned(2)))
+
+
 
 
 * **Insecure\:** The copy functions will actually copy an extra byte to or from general SRAM if the buffer length is odd. This is very insecure, but the hole should only be visible from the application side since I'm required to allocate things on 16-bit boundaries inside the PMA, even if the buffer length is odd (so the USB peripheral couldn't copy in or out of the adjacent buffer if an odd number of bytes were transferred). In fact, the USB peripheral will respect odd/excessive lengths and stop writing/reading if it reaches the end of a buffer in the PMA. So, the reach of this insecurity should be fairly small beyond copying an extra byte to where it doesn't belong.
@@ -377,6 +385,8 @@ Now, as for why I wanted to do this, take a look at this fun variable declaratio
 
 
 This creates a variable in the ".pma" section called "bt". Now, there are a few things to note about this variable\:
+
+
 * I had to do a small hack. Look at the contents of "PMA_SECTION". If I didn't put "aw,%nobits" after the name of the section, the binary file would actually attempt to program the contents of the PMA when I flashed the microcontroller. This isn't an issue for Intel HEX files since the data address can jump around, but my STM32 programming process uses straight binary blobs. The blob would actually contain the several-Gb segment between the end of the flash (somewhere in the 0x08000000's) and the beginning of the PMA (0x40006000). That was obviously a problem, so I needed to prevent the linker from thinking it needed to program things in the .pma segment. The simplest way was with this hack.
 
 
@@ -418,6 +428,8 @@ Handling Transfers
 
 
 Since USB transfers are all host-initiated, the device must tell the USB Peripheral where it can load/store transfer data and then wait. Every endpoint has a register called the "EPnR" in the USB peripheral which has the following fields\:
+
+
 * Correct transfer received flag
 
 
@@ -450,6 +462,8 @@ Since USB transfers are all host-initiated, the device must tell the USB Periphe
 
 
 The main point I want to hit on with this register is the Status fields. The USB Peripheral is fairly involved with handshaking and so the status of the transmitter or receiver must be set correctly\:
+
+
 * If a transmitter or receiver is Disabled, then the endpoint doesn't handshake for that endpoint. It is off. If the endpoint is unidirectional, then the direction that the endpoint is not should be set to "disabled"
 
 
@@ -481,6 +495,8 @@ This is where the PMA ties in. The USB Peripheral uses the Buffer Descriptor Tab
 The struct is packed, meaning that each of those PMAWords is right next to the other one. Since PMAWord is actually uint16_t, we can see that the tx_addr and rx_addr fields are not large enough to be pointing to something in the global memory. They are in fact pointing to locations inside the PMA as well. The BDT is just an array, consisting of 8 of these 16-byte structures.
 
 After an endpoint is initialized and the user requests a transfer on that endpoint, I do the following once for transmit and once for receive, as needed\:
+
+
 * Dynamically allocate a buffer in the PMA (more on this next).
 
 
@@ -587,6 +603,8 @@ The "hook pattern", callbacks based on weak links
 
 
 At this point in the post, we are starting to see more and more of how I've built this API. My goals were as follows\:
+
+
 * I wanted to have a codebase for the USB peripheral that I didn't need to modify in order to implement new device types. One thing I really disliked about the Teensy's USB driver was that there were a bunch of #define's inside the method that handled setup transactions. I wanted to be able to separate out my application's code from the USB driver's code. Maybe someday I could even just distribute it to myself as a static library and have my applications link to it.
 
 
@@ -858,6 +876,8 @@ Transfers
 
 
 I'm just going to go through the transmit sequence, since the receive works in a similar manner. A transfer is initiated when the user calls usb_endpoint_send, passing a buffer with a length. The sequence is going to go as follows\:
+
+
 #. Use an internal structure to store a pointer to the buffer along with its length.
 
 
@@ -1077,6 +1097,8 @@ The supporting code for this is as follows\:
 
 
 A few things to note\:
+
+
 * During the interrupt handler, you'll notice a while loop. Internally, the USB Peripheral will actually queue up all the endpoints that have events pending. My "USB_ENDPOINT_REGISTER(endpoint) = val & USB_EPREG_MASK & ~USB_EP_CTR_TX" statement acknowledges the event so that the next time USB->ISTR is read it reflects the next endpoint that needs servicing.
 
 
@@ -1095,6 +1117,8 @@ Where to go from here
 Clearly, I haven't shown all of the pieces and that's because copying and pasting 900 lines of code isn't that useful. Instead, I wanted to pick out the highlights of managing the PMA and abstracting away the USB packetizing logic from the application.
 
 Using this framework, it should be fairly simple to implement different types of USB devices or even composite USB devices. There's a couple parts that still aren't fully where I want them to be, however\:
+
+
 * USB Descriptors. I really don't have a good way to make these extensible. For now, they're literally just a byte array declared as extern in the usb header and implemented by the user's application. Manually modifying byte arrays is just not maintainable, but I haven't yet developed a better version (I at one point looked into writing some kind of python xml interpreter that could generate the descriptors, but I ended up just doing it the old byte way because I wanted to get the show on the road and have fun programming my watch.
 
 

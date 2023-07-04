@@ -17,6 +17,8 @@ So, I opened the case and started moving stuff around. I also decided to re-orga
 In the front of the case there is a plastic piece that covers the metal body of the case and also holds the power button, reset button, and HDD light. This case has a grille on it to allow air to pass through into the front fan (if I had one installed).
 
 I decided that this grille could look awesome if it had some backlighting. I had considered using a lighted fan for this purpose before, but since fans are mounted on the inside of the case it would project the shadows from the internal metal structure onto the plastic grille, ruining the effect. I decided to mount some white LEDs on the inside of the plastic piece pointing towards the inside of the case so they could shine on and illuminate the part behind the grille to give a "glowing" effect. Here is what I used\:
+
+
 * Some spare really thick black matte cardstock my sister let me have (she is into artsy things)
 
 
@@ -60,6 +62,8 @@ The more difficult part was attaching the matte board to the metal part of the c
 [/caption]
 
 All in all my specs are as follows\:
+
+
 * `ASRock Z68 Pro3-M Motherboard (microATX) <http://www.newegg.com/Product/Product.aspx?Item=N82E16813157252>`__
 
 

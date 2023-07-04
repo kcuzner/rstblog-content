@@ -51,6 +51,8 @@ The Display
 
 
 I have spent most of my time debugging the software for this. Until I got an oscilloscope this was very slow going and my code was very error prone. Even with an oscilloscope I tend to make mistakes like not blanking the previous row before turning on the next one (causes ghosting) or clocking out the data backwards. So far I have only experimented with going right to left, but as I write it has occured to me that arranging the shift registers in the opposite direction and outputting the data left to right would be easier on my mind (and would avoid having to flip my arrays). In either case, the basic sequence this uses to output a row is as follows\:
+
+
 #. Clock out the new row with the rightmost bit first
 
 
@@ -69,6 +71,8 @@ Switching steps 3 and 4 causes slight ghosting and that was probably one of my l
 Adding "color" to the pixels is one of the possible features of this. Instead of having each array be 40 16-bit words it will have 40 32-bit words. This doubles the memory requirement and starts to approach the memory limit of the 18F4550 (remember there are two arrays). The row displaying sequence will be quadrupled so that instead of displaying 16 rows it effectively displays 64 rows, 4 for each actual row. This shouldn't reduce the overall brightness of the screen since all it does it add PWM to each individual row with 2-bit resolution giving 4 "colors".
 
 Data will be written to the display using an 8-bit master-slave parallel bus between the display board and the clock board. I have not yet come up with a control sequence, but the basic functionality will be like the Parellel Slave Port that I have seen on a few higher end microcontrollers. I am leaning toward something along the lines of the following for a control sequence\:
+
+
 #. Master sends commands that specify where to start writing data and how much data will be written
 
 
@@ -91,6 +95,8 @@ The Clock iteself
 
 
 I haven't even started writing the software for this, but it will be probably even more complex than the display software. I plan on using one of the 24HJ series of PIC microcontrollers to handle this to try and process as much as possible. Some features that this clock will definately have and I have already figured out are as follows\:
+
+
 * Timekeeping using a RTC with a supercap as a backup power supply
 
 
@@ -105,6 +111,8 @@ I haven't even started writing the software for this, but it will be probably ev
 
 
 Other possible features that I could add given enough time\:
+
+
 * Multiple fonts for numbers
 
 
@@ -113,6 +121,8 @@ Other possible features that I could add given enough time\:
 
 
 Outlandish features that could only be added if my current programming experience is significantly increased\:
+
+
 * Get and read RSS feeds using wifi
 
 

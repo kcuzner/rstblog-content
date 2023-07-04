@@ -301,6 +301,8 @@ Contents
 --------
 
 
+
+
 * `The Script <the-script>`__
 
 
@@ -327,6 +329,8 @@ The Script
 I have continued to write my descriptors using the "Teensy method" for a few reasons\:
 
 
+
+
 * They are compile-time constants and therefore don't take up valuable RAM (which consumes both .data and .rodata segments). I've seen other implementations that initialize a writable array in RAM with the descriptor and that just doesn't work well with memory-constrained embedded systems. It just makes the USB driver stack footprint too large for my comfort.
 
 
@@ -335,6 +339,8 @@ I have continued to write my descriptors using the "Teensy method" for a few rea
 
 
 Writing descriptors like this has some problems, however\:
+
+
 
 
 * It requires me to manually edit the binary contents of the descriptors, keep multiple fields in sync (i.e. length fields vs actual length), and handle endianness manually.
@@ -351,6 +357,8 @@ Writing descriptors like this has some problems, however\:
 
 
 So, I decided to improve this a bit with some scripting. Here were my goals\:
+
+
 
 
 * Fully automatic computation of the wLength fields in descriptors.
@@ -491,6 +499,8 @@ Makefile changes
 The script consists of a 800-ish line python script (current version\: `https\://github.com/kcuzner/midi-fader/blob/master/firmware/scripts/descriptorgen.py <https://github.com/kcuzner/midi-fader/blob/master/firmware/scripts/descriptorgen.py>`__) which takes as its arguments every source file in the project that could have some block comments. It then does the following\:
 
 
+
+
 #. Find all block comments (/\* ... \*/) in the source and extract them, stripping off leading "\*" characters from each line. The blocks are retained as individual continuous pieces and are each parsed separately.
 
 
@@ -588,6 +598,8 @@ It's not the most straightforward method, but it works well for my multi-target 
 This works like so\:
 
 
+
+
 #. The GENERATE variable is set to contain the phrase "USB_DESCRIPTOR" which will trigger evaluation of the variables that will cause the USB descriptor to be generated.
 
 
@@ -673,6 +685,8 @@ As the python script is run, it searches the source files for XML which describe
 The syntax is as follows\:
 
 
+
+
 * Every USB descriptor is declared using a **<descriptor>** element. This element has an "id" and a "type" attribute. The "id" is just a string which can be used to refer to the descriptor later inside of other descriptors. The "type" is a number which is exactly the same as the USB descriptor type as declared in the USB specification. For example, a device descriptor is type "1", a configuration descriptor is type "2", a string descriptor is type "3", and an interface descriptor is type "4".
 * I added the "type" as a **<descriptor>**-level attribute because elements like **<children>** require that we have indexed descriptors by type.
 
@@ -723,6 +737,8 @@ There's a couple other child tags that a descriptor can have, but they aren't pa
 To summarize, this descriptor generating script allows me to do some pretty convenient things\:
 
 
+
+
 * I can define a descriptor for an interface in the same file as the source file that handles it.
 
 
@@ -744,6 +760,8 @@ This section can be ignored if you're just here for generating descriptors. That
 
 
 The next step to having something fully portable is to have an easy way to hook into the entire application. In general, my drivers have functions that start with **hook_** which are called at certain points. Here are a few examples of hooks that I typically define\:
+
+
 
 
 * **hook_usb_handle_setup_request**\: Called whenever a setup request is received. Passes the setup request as its argument. It is only called when a setup request arrives that can't be processed by the default handler (which only processes SET_ADDRESS and GET_DESCRIPTOR requests).

@@ -1,4 +1,6 @@
 I took the plunge and decided to re-implement what I had in Python using C++. I had to change up my structure a bit, but I made the switch because of the following reasons\:
+
+
 * The Qt Framework. While there are bindings for Python, I really liked Qt-Creator. Also, Qt is extremely cross platform (at least that is how it seems) and has a large amount of libraries. I've been messing around with it now for a bit trying to get a few things to work.
 
 

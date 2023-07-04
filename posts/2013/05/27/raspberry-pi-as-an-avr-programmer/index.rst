@@ -24,6 +24,8 @@ Installation
 
 
 The best option here until I bother creating packages for it is to  do a git clone directly into a directory on the Raspberry Pi and build it from there on the Raspberry Pi itself. I remember having to install the following packages to get it to compile (If I missed any, let me know)\:
+
+
 * bison
 
 
@@ -159,6 +161,8 @@ After setting up avrdude.conf to your desired configuration, you can now connect
    avrdude done.  Thank you.
 
 There are two major things to note here\:
+
+
 * I set the programmer type (-c option) to be "linuxspi". This tells avrdude to use my addition as the programming interface
 
 

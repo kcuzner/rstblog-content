@@ -19,6 +19,8 @@ The Arduino IDE
 
 
 Oh my goodness. Worst ever. Ok, not really, but I really have a hard time justifying using it other than the fact that it makes downloading to the Teensy really easy. This post isn't meant to be a review of the arduino IDE, but the editor could use some serious improvements IMHO\:
+
+
 * Tab indentation level\: Some of us would like to use something other than 2 spaces, thank you very much. We don't live in the 70's where horizontal space is at a premium and I prefer 4 spaces. Purely personal preference, but I feel like the option should be there
 
 

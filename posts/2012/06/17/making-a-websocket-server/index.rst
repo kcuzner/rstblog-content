@@ -11,6 +11,8 @@ The server I have runs on a port which is considered a dedicated port for WebSoc
 Each service has its own `thread <http://docs.python.org/library/threading.html#thread-objects>`__ and inherits from a base class which is a thread plus a queue for accepting new clients. The clients are a `socket <http://docs.python.org/library/socket.html#socket-objects>`__ object returned by socket.accept which are wrapped in a class that allows for communication to the socket via queues. The actual communication to sockets is managed by a separate thread that handles all the encoding and decoding to websocket frames. Since adding a client doesn't produce much overhead, this structure potentially could be expanded very easily to handle many many clients.
 
 A few things I plan on adding to the server eventually are\:
+
+
 * Using processes instead of threads for the services. Due to the global interpreter lock, if this is run using CPython (which is what most people use as far as I know and also what comes installed by default on many systems) all the threads will be locked to use the same CPU since the python interpreter can't be used by more than one thread at once (however, it can for processes). The difficult part of all this is that it is hard to pass actual objects between processes and I have to do some serious re-structuring for the code to work without needing to pass objects (such as sockets) to services.
 
 

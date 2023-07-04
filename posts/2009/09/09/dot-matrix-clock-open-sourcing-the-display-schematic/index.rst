@@ -1,6 +1,8 @@
 Following the suggestion of a friend, I am going to open source a portion of the software (when it comes) and the display schematic. After I get the board and finish up the software I plan on releasing this as a kit. So far it is looking like the kit is going to cost somewhere between $110-$140. I would supply the board with the controller already soldered and programmed.
 
 As it stands, the hardware features are as follows\:
+
+
 * 40x16 display with two LEDs per pixel giving 1280 LEDs
 
 
@@ -21,6 +23,8 @@ As it stands, the hardware features are as follows\:
 
 
 The planned basic software features are as follows\:
+
+
 * Built in font(s). These would not be restricted by rows or columns and would be placeable by specifying start coordinates. I may also add the ability to have either user fonts and/or variable width characters.
 
 

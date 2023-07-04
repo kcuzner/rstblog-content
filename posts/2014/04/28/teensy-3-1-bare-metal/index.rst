@@ -4,6 +4,8 @@ Introduction
 
 
 A couple of weeks ago I saw a link on `hackaday <http://hackaday.com>`__ to an `article <http://www.seanet.com/~karllunt/bareteensy31.html>`__ by Karl Lunt about using the Teensy 3.1 without the Arduino IDE and building for the bare metal. I was very intrigued as the Arduino IDE was my only major beef with developing stuff for the Teensy 3.1 and I wanted to be able to do things without having to use the IDE. I read through the article and although it was geared towards windows, I decided to try to adapt it to my development style. There were a few things I wanted to do\:
+
+
 * No additional code dependencies other than the teensyduino installation which I already had
 
 
@@ -34,6 +36,8 @@ Prerequisites
 
 
 As my first order of business, I located the arm-none-eabi binaries for my linux distribution. These can also be found for Windows as noted in Karl Lunt's article. Random sidenote\: I found `this <http://kunen.org/uC/gnu_tool.html>`__ description of why arm-none-eabi is called arm-none-eabi. Very informative. Anyway, for those who run archlinux, the following packages are needed\:
+
+
 * arm-none-eabi-gcc (contains the compilers)
 
 

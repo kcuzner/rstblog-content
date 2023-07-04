@@ -56,6 +56,8 @@ Overview of HID
 
 
 Before doing anything HID, you need two pieces of documentation\:
+
+
 * The USB HID Specification\: `http\://www.usb.org/developers/hidpage/HID1_11.pdf <http://www.usb.org/developers/hidpage/HID1_11.pdf>`__
 
 
@@ -72,6 +74,8 @@ Reports
 
 
 HID communicates by way of "Reports". The basic idea is that a "Report" tells the host something going on with the human interface device, be it a mouse moment, a keystroke, or whatever. There are not only reports going to the host, but also those that go from the host to the device. These reports can do things like turn on the caps lock LED and so forth. The reports are named as follows\:
+
+
 * IN Reports\: These are reports IN to the host from the device.
 
 
@@ -80,6 +84,8 @@ HID communicates by way of "Reports". The basic idea is that a "Report" tells th
 
 
 All the report naming is quite host-centric as you can see. Now, when a device declares itself as a human interface device, it has to implement the following endpoints\:
+
+
 * The control endpoint (endpoint 0). Every device needs this anyway, so its hardly worth mentioning.
 
 
@@ -101,6 +107,8 @@ Report Descriptors
 One of the key features, and a major motivation behind writing HID devices, is that most operating systems require no drivers for these devices to work. For most other USB devices, the operating system requires a driver which interacts with the device on a low level and provides an interface either back into userspace or kernelspace which can be used by regular programs to interact with the device. However, for human interface devices the OS actually provides a driver which translates whatever reports a custom device may send back to the host into an API usable by programs. For example, if you plug a USB joystick or gamepad which enumerates as a HID into the computer, other programs can call OS methods that allow enumerating the analog joysticks and pushbuttons that the gamepad provides, without needing to use a manufacturer-specific driver to translate the reports into input actions.
 
 This is possible by the use of "Report Descriptors". These serve as a way for the device to self-describe the format of the reports it is going to send back. A joystick from manufacturer A might send four analog values followed by 16 button values, but a joystick from manufacturer B may instead send 16 button values followed by only two analog values. The OS driver makes sense of the report formatting by reading the report descriptors returned by the device when it enumerates. Report descriptors are represented as a series of tokens which are parsed one after another to build up the description of the report. Tokens that may appear include\:
+
+
 * **Begin/End Collection Tokens.** All items described by the report are placed inside collections. These collections can be nested.
 
 
@@ -120,6 +128,8 @@ Step 1\:Extending Setup Requests
 
 
 The general USB specification defines a setup request command GET_DESCRIPTOR. The spec defines the high byte of wValue to be the "descriptor type". The HID specification defines the following class-specific descriptors\:
+
+
 * 0x21\: HID
 
 
@@ -149,6 +159,8 @@ In my LED watch with its API, I just have a read-only table of descriptors that 
    };
 
 Now, in addition to extending GET_DESCRIPTOR, the HID specification requires one new setup request be supported\: Class-specific request 0x01 (bRequest = 0x01, bmRequestType = 0x01), known as GET_REPORT. This provides a control-request way to get HID reports. Now, I've actually found that both Windows and Linux don't mind if this isn't implemented. However, it may be good to implement anyway. It has the following arguments\:
+
+
 * wValue\: Report Type (IN, OUT, FEATURE) in the high byte, report ID in the low byte.
 
 
@@ -199,6 +211,8 @@ Modifying the configuration descriptor
 
 
 Every USB device has a configuration descriptor. In reality, what I'm calling the "configuration descriptor" here is actually a concatenated list of everything that follows the configuration descriptor. Here are the parts of a configuration descriptor, as they appear in order\:
+
+
 * The configuration descriptor itself (Descriptor with bDescriptorType = 2)
 
 
@@ -227,6 +241,8 @@ Every USB device has a configuration descriptor. In reality, what I'm calling th
 This is usually just a byte array. When making a device into a HID, the descriptor needs to change. Two new descriptor types are introduced by the HID class specification that we will use\: 0x21 (HID descriptor) and 0x22 (Report Descriptor). The HID Descriptor declares the version of the HID spec that the device follows along with a country code. It also contains one or more report descriptors. The report descriptors contain only a length of a report (along with the bDescriptorType). These will be used later when the host makes a special HID setup request to load these descriptors.
 
 The configuration descriptor of something that has an HID interface looks like so (changes in bold, see HID specification section 7.1, very first paragraph)\:
+
+
 * The configuration descriptor itself (Descriptor with bDescriptorType = 2)
 
 
@@ -331,6 +347,8 @@ Writing a report descriptor
 The HID class describes a new class-specific setup request which can be used to read Report Descriptors. When this setup request is sent by the host, the device should return the Report Descriptor requested. Report Descriptors are fairly unique compared to the other descriptors used in USB. One major difference is that they read more like an XML document than a key-value array. There is no set order and no set length. In fact, the only way the host knows how many bytes to read for this setup request is from the HID Descriptor found inside the Configuration Descriptor that says how many bytes to expect. With other descriptors, the host usually reads the descriptor twice\: Once only reading the first 9 bytes to get the wTotalLength and a second time reading the wTotalLength. With the Report Descriptor the host will read exactly as many bytes as were declared by the HID Descriptor. This of course means that if that length value is not set up correctly, then the host will get a truncated report descriptor and will have a hard time parsing it.
 
 The most difficult part about writing report descriptors is that they are not easy to debug. On Windows, the device manager will simply say "Device failed to start". On Linux, a similar error appears in the system log. You'll get no help figure out what went wrong. Here are my tips to writing report descriptors\:
+
+
 * **Start off small, then grow. **Write a minimal report descriptor and extend it from there, one token at a time. This way you can know which token has caused you to have problems.
 
 
@@ -365,6 +383,8 @@ The first thing I'm going to describe are my helper macros, actually\:
    #define HID_SHORT(...) GET_HID_SHORT(__VA_ARGS__, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)(__VA_ARGS__)
 
 All HID tokens have a common format. They are a sequence of bytes with the first byte describing how many of the bytes following are part of the token, up to five bytes total. The first byte has the following format\:
+
+
 * Bits 7-2\: Tag Type
 
 
@@ -373,6 +393,8 @@ All HID tokens have a common format. They are a sequence of bytes with the first
 
 
 These helper macros are a little complex, and to be honest I based them of something I found on stackoverflow somewhere. I'm not even sure if they work with any compiler other than GCC. Here's how they work\:
+
+
 * The HID_SHORT macro takes in a variable number of arguments (the ... in the argument list, also known as variadic arguments). This is accessed by __VA_ARGS__. It in turn calls the GET_HID_SHORT macro, pasting in the variadic arguments first. The arguments following are used to select which macro to call\: HID_SHORT_ZERO or HID_SHORT_MANY.
 
 
@@ -393,6 +415,8 @@ These helper macros are a little complex, and to be honest I based them of somet
 
 
 Here's some examples of what happens when this is evaluated\:
+
+
 * HID_SHORT(0xC0)\: This evaluates to "(0x0c | 0)".
 
 
@@ -403,6 +427,8 @@ Here's some examples of what happens when this is evaluated\:
 With this macro we can define our HID tokens without having to worry about making a mistake encoding the length in the first byte.
 
 I'm not going to go through the token types exhaustively since those are in the spec, but here's a couple common ones\:
+
+
 * 0x08\: USAGE. Every field in a report has a "Usage" associated with it. This token is followed by one or two more bytes and indicates to the host how the field is meant to be used. For example, there is a usage called "Wheel" and another called "D-pad up".
 
 
@@ -441,6 +467,8 @@ Since the easiest way to get started with these is with some examples, let's sta
    };
 
 Let's dig into this report descriptor a little\:
+
+
 * Right off the bat, we change the USAGE_PAGE to page 0xFF00, which is "Vendor Defined". All the usages on this page are "Vendor <number>".
 
 
@@ -472,6 +500,8 @@ Let's dig into this report descriptor a little\:
 Now let's move on to another kind of report descriptor\: Defining multiple reports in one descriptor. This requires some discussion of "Report IDs".
 
 When a REPORT_ID token appears in a report descriptor, it changes how reports are sent and received by the host and device\:
+
+
 * All reports are now exactly one byte longer. If you declare a report with eight 8-bit fields, you will transfer 9 bytes of data.
 
 
@@ -514,6 +544,8 @@ Here's an example descriptor that declares *three* reports\:
    };
 
 The three reports defined here are\:
+
+
 * IN report 1\: Contains 4 bits of D-pad information (up through left) and 4 bits of constant data (basically just filler bits).
 
 
@@ -525,6 +557,8 @@ The three reports defined here are\:
 
 
 Some more interesting things that this example brings up\:
+
+
 * It just so happens that IN report 1 and OUT report 1 are the same size\: 1 byte (2 bytes transferred because of the report ID). However, they don't need to be.
 
 
@@ -551,6 +585,8 @@ Now that you've got your report descriptors all figured out, you need to actuall
 In your configuration descriptor, you gave a polling rate for the endpoint. This polling rate does not imply that the host expects you to transfer a report at that rate. It only means that the host will attempt to start an IN transfer that often. When you have no report to send, make your endpoint NAK (don't STALL).
 
 In my LED Watch project I wrote a USB API which takes care of packetizing for me. When I want to send data, I just point it towards an byte array and it sends it using as many or as few packets. For HID reports, I only sent them as-needed. The only complicated part is constructing the report itself. Follow these simple steps to send an IN report\:
+
+
 #. Construct your report.
 #. If you use the REPORT_ID token, then make sure the first byte of your report contains the report ID. All the other fields are concatenated later (so an 8-byte report is actually 9-bytes).
 
@@ -573,6 +609,8 @@ Step 4\: Sending OUT Reports
 
 
 This is the exact same story as IN reports, except this time you don't construct a report. Instead, you allocate space for it and wait for the host to send. Here's the steps for an OUT report\:
+
+
 #. Allocate some memory and point your USB endpoint towards it.
 
 
@@ -627,6 +665,8 @@ C# under Windows
 The enumeration of human interface devices and communication with them happens using some methods in hid.dll and kernel32.dll. Using P/Invoke you can talk to these using C#. There are several libraries for this, but the lightest weight one I can find is here\: `https\://github.com/MightyDevices/MightyHID <https://github.com/MightyDevices/MightyHID>`__
 
 I don't actually recommend using the library itself. Rather, I would recommend reading through it and seeing how it does things and implementing that in your application directly. Sadly, although I have written an application in C# that talked pretty well to HID devices I do not have the source code available. Instead, I can give some tips\:
+
+
 * **Don't be afraid of using P/Invoke.** At a bare minimum, you're going to have to to enumerate the HID devices in the system this way.
 
 

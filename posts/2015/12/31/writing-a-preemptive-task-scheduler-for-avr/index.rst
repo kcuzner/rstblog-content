@@ -1,6 +1,8 @@
 Wow it has been a while. Between school, work, and another project that I've been working on since last October (which, if ultimately successful, I will post here) I haven't had a lot of time to write about anything cool.
 
 I wanted to share today something cool I wrote for my AVRs. Many of my recent AVR projects have become rather complex in that they usually are split into multiple parts in the software which interact with each other. One project in particular had the following components\:
+
+
 * A state machine managing several PWM channels. It implemented behavior like pulsing, flashing, etc. It also provided methods for the other components to interact with it.
 
 
@@ -12,6 +14,8 @@ I wanted to share today something cool I wrote for my AVRs. Many of my recent AV
 
 
 So, why did I use state machines rather than just implementing this whole thing in a giant loop with some interrupts mixed in? The answer is twofold\:
+
+
 #. Spaghetti. Doing things in state machines avoided spaghetti code that would have otherwise made the system very difficult to modify. Each machine was isolated from the others both structurally and in software (static variables/methods, etc). The only way to interact with the state machines was to use my provided methods which lends itself to a clean interface between the different components of the program. Switching out the logic in one part of the program did not have any effect on the other components (unless method signatures were changed, of course).
 
 
@@ -25,6 +29,8 @@ I should mention here that there is a certain level of ability assumed with AVRs
 
 Table of Contents
 =================
+
+
 
 
 * `Preemption? <preemption>`__
@@ -88,6 +94,8 @@ Some Pros
 ---------
 
 
+
+
 * Can reduce the jitter (and possibly the latency) in responding to interrupts. This is of paramount importance in some embedded systems which will have problems if the system cannot respond in a predictable manner to external stimuli.
 
 
@@ -104,6 +112,8 @@ Some Pros
 
 Some Cons
 ---------
+
+
 
 
 * Can add unnecessary complexity to the program in general. A task scheduler is no small thing and brings with it all of the issues seen in concurrent programming in general. However, these issues usually already exist when using interrupts and such.
@@ -327,6 +337,8 @@ Implementation\: kos_enter_isr and kos_exit_isr
 
 
 We are faced with a very particular problem when we want to call our scheduler inside of an interrupt. Let's imagine a scenario where we have two tasks, Task A and Task B (Task A has higher priority than Task B), in addition to the idle task. Task A uses waits on two semaphores (semaphores 1 and 2) that is signaled by an ISR. When task A is running, it signals another semaphore that Task B waits on (semaphore 3). Here is what happens\:
+
+
 #. The idle task is running because both Task A and Task B are waiting on semaphores.
 
 
@@ -350,6 +362,8 @@ We are faced with a very particular problem when we want to call our scheduler i
 
 
 As straightforward as that may seem, that isn't the intended behavior. Imagine if a task with an even higher priority than A had the ISR occur while it was executing. The sequence above would be totally different because Task A wouldn't be dispatched after the 1st semaphore being posted (item #4). Let's see what happens\:
+
+
 #. The idle task is running because both Task A and Task B are waiting on semaphores.
 
 
@@ -654,6 +668,8 @@ Source contents\:
 So, our semaphore will cause a task to become blocked when kos_semaphore_pend is called (and the semaphore value was <= 0) and when kos_semaphore_post is called, the highest priority task that is blocked on the particular semaphore will be made ready.
 
 Just so this makes sense, let's go through an example sequence of events\:
+
+
 #. Task A is created. There are now two tasks on the task list\: Task A and the idle task.
 
 
@@ -786,6 +802,8 @@ A word on debugging
 
 
 Before I finish up I want to mention a few things about debugging with avr-gdb. This project was the first time I had ever needed to use an simulator and debugger to even get the program to run. It would have been impossible to write this using an actual device since very little is revealed when operating the device. Here are a few things I learned\:
+
+
 * avr-gdb is not perfect. For example, it is confused by the huge number of push statements at the beginning of kos_dispatch and will crash if stepped into that function (if it receives a break inside kos_dispatch that seems to work sometimes). This is due to avr-gdb attempting to decode the stack and finding that the frame size of the function is too big. It's weird and I didn't quite understand why that limitation was there, so I didn't really muck around with it. This made debugging the dispatcher super difficult.
 
 
@@ -808,6 +826,8 @@ This has been a long post, but it is a complicated topic. Writing something like
 The scheduler and dispatcher I have described here are not perfect nor are they the most optimal efficient design. For one thing, my design uses a huge amount of RAM compared to other RTOS options. My scheduler and dispatcher are also inefficient, with the scheduler having an O(N) complexity depending on the number of tasks. My structure does, however, allow for O(1) time when suspending a task (although I question the utility of this...it worked better with the 8086 scheduler I made for class than with the AVR). Another problem is that kos_dispatch will not work with avr-gdb if the program is stopped during this function (it has a hard time decoding the function prologue because of the large number of push instructions). I haven't found a solution to this problem and it certainly made debugging a little more difficult.
 
 So, now that I've told you some of what's wrong with the above, here are two RTOS which can be used with the AVR and are well tested\:
+
+
 * `FemtoOS <http://www.femtoos.org/>`__. This is an extremely tiny and highly configurable RTOS. The bare implementation needs only 270 bytes of flash and 10 bytes of RAM. Ridiculous! My only serious issue with it is that it is GPLv3 licensed and due to how the application is compiled, licensing can be troublesome unless you want to also be GPLv3.
 
 

@@ -62,6 +62,8 @@ The Freescale K20 Family and their USB module
 The one thing that I don't like about all of these great microcontrollers that come out with USB support is that all of them have their very own special USB module which doesn't work like anyone else. Sure, there are similarities, but there are no two *exactly* alike. Since I have a Teensy and the K20 family of microcontrollers seem to be relatively popular, I don't feel bad about writing such specific software.
 
 There are two documents I found to be essential to writing this driver\:
+
+
 #. The family manual. Getting a correct version for the MK20DX256VLH7 (the processor on the Teensy) can be a pain. PJRC comes to the rescue here\: `http\://www.pjrc.com/teensy/K20P64M72SF1RM.pdf <http://www.pjrc.com/teensy/K20P64M72SF1RM.pdf>`__ (note, the Teensies based on the MK20DX128VLH5 use a different manual)
 
 
@@ -70,6 +72,8 @@ There are two documents I found to be essential to writing this driver\:
 
 
 There are a few essential parts to understand about the USB module\:
+
+
 * It needs a specific memory layout. Since it doesn't have any dedicated user-accessible memory, it requires that the user specify where things should be. There are specific valid locations for its Buffer Descriptor Table (more on that later) and the endpoint buffers. The last one bit me for several days until I figured it out.
 
 
@@ -307,6 +311,8 @@ The above code will be executed whenever the IRQ for the USB module fires. This 
 Reading through the code is should be obvious that I have not done much with many of the flags, including USB sleep, errors, and stall. For the purposes of this super simple driver, we really only care about USB resets and USB token decoding.
 
 The very first interrupt that we care about which will be called when we connect the USB device to a host is the Reset. The host performs this by bringing both data lines low for a certain period of time (read the USB basics stuff for more information). When we do this, we need to reset our USB state into its initial and ready state. We do a couple things in sequence\:
+
+
 #. Initialize the buffers for endpoint 0. We set the RX buffers to point to some static variables we have defined which are simply uint8_t arrays of length "ENDP0_SIZE". The TX buffers are reset to null since nothing is going to be transmitted. One thing to note is that the ODDRST bit is flipped on in the USB0_CTL register. This is very important since it "syncronizes" the USB module with our code in terms of knowing whether the even or odd buffer should be used next for transmitting. When we do ODDRST, it sets the next buffer to be used to be the even buffer. We have a "user-space" flag (endp0_odd) which we reset at the same time so that we stay in sync with the buffer that the USB module is going to use.
 
 
@@ -594,6 +600,8 @@ This is the part that took me the longest once I managed to get the module talki
 This is a very very very minimalistic setup token handler and *is not by any means complete*. It does only what is necessary to get the computer to see the device successfully read its descriptors. There is no functionality for actually doing things with the USB device. Most of the space is devoted to actually returning the various descriptors. In this example, the descriptor is for a device with a single configuration and a single interface which uses no additional endpoints. In a real device, this would almost certainly not be the case (unless one uses V-USB...this is how V-USB sets up their device if no other endpoints are compiled in).
 
 The SETUP packet comes with a "request" and a "type". We process these as one word for simplicity. The above shows only the necessary commands to actually get this thing to connect to a Linux machine running the standard USB drivers that come with the kernel. I have not tested it on Windows and it may require some modification to work since it doesn't implement all of the necessary functionality. A description of the functionality follows\:
+
+
 * Set address (0x0500)\: This is a very simple command. All it does is wait for the next IN token. Upon receipt of this token, the address is considered "committed" and the USB module is told of its new address (see the endpoint 0 handler function above (not the setup handler)).
 
 
@@ -614,6 +622,8 @@ During transmission, both the even and data flags are toggled. This ensures that
 The descriptors are the one part that can't really be screwed up here. Screwing up the descriptors causes interesting errors when the host tries to communicate. I did not like how the "reference" usb drivers I looked at generally defined descriptors\: They used a char array. This works very well for the case where there are a variable number of entries in the descriptor, but for my purposes I decided to use named structs so that I could match the values I had specified on my device to values I read from the host machine without resorting to counting bytes in the array. It's simply for easier reading and doesn't really give much more than that. It may even be more error prone because I am relying on the compiler packing the struct into memory in the correct order for transmission and in later versions I may end up using the char array method.
 
 I won't delve into a long and drawn out description of what the USB descriptor has in it, but I will give a few points\:
+
+
 * In Linux, the device descriptor is requested first and then the configuration descriptor after that. They are two separate commands, hence the two separate descriptor entries in my descriptor table.
 
 
@@ -639,6 +649,8 @@ Where to go from here
 
 
 The driver I have implemented leaves much to be desired. This isn't meant to be a fully featured driver. Instead, its meant to be something of an introduction to getting the USB module to work on the bare metal without the support of some external dependency. A few things that would definitely need to be implemented are\:
+
+
 * The full set of commands for the endpoint 0 SETUP token processing
 
 

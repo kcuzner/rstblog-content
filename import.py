@@ -369,7 +369,7 @@ class ListTag(TagHandler):
             process(i, c.to_rst(*args, **kwargs)) for i, c in enumerate(self.content)
         ]
         # Items are separated by a blank space and the list is terminated by a blank space
-        return "\n\n".join(items) + "\n\n"
+        return "\n\n" + "\n\n".join(items) + "\n\n"
 
 
 @TagHandler.register_tag("ol")

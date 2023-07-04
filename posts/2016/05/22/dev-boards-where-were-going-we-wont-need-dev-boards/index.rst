@@ -21,6 +21,8 @@ Having seen how common the STM32 family was (both in dev boards and in commercia
 This post is a complete step-by-step tutorial on getting an STM32 microcontroller up and running without using a single dev board (breakout boards don't count as dev boards for the purposes of this tutorial). I'm writing this because I could not find a standalone tutorial for doing this with an ARM microcontroller and I ended up having to piece it together bit by bit with a lot of googling. My objective is to walk you through the process of purchasing the appropriate parts, writing a small program, and uploading it to the microcontroller.
 
 I make the following assumptions\:
+
+
 * The reader is familiar with electronics and soldering.
 
 
@@ -51,6 +53,8 @@ Materials
 
 
 You will require the following materials\:
+
+
 * A computer running Linux. **If you run Windows only, please don't be dissuaded. **I'm just lazy and don't want to test this for Windows. It may require some finagling. Manufacturer support is actually better for Windows since they provide some interesting configuration and programming software that is Windows only...but who needs that stuff anyway?
 
 
@@ -85,6 +89,8 @@ Step 1\: Download the datasheets
 
 
 Above we decided to use the STM32F103C8 ARM Cortex-M3 microcontroller in a TQFP-48 package. This microcontroller has so many peripherals its no wonder its the one all over eBay. I could see this microcontroller easily satisfying the requirements for all of my projects. Among other things it has\:
+
+
 * 64K flash, 20K RAM
 
 
@@ -129,6 +135,8 @@ Step 2\: Figure out where to solder and do it
 After getting the datasheet we need to solder the microcontroller down to the breakout board so that we can start working with it on a standard breadboard. If you prefer to go build your own PCB and all that (I usually do actually) then do that instead of this. However, you will still need to know which pins to hook up.
 
 On the pin diagram posted here you will find the highlighted pins of interest for hooking this thing up. We need the following pins at a minimum\:
+
+
 * **Shown in Red/Blue\:** All power pins, VDD, VSS, AVDD, and AVSS. There are four pairs\: 3 for the VDD/VSS and one AVDD/AVSS. The AVDD/AVSS pair is specifically used to power the analog/mixed signal circuitry and is separate to give us the opportunity to perform some additional filtering on those lines and remove supply noise induced by all the switching going on inside the microcontroller; an opportunity I won't take for now.
 
 
@@ -162,6 +170,8 @@ Step 3\: Connect the breadboard and programmer
 Don't do this with the programmer plugged in.
 
 On the right you will see my STLinkV2 clone which I will use for this project. Barely visible is the pinout. We will need the following pins connected from the programmer onto our breadboard. These come off the header on the non-USB end of the programmer. **Pinouts may vary. Double check your programmer!**
+
+
 * **3.3V\:** We will be using the programmer to actually power the microcontroller since that is the simplest option. I believe this pin is Pin 7 on my header.
 
 
@@ -178,6 +188,8 @@ On the right you will see my STLinkV2 clone which I will use for this project. B
 You may notice in the above picture that I have an IDC cable coming off my programmer rather than the dupont wires. I borrowed the cable from my AVR USBASP programmer since it was more available at the time rather than finding the dupont cables that came with the STLinkV2.
 
 Next, we need to connect the following pins on the breadboard\:
+
+
 * STM32 [A]VSS pins 8, 23, 35, and 47 connected to ground.
 
 
@@ -216,6 +228,8 @@ Visit the page and download the STM32CubeF1 zip file. It will ask for an email a
 **Alternately, just clone the repository.**** You'll miss all the fun of poking around the zip file, but sometimes doing less work is better.**
 
 The STM32CubeF1 zip file contains several components which are designed to help people get started quickly when programming STM32s. This is one thing that ST definitely does better than Freescale. It was so difficult to find the headers for the Kinetis microcontrollers that almost gave up at that point. Anyway, inside the zip file we are only interested in the following\:
+
+
 * The contents of Drivers/CMSIS/Device/ST/STM32F1xx/Include. These headers contain the register definitions among other things which we will use in our program to reference the peripherals on the device.
 
 
@@ -239,6 +253,8 @@ Step 5\: Install the required software
 
 
 We need to be able to compile the program and flash the resulting binary file to the microcontroller. In order to do this, we will require the following programs to be installed\:
+
+
 * The arm-none-eabi toolchain. I use arch linux and had to install "arm-none-eabi-gcc". On Ubuntu this is called "gcc-arm-none-eabi". This is the cross-compiler for the ARM Cortex cores. The naming "none-eabi" comes from the fact that it is designed to compile for an environment where the program is the only thing running on the target processor. There is no underlying operating system talking to the application binary file (ABI = application binary interface, none-eabi = No ABI) in order to load it into memory and execute it. This means that it is ok with outputting raw binary executable programs. Contrast this with Linux which likes to use the ELF format (which is a part of an ABI specification) and the OS will interpret that file format and load the program from it.
 
 
@@ -259,6 +275,8 @@ Step 6\: Write and compile the program
 
 
 Ok, so we need to write a program for this microcontroller. We are going to simply toggle on and off a GPIO pin (PB0). After reset, the processor uses the internal RC oscillator as its system clock and so it runs at a reasonable 8MHz or so I believe. There are a few steps that we need to go through in order to actually write to the GPIO, however\:
+
+
 #. Enable the clock to PORTB. Most ARM microcontrollers, the STM32 included, have a clock gating system that actually turns off the clock to pretty much all peripherals after system reset. This is a power saving measure as it allows parts of the microcontroller to remain dormant and not consume power until needed. So, we need to turn on the GPIO port before we can use it.
 
 

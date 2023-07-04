@@ -9,6 +9,8 @@ Parts List
 
 
 I noticed while building this that I was using parts that were originally purchased on radioshack (aside from the microcontroller) and the home depot/ace hardware. Here is the list of parts with a few prices\:
+
+
 * (2) `Infrared Emitter/Detector sets <http://www.radioshack.com/product/index.jsp?productId=2049723>`__ ($3.49, radioshack)
 
 
@@ -58,6 +60,8 @@ Instructions
 
 
 These instructions assume enough knowledge to construct a circuit on a breadboard from a schematic along with enough mechanical skill to saw and drill stuff.
+
+
 #. Attach (I would solder them, but you can twist and tape if you like) relatively long wires to the ends of each infrared emitter and detector. There should be two of each in total. Make the wires different colors per pin on each device so that they can be distinguished later. Make a note of where each wire went on the back of the package they came in which should have an internal diagram for each part if you got it at radio shack. Twist each pair of wires together so that each device has a long twisted pair of wires coming off of it.
 
 
@@ -116,6 +120,8 @@ Things to add
 
 
 Obviously, there are some things that could be done with this to make it even cooler. Some of my ideas\:
+
+
 * Add an LCD screen that shows the milliseconds it took (or even fps)
 
 

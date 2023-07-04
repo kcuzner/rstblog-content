@@ -1,6 +1,8 @@
 There is an odd famine of information about this particular subject available in text form. If you google "usbasp tpi" and things like it, you'll find posts on the avr forums filled with incorrect information and schematics. This post is an attempt to remedy this.
 
 I intend to show exactly the following, no more and no less\:
+
+
 #. What is TPI?
 
 
@@ -25,6 +27,8 @@ What is TPI?
 TPI is the Tiny Programming Interface found on "somewhat newer" AVR microcontrollers (i.e. made in the last decade or so). There is yet a newer one which has shown up on AVRs post-Microchip acquisition (UPDI) which isn't very publicly documented, but there are utilities like `pyupdi <https://github.com/mraardvark/pyupdi>`__ which aim to support that interface without a programmer.
 
 TPI is quite a bit smaller than the older ISP interface. Rather than looking like an SPI port, it has just three lines\:
+
+
 * #RESET\: Just the same as before, the reset pin is used to control whether or not the interface is active.
 
 
@@ -44,6 +48,8 @@ How to reprogram your usbasp to be capable of TPI
 If you're like me, you bought your USBASP a decade ago from ebay. It likely has very old firmware which isn't capable of TPI programming just yet. Even the "new" usbasps found on ebay have very old firmware. So, you'll need to update the firmware to the newest version (from 2011!!!!) which gave TPI support. There are a few guides on this process, but one text-based one can be found here\: `https\://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/ <https://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/>`__
 
 I'll summarize here what you need to do\:
+
+
 #. Buy a second usbasp. One will be the programmer, and one will be the target that is going to become TPI capable.
 
 
@@ -70,6 +76,8 @@ How to wire up a TPI-only AVR
 
 
 This should be easy to find information on, but it really isn't for some reason. Here's the basics\:
+
+
 * Connect #RESET to the ISP connector's #RESET
 
 
@@ -100,6 +108,8 @@ I used an ATTiny20 in my design, so I have mine wired up like this (note that I 
 Aside from the connections, the next thing to worry about is that 5V connection. This isn't 2011 anymore and voltages are getting lower and lower. However, flash still requires upwards of 12V to program properly (gotta get those electrons to jump!) and a charge pump that works at 3.3V is 2x or 4x larger than one that needs 5V. So, it makes sense to me that the designers of the ATTiny20 would have made that tradeoff and required a programming voltage of 5V (4.5V minimum, but you should really use 5V) rather than trying to fit a giant charge pump on an already highly-opmized die.
 
 So, you need to program at 5V, but your circuit uses different voltages. Here are some tips I have for resolving this situation\:
+
+
 * Can your circuit actually run at 5V? All the ICs I picked in my particular design worked at both 3.3V and 5V. So I have two sources for the board power\: the main connector that goes off to the rest of the system (3.3V) and the ISP programming cable (5V). I know that I'll never have both of those plugged in at the same time, so it works for me.
 
 

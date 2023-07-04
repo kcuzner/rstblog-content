@@ -1,6 +1,8 @@
 As my final installment for the posts about my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ I wanted to write about the self-programming bootloader I made for an STM32L052 and describe how it works. So far it has shown itself to be fairly robust and I haven't had to get out my STLink to reprogram the watch for quite some time.
 
 The main object of this bootloader is to facilitate reprogramming of the device without requiring a external programmer. There are two ways that a microcontroller can accomplish this generally\:
+
+
 #. Include a binary image in every compiled program that is copied into RAM and runs a bootloader program that allows for self-reprogramming.
 
 
@@ -25,6 +27,8 @@ Contents
 
 
 .. rstblog-break::
+
+
 
 * `Parts of a bootloader <parts>`__
 
@@ -53,6 +57,8 @@ Parts of a bootloader
 
 
 There's a few pieces to the bootloader that I'm going to describe here which are necessary for its function.
+
+
 * Since the bootloader runs first\: The ability to detect whether or not the bootloader should run. Also a way for the application to enter bootloader mode.
 
 
@@ -108,6 +114,8 @@ First, there's a few #defines and global variables that it would be good to know
 
 
 There are a few things that can be gathered from this\:
+
+
 * We are going to be using the EEPROM. I made a convenient _EEPROM macro that makes a variable be placed into the EEPROM portion of memory.
 
 
@@ -159,6 +167,8 @@ After the bootloader determines that it needs to run the user's program, it will
 
 
 The first step here is to reset the magic_code value, since this is a one-time CSR-check override. Next, interrupts are disabled and some steps are taken to start executing the user program\:
+
+
 #. The user_vtor value is dereferenced and we read values directly from the previously programmed user application. For Cortex-M binaries, the interrupt table's first two words are the initial stack pointer and the location of the reset interrupt. By dereferencing the VTOR value we read the user program like an array, extracting the first and second words to store as the future stack pointer and future program counter (since we want to start at the user program's reset entry point).
 
 
@@ -231,6 +241,8 @@ Our reports are very simple\: We have a 64-byte IN report and a 64-byte OUT repo
 
 
 To program the device, this bootloader implements a state machine that interprets sequences of OUT reports and issues IN reports as follows\:
+
+
 * The status report\: At certain points, the bootloader will issue IN reports back to the host which contain the last command received, any error flags, and some CRC32 values which are used to ensure we don't swap upper and lower pages when transferring flash pages back to the host.
 
 

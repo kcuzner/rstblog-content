@@ -12,6 +12,8 @@ I want to talk about how I overcame the lack of a VTOR to write a USB bootloader
 
 
 **Table of contents\:**
+
+
 * `What is the VTOR? <what-is-vtor>`__
 
 
@@ -72,6 +74,8 @@ Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Control
 
 
 When an interrupt occurs, the NVIC will examine this table, read the handler address from it, push some special information onto the stack (the exception frame), and then execute the handler. This exact sequence is fairly complex, but here are some resources if you're interested in learning more\:
+
+
 * `http\://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm <http://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm>`__
 
 
@@ -251,6 +255,8 @@ Bootloaders and the VTOR
 At this point we can talk about how bootloaders would use the VTOR. In my `last post on the subject <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`__, I didn't really talk extensively about interrupts beyond mentioning that the VTOR is overwritten as part of the process of jumping to the user program. The reason this is done is so that after the bootloader has decided to transfer execution to the user program that interrupts executed in the program are directed to the handlers dictated by the user program. Ideally, the user program doesn't even need to worry about the fact that its running in a boot-loaded manner.
 
 On a microcontroller with a separate bootloader and user program the flash is partitioned into two segments\: The bootloader which *always* lives right at the beginning of flash so that the STM32 boots into the bootloader and the user program which lives much further down in the flash. I usually put my user programs at around the 8KB mark since the (inefficient and clumsy) hobbyist bootloaders i write tend to use just a little over 4K of the flash. When the bootloader runs it performs the following sequence\:
+
+
 #. Determine if a user program exists. If the user program does not exist, start running the main bootloader program and abort this sequence.
 
 
@@ -355,6 +361,8 @@ Dealing with an absent VTOR
 After I purchased the microcontroller for my project (an STM32F042) I discovered that it was a Cortex-M0 and did not have a VTOR. This was a rather unpleasant surprise and now I know that the M0 sucks compared to the M0+. Nonetheless, I was able to overcome this with a fairly simple software shim and that's what I want to share.
 
 There are two main issues that the VTOR addresses\:
+
+
 * Determining the address of an interrupt when it isn't relative to 0x00000000.
 
 
@@ -365,6 +373,8 @@ There are two main issues that the VTOR addresses\:
 Since I don't have a VTOR all of my interrupts will be executed from the bootloader by default. This is obviously unacceptable since things like a USB interrupt occurring would cause the user program to suddenly revert back to being the bootloader program (and probably into some undefined state since the SRAM would be all different).
 
 To address the first problem, I had to make some changes to my bootloader and to the user program\:
+
+
 #. I designated a certain area of SRAM in the bootloader program as holding data that will be valid while the processor is running.
 
 

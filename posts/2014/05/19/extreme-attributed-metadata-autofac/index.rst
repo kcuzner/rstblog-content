@@ -8,6 +8,8 @@ If you are anything like me, you love reflection in any programming language. Fo
 I recently started using `Autofac <http://autofac.org/>`__ at work to help achieve `Inversion of Control <http://martinfowler.com/articles/injection.html>`__ within our projects. It has honestly been the most life changing C# library (sorry Autofac, jQuery and Knockout still take the cake for "life-changing in all languages") I have ever used and has changed the way I decompose problems when writing programs.
 
 This article will cover some very interesting features of the Autofac Attributed Metadata module. It is a little lengthy, so I have here what will be covered\:
+
+
 * What is autofac?
 
 
@@ -100,6 +102,8 @@ Now, here is a simple program that will use these formatters\:
    }
 
 Ok, so we have ran into a problem\: We have a list of formatters, but we don't know which is which. There are a couple different solutions\:
+
+
 * Use the "is" test or do a "soft cast" using the "as" operator to a specific type. This is bad because it requires that the resolver know about the specific implementations of the interface (which is what we are trying to avoid)
 
 

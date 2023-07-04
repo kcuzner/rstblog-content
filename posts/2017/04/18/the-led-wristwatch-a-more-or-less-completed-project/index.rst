@@ -3,6 +3,8 @@ About 2009 I saw an article written by Dr. Paul Pounds in which he detailed a po
 Although the project started out as an AVR project, I decided after my escapades with the STM32 in August that I really wanted to make it an STM32 project, so around November I started making a new design that used the STM32L052C8 ARM Cortex-M0+ ultra-low power USB microcontroller. The basic concept of the design is to mock up an analog watch face using a ring of LEDs for the hours, minutes, and seconds. I found three full rings to be expecting a bit much if I wanted to keep this small, so I ended up using two rings\: One for the hours and another for combined minutes and seconds (the second hand is recognized by the fact that it is "moving" perceptibly).
 
 In this post I'm going to go over my general design, some things I was happy with, and some things that I wasn't happy with. I'll make some follow-up posts for the following topics\:
+
+
 * `USB on the STM32 <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`__
 
 
@@ -34,6 +36,8 @@ In this post I'm going to go over my general design, some things I was happy wit
 
 
 There are three main parts to the watch circuit\:
+
+
 * The power supply and battery charger.
 
 

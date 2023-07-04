@@ -7,6 +7,8 @@ Introduction
 
 
 A couple of days ago, I was asked to help do some soldering for a modification someone was trying to do to a PS1 controller. He informed me that it was for the game `Pop 'n Music <https://en.wikipedia.org/wiki/Pop'n_Music>`__ and that it required a special controller to be played properly. Apparently, official controllers can sell for $100 or more, so modifying an existing controller was the logical thing to do. After much work and pain, it was found that while modifying an existing controller was easy, it wasn't very robust and could easily fall apart and so I built one using an ATMega48 and some extra components I had lying around. The microcontroller emulates the PSX bus which is used to communicate between the controller and the playstation/computer. As my reference for the bus, I used the following two web pages\:
+
+
 * `http\://emu-docs.org/PlayStation/psxcont/ <http://emu-docs.org/PlayStation/psxcont/>`__ - Schematics and details on the electrical properties of the bus
 
 
@@ -21,6 +23,8 @@ The first attempt\: Controller mod
 
 
 The concept behind the controller mod was simple\: Run wires from the existing button pads to some arcade-style buttons arranged in the pattern needed for the controller. It worked well at first, but after a little while we began to have problems\:
+
+
 * The style of pad that he purchased had conductive rubber covering all of the copper for the button landings. In order to solder to this, it was necessary to scrape off the rubber. This introduced a tendency for partially unclean joints, giving rise to cold connections. While with much effort I was able to mitigate this issue (lots of scraping and cleaning), the next problem began to manifest itself.
 
 

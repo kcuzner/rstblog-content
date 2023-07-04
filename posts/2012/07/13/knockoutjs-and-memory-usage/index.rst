@@ -181,6 +181,8 @@ Summary
 
 
 In summary, to reduce KnockoutJS memory usage consider the following\:
+
+
 * Reduce the number of functions inside the scope of each model. Move functions to the lowst possible place in your model tree to avoid unnecessary duplication.
 
 

@@ -2,7 +2,8 @@ One of the things that has intrigued me for the past couple years is making embe
 
 Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`__ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
 
-[caption id="" align="alignright" width="328"].. image:: /teensy/teensy31.png
+[caption id="" align="alignright" width="328"]
+.. image:: /teensy/teensy31.png
    :target: http://www.pjrc.com/teensy/teensy31.html
 
  Teensy 3.1[/caption]
@@ -24,6 +25,7 @@ At the end of this post, I will have outlined all of the pieces needed to have a
 Contents
 ========
 
+
 `USB Basics <usb-basics>`__
 
 `The Freescale K20 Family and their USB module <freescale-usb>`__
@@ -43,8 +45,8 @@ Contents
 USB Basics
 ==========
 
-I will actually not be talking about these here as I am most definitely no expert. However, I will point to the page that I found most helpful when writing this\:
 
+I will actually not be talking about these here as I am most definitely no expert. However, I will point to the page that I found most helpful when writing this\:
 `http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`__
 
 
@@ -52,8 +54,10 @@ This site explained very clearly exactly what was going on with USB. Coupled wit
 
 
 
+
 The Freescale K20 Family and their USB module
 =============================================
+
 
 The one thing that I don't like about all of these great microcontrollers that come out with USB support is that all of them have their very own special USB module which doesn't work like anyone else. Sure, there are similarities, but there are no two *exactly* alike. Since I have a Teensy and the K20 family of microcontrollers seem to be relatively popular, I don't feel bad about writing such specific software.
 
@@ -84,6 +88,7 @@ In writing this, I must confess that I looked quite a lot at the Teensyduino cod
 Part 1\: The clocks
 ===================
 
+
 The K20 family of microcontrollers utilizes a miraculous hardware module which they call the "Multipurpose Clock Generator" (hereafter called the MCG). This is a module which basically allows the microcontroller to take any clock input between a few kilohertz and several megahertz and transform it into a higher frequency clock source that the microcontroller can actually use. This is how the Teensy can have a rated speed of 96Mhz but only use a 16Mhz crystal. The configuration that this project uses is the Phase Locked Loop (PLL) from the high speed crystal source. The exact setup of this configuration is done by the `sysinit code <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/sysinit.c>`__.
 
 The PLL operates by using a divider-multiplier setup where we give it a divisor to divide the input clock frequency by and then a multiplier to multiply that result by to give us the final clock speed. After that, it heads into the System Integration Module (SIM) which distributes the clock. Since the Teensy uses a 16Mhz crystal and we need a 96Mhz system clock (the reason will become apparent shortly), we set our divisor to 4 and our multiplier to 24 (see `common.h <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/include/common.h>`__). If the other type of Teensy 3 is being used (the one with the MK20DX128VLH5), the divisor would be 8 and the multiplier 36 to give us 72Mhz.
@@ -111,6 +116,7 @@ With that, the clock to the USB module has been activated and the module can now
 
 Part 2\: The startup sequence
 =============================
+
 
 The Peripheral Module Quick Reference guide mentioned earlier contains a flowchart which outlines the exact sequence needed to initialize the USB module to act as a device. I don't know if I can copy it here (yay copyright!), but it can be found on page 134, figure 15-6. There is another flowchart specifying the initialization sequence for using the module as a host.
 
@@ -198,6 +204,7 @@ The very last step in initialization is to set the internal pullup on D+. Accord
 
 Part 3\: The interrupt handler state machine
 ============================================
+
 
 The USB protocol can be interpreted in the context of a state machine with each call to the interrupt being a "tick" in the machine. The interrupt handler must process all of the flags to determine what happened and where to go from there.
 
@@ -324,6 +331,7 @@ Our code here uses USB0_STAT to determine which endpoint the token was decoded f
 
 Part 4\: Token processing & descriptors
 =======================================
+
 
 This is one part of the driver that isn't something that must be done a certain way, but however it is done, it must accomplish the task correctly. My super-simple driver processes this in two stages\: Processing the token type and processing the token itself.
 
@@ -629,6 +637,7 @@ I won't delve into a long and drawn out description of what the USB descriptor h
 Where to go from here
 =====================
 
+
 The driver I have implemented leaves much to be desired. This isn't meant to be a fully featured driver. Instead, its meant to be something of an introduction to getting the USB module to work on the bare metal without the support of some external dependency. A few things that would definitely need to be implemented are\:
 * The full set of commands for the endpoint 0 SETUP token processing
 
@@ -649,6 +658,7 @@ The driver I have implemented leaves much to be desired. This isn't meant to be 
 
 Conclusion
 ==========
+
 
 I can only hope that this discussion has been helpful. I spent a long time reading documentation, writing code, smashing my keyboard, and figuring things out and I would like to see that someone else could benefit from this. I hope as I learn more about using the modules on my Teensy that I will become more competent in understanding how many of the systems I rely on on a daily basis function.
 

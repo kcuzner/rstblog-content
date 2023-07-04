@@ -2,9 +2,11 @@
 The Problem
 ===========
 
+
 I am working on a project that involves a Li-Ion battery charger. I've never built one of these circuits before and I wanted to test the battery over its entire charge-discharge cycle to make sure it wasn't going to burst into flame because I set some resistor wrong. The battery itself is very tiny (100mAH, 2.5mm thick) and is going to be powering an extremely low-power circuit, hopefully over the course of many weeks between charges.
 
-[caption id="attachment_541" align="aligncenter" width="640"].. image:: Battery-Charger.jpg
+[caption id="attachment_541" align="aligncenter" width="640"]
+.. image:: Battery-Charger.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger.jpg
 
  Battery charger breadboard[/caption]
@@ -15,6 +17,7 @@ After about 2 days of taking meter measurements every 6 hours or so to see what 
 
 Setting up the Teensy 3.1 ADC
 =============================
+
 
 I've never used the ADC before on the Teensy 3.1. I don't use the Teensy Cores HAL/Arduino Library because I find it more fun to twiddle the bits and write the makefiles myself. Of course, this also means that I don't always get a project working within 30 minutes.
 
@@ -56,6 +59,7 @@ Since I planned to measure the voltages coming off a Li-Ion battery, I needed to
 
 Quick and dirty USB device-side driver
 ======================================
+
 
 For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
 
@@ -103,6 +107,7 @@ I added a control request (0x01) which uses the wIndex (not to be confused with 
 
 Host software
 =============
+
 
 Since libusb is easy to use with Python, via PyUSB, I decided to write out the whole thing in Python. Originally I planned on some sort of fancy gui until I realized that it would far simpler just to output a CSV and use MATLAB or Excel to process the data. The software is simple enough that I can just put the entire thing here\:
 
@@ -216,7 +221,9 @@ This process highlights an issue with using standard resistors. Unless the resis
 Conclusion
 ==========
 
-[caption id="attachment_542" align="aligncenter" width="640"].. image:: Battery-Charger-with-EZDAQ.jpg
+
+[caption id="attachment_542" align="aligncenter" width="640"]
+.. image:: Battery-Charger-with-EZDAQ.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger-with-EZDAQ.jpg
 
  Battery Charger with EZDAQ Attached (don't mind the O-Scope probes...those are for another test)[/caption]

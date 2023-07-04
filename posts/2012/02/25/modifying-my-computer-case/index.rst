@@ -38,7 +38,6 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 
-
 [caption id="attachment_132" align="alignright" width="150" caption="The spider wires"].. image:: HPIM1946.jpg
 
 [/caption]
@@ -47,6 +46,7 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 I started out by soldering the header to some wires to take the 5V and GND line off of the small .1" power connector in my computer. I then put the resistor on the positive rail and then split everything off into 4 wires (8 in total\: 4 power, 4 ground). The result looked rather like a spider in my opinion. After that it was a relatively simple job of soldering the long lead of the LEDs to the positive rail and the other side to the negative rail. Thus, the LED assembly was completed.
+
 
 
 [caption id="attachment_135" align="alignleft" width="240" caption="Matte board and aimed LEDs"].. image:: HPIM1950.jpg

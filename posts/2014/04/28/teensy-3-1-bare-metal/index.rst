@@ -2,6 +2,7 @@
 Introduction
 ============
 
+
 A couple of weeks ago I saw a link on `hackaday <http://hackaday.com>`__ to an `article <http://www.seanet.com/~karllunt/bareteensy31.html>`__ by Karl Lunt about using the Teensy 3.1 without the Arduino IDE and building for the bare metal. I was very intrigued as the Arduino IDE was my only major beef with developing stuff for the Teensy 3.1 and I wanted to be able to do things without having to use the IDE. I read through the article and although it was geared towards windows, I decided to try to adapt it to my development style. There were a few things I wanted to do\:
 * No additional code dependencies other than the teensyduino installation which I already had
 
@@ -31,6 +32,7 @@ I'm writing this in the hope that those without mad Makefile skills, such as mys
 Prerequisites
 =============
 
+
 As my first order of business, I located the arm-none-eabi binaries for my linux distribution. These can also be found for Windows as noted in Karl Lunt's article. Random sidenote\: I found `this <http://kunen.org/uC/gnu_tool.html>`__ description of why arm-none-eabi is called arm-none-eabi. Very informative. Anyway, for those who run archlinux, the following packages are needed\:
 * arm-none-eabi-gcc (contains the compilers)
 
@@ -47,10 +49,12 @@ Hopefully this gives a bit of a hint on what packages may need to be installed o
 My Flow
 =======
 
+
 For C and C++ development I have a particular flow that I like to follow. This is heavily influenced by my usage of Code\:\:Blocks and Visual Studio. I like to have a src directory where I put all of my sources, an include directory where I put all of my headers, an obj directory for all the obj, d, & lst files, and a bin directory for my executable output. I've always had such a hard time with raw Makefiles because I could never quite get that directory structure working. I was never quite satisfied with my feeble Makefile attempts which ended up placing the object files in the root directory where the sources had to be. This Makefile represents my first time I was ever able to actually have a real bin, obj, src structure that works.
 
 Compiling object files to obj & looking in src for source
 ---------------------------------------------------------
+
 
 A working description of this can be found in the Makefile in my github repository I mentioned earlier.
 
@@ -98,6 +102,7 @@ When executing a target ("$(OBJDIR)/%.o\: $(SRCDIR)/%.cpp" in our example), ther
 Outputting everything to bin
 ----------------------------
 
+
 Compared to the pattern matching and multiple target definitions that we discussed above, this is comparatively simple. We simply get to prefix all of our "binary" output files with some directory which is set as $(OUTPUTDIR) in my Makefile. Here is an example\:
 
 ::
@@ -125,6 +130,7 @@ We see here that any output that we are creating as a result of the compilation 
 
 Using Teensyduino without compiling everything
 ==============================================
+
 
 This was by far the most frustrating part to get working. Everything about the makefiles was readily available online, with some serious googling. However, getting things to actually compile was a little different story.
 
@@ -164,6 +170,7 @@ I decided that I would include "yield.c" and "analog.c" since those weren't too 
 
 Conclusion
 ==========
+
 
 Armed with my new Makefile and a better understanding of how the Teensy 3.1 works from a software perspective, I managed to compile and upload my "blinky" program which just blinks the onboard LED (pin 13) on and off every 1/4 second. The overall program size was 3% of the total space, which is much more reasonable compared to the 10-20% it was taking when compiled using the Arduino IDE.
 

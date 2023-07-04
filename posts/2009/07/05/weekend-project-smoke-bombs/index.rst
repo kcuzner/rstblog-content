@@ -11,6 +11,7 @@ The next ingredient was easy to get\: brown sugar. I got the light brown kind, b
 Materials
 =========
 
+
 * Saltpeter or KNO\ :sub:`{content}`\ . It doesn't matter which since they are the same thing.
 
 
@@ -52,6 +53,7 @@ Materials
 Instructions
 ============
 
+
 #. Weigh out the saltpeter and place it into the mortar. It is best to weigh it while it is inside the mortar so that it doesn't get all over the place from dumping into the mortar. Since this mixture is going to be 3 parts KNO\ :sub:`{content}`\  to 2 parts sugar, it is easiest to make this a number divisible by 3. In this tutorial I used 48g of saltpeter.
 
 
@@ -89,6 +91,7 @@ Instructions
 
 Video and Pictures
 ==================
+
 
 [caption id="attachment_64" align="aligncenter" width="640" caption="Before lighting it"].. image:: before.jpg
 

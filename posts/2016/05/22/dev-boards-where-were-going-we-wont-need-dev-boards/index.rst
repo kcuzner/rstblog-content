@@ -3,10 +3,13 @@ A complete tutorial for using an STM32 without a dev board
 ==========================================================
 
 
+
 Introduction
 ------------
 
-[caption id="attachment_524" align="alignright" width="320"].. image:: IMG_20160521_213623.jpg
+
+[caption id="attachment_524" align="alignright" width="320"]
+.. image:: IMG_20160521_213623.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213623.jpg
 
  STM32F103C8 Tray from eBay[/caption]
@@ -38,13 +41,14 @@ I make the following assumptions\:
 
 
 All code, makefiles, and configuration stuff can be found in the project repository on github.
-
 **Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
+
 
 
 
 Materials
 =========
+
 
 You will require the following materials\:
 * A computer running Linux. **If you run Windows only, please don't be dissuaded. **I'm just lazy and don't want to test this for Windows. It may require some finagling. Manufacturer support is actually better for Windows since they provide some interesting configuration and programming software that is Windows only...but who needs that stuff anyway?
@@ -78,6 +82,7 @@ Side note\: Here is an excellent video by the EE guru Dave Jones on surface moun
 
 Step 1\: Download the datasheets
 ================================
+
 
 Above we decided to use the STM32F103C8 ARM Cortex-M3 microcontroller in a TQFP-48 package. This microcontroller has so many peripherals its no wonder its the one all over eBay. I could see this microcontroller easily satisfying the requirements for all of my projects. Among other things it has\:
 * 64K flash, 20K RAM
@@ -114,7 +119,9 @@ Find the STM32F103C8 datasheet and family reference manual here (datasheet is at
 Step 2\: Figure out where to solder and do it
 =============================================
 
-[caption id="attachment_522" align="alignright" width="241"].. image:: STM32F103Pins-1.png
+
+[caption id="attachment_522" align="alignright" width="241"]
+.. image:: STM32F103Pins-1.png
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/STM32F103Pins-1.png
 
  STM32F103C8 Pins of interest[/caption]
@@ -134,7 +141,8 @@ On the pin diagram posted here you will find the highlighted pins of interest f
 
 Below you will find a picture of my breakout board. I soldered a couple extra pins since I want to experiment with USB.
 
-[caption id="attachment_523" align="aligncenter" width="480"].. image:: IMG_20160521_211614.jpg
+[caption id="attachment_523" align="aligncenter" width="480"]
+.. image:: IMG_20160521_211614.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211614.jpg
 
  STM32F103C8 Breakout[/caption]
@@ -144,7 +152,9 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
 Step 3\: Connect the breadboard and programmer
 ==============================================
 
-[caption id="attachment_525" align="alignright" width="320"].. image:: IMG_20160521_213137.jpg
+
+[caption id="attachment_525" align="alignright" width="320"]
+.. image:: IMG_20160521_213137.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213137.jpg
 
  Cheap STLinkV2 Clone[/caption]
@@ -186,7 +196,8 @@ Next, we need to connect the following pins on the breadboard\:
 
 Here is my breadboard setup\:
 
-[caption id="attachment_527" align="aligncenter" width="480"].. image:: IMG_20160521_211048-1.jpg
+[caption id="attachment_527" align="aligncenter" width="480"]
+.. image:: IMG_20160521_211048-1.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211048-1.jpg
 
  STM32F103C8 Breadboard Setup[/caption]
@@ -196,6 +207,7 @@ Step 4\: Download the STM32F1xx C headers
 
 
 **Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
+
 
 Since we are going to write a program, we need the headers. These are part of the STM32CubeF1 library found `here <http://www.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef1.html>`__.
 
@@ -225,6 +237,7 @@ I copied all the files referenced above to various places in my project structur
 Step 5\: Install the required software
 ======================================
 
+
 We need to be able to compile the program and flash the resulting binary file to the microcontroller. In order to do this, we will require the following programs to be installed\:
 * The arm-none-eabi toolchain. I use arch linux and had to install "arm-none-eabi-gcc". On Ubuntu this is called "gcc-arm-none-eabi". This is the cross-compiler for the ARM Cortex cores. The naming "none-eabi" comes from the fact that it is designed to compile for an environment where the program is the only thing running on the target processor. There is no underlying operating system talking to the application binary file (ABI = application binary interface, none-eabi = No ABI) in order to load it into memory and execute it. This means that it is ok with outputting raw binary executable programs. Contrast this with Linux which likes to use the ELF format (which is a part of an ABI specification) and the OS will interpret that file format and load the program from it.
 
@@ -243,6 +256,7 @@ Once you have installed all of the above programs, you should be good to go for 
 
 Step 6\: Write and compile the program
 ======================================
+
 
 Ok, so we need to write a program for this microcontroller. We are going to simply toggle on and off a GPIO pin (PB0). After reset, the processor uses the internal RC oscillator as its system clock and so it runs at a reasonable 8MHz or so I believe. There are a few steps that we need to go through in order to actually write to the GPIO, however\:
 #. Enable the clock to PORTB. Most ARM microcontrollers, the STM32 included, have a clock gating system that actually turns off the clock to pretty much all peripherals after system reset. This is a power saving measure as it allows parts of the microcontroller to remain dormant and not consume power until needed. So, we need to turn on the GPIO port before we can use it.
@@ -416,6 +430,7 @@ The result of this makefile is that it will create a file called "bin/blink.bin"
 Step 7\: Flashing the program to the microcontroller
 ====================================================
 
+
 Source for this step\: `https\://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux <https://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux>`__
 
 This is the very last step. We get to do some openocd configuration. Firstly, we need to write a small configuration script that will tell openocd how to flash our program. Here it is\:
@@ -496,7 +511,8 @@ In the makefile earlier, I actually made this the "install" target, so running "
 
 After doing that I saw the following awesomeness\:
 
-[caption id="attachment_528" align="aligncenter" width="480"].. image:: IMG_20160521_212615.jpg
+[caption id="attachment_528" align="aligncenter" width="480"]
+.. image:: IMG_20160521_212615.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_212615.jpg
 
  STM32F103C8 with LED turned on[/caption]
@@ -505,6 +521,7 @@ Wooo!!! The LED blinks! At this point, you have successfully flashed an ARM Cort
 
 Conclusion
 ==========
+
 
 For me, this marks the end of one journey and the beginning of another. I can now feel free to experiment with ARM microcontrollers without having to worry about ruining a nice shiny development board. I can buy a obscenely powerful $1 STM32 microcontroller from eBay and put it into any project I want. If I were to try to do that with AVRs, I would be stuck with the ultra-low-end 8-pin ATTiny13A since that's about it for ~$1 AVR eBay offerings (don't worry...I've got plenty of ATMega328PB's...though they weren't $1). I sincerely hope that you found this tutorial useful and that it might serve as a springboard for doing your own dev board-free ARM development.
 

@@ -5,6 +5,7 @@ The KnockoutJS documentation is really great, but it is more geared towards the 
 Example
 -------
 
+
 Javascript (note that this assumes usage of jQuery for things like AJAX)\:
 
 ::
@@ -90,6 +91,7 @@ Now for a really simple view (sorry for lack of styling or the edit capability, 
 The Problem
 -----------
 
+
 So, what is the problem here with this model? It works just fine... you can add, remove, save, and display items in a collection of containers. However, if this view was to contain, say, 1000 containers with 1000 items each, what would happen? Well, we would have a lot of memory usage. Now, you could say that would happen no matter what you did and you wouldn't be wrong. The question here is, how much memory is it going to use? The example above is not nearly the most efficient way of structuring a model and will consume much more memory than is necessary. Here is why\:
 
 Note how the saving, adding, and removing functions are implemented. They are declared attached to the *this* variable inside each object. Now, in languages like C++, C#, or Java, adding functions to an object (that is what attaching the function to the *this* variable does in Javascript if you aren't as familiar with objects in Javascript) will not cause increased memory usage generally, but would rather just make the program size larger since the classes would all share the same compiled code. However, Javascript is different.
@@ -100,6 +102,7 @@ Now, tying all that together here is what happens\: Closures "wrap up" everythin
 
 Solution
 --------
+
 
 How can this be fixed? What we need to do is to reduce the number of anonymous functions that are created. We need to remove the save, add, and remove functions from the ItemModel and ItemContainerModel. As it turns out, the structure of Knockout is geared towards doing something which can save us a lot of memory usage.
 
@@ -175,6 +178,7 @@ Now, that wasn't so hard was it? What we just did was we made it so that we only
 
 Summary
 -------
+
 
 In summary, to reduce KnockoutJS memory usage consider the following\:
 * Reduce the number of functions inside the scope of each model. Move functions to the lowst possible place in your model tree to avoid unnecessary duplication.

@@ -1,11 +1,11 @@
 In my most recent project I selected an ARM Cortex-M0 microcontroller (the STM32F042). I soon realized that there is a key architectural piece missing from the Cortex-M0 which the M0+ does not have\: The vector table offset register (VTOR).
 
 I want to talk about how I overcame the lack of a VTOR to write a USB bootloader which supports a semi-safe fallback mode.
-
 **The source for this post can be found here (look in the "bootloader" folder)\:**
 
 
 `https\://github.com/kcuzner/midi-fader/tree/master/firmware <https://github.com/kcuzner/midi-fader/tree/master/firmware>`__
+
 
 
 .. rstblog-break::
@@ -31,8 +31,8 @@ I want to talk about how I overcame the lack of a VTOR to write a USB bootloader
 What is the VTOR?
 =================
 
-Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Controller. This is used for prioritizing peripheral interrupts (I2C byte received, USB transaction complete, etc) and core signals (hard fault, system timer tick, etc) while managing the code which is executed in response. The NVIC works by using a lookup table at a specific location to determine what code to execute. As an example, the interrupt table for the STM32F042 looks something like this\:
 
+Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Controller. This is used for prioritizing peripheral interrupts (I2C byte received, USB transaction complete, etc) and core signals (hard fault, system timer tick, etc) while managing the code which is executed in response. The NVIC works by using a lookup table at a specific location to determine what code to execute. As an example, the interrupt table for the STM32F042 looks something like this\:
 
 +-----------------------+----------------------------------------+
 | Address               | Description                            |
@@ -67,6 +67,7 @@ Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Control
 +-----------------------+----------------------------------------+
 | ...etc...             |
 +-----------------------+----------------------------------------+
+
 
 
 
@@ -226,7 +227,6 @@ So, what is the VTOR? In some ARM Cortex architectures (I know at least the ARM 
 
 One thing you may have noticed at this point is that my assembly dump earlier had everything living relative to address 0x08000000. However, I said that that the VTOR's reset value was 0x00000000. So, how does the STM32's ARM core know where to find the table? All STM32's I've seen so far implement a "boot remapping" feature which uses the physical "BOOT0" pin to map the flash (which starts at 0x08000000) onto the memory space starting at 0x00000000 like so (may vary slightly by STM32)\:
 
-
 +-------+------------------------------------------------------------------------------------------------+
 | BOOT0 | Result                                                                                         |
 | pin   |                                                                                                |
@@ -239,12 +239,14 @@ One thing you may have noticed at this point is that my assembly dump earlier ha
 
 
 
+
 Some STM32s have support for extra modes like mapping the SRAM (address 0x20000000) onto 0x00000000. So although the VTOR's default value is 0x00000000, since the STM32 is remapping 0x08000000 into that space the ARM Cortex core sees the contents of the flash when it loads information from locations relative to 0x00000000 if the BOOT0 pin is tied low.
 
 .. _bootloader-vtor:
 
 Bootloaders and the VTOR
 ========================
+
 
 At this point we can talk about how bootloaders would use the VTOR. In my `last post on the subject <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`__, I didn't really talk extensively about interrupts beyond mentioning that the VTOR is overwritten as part of the process of jumping to the user program. The reason this is done is so that after the bootloader has decided to transfer execution to the user program that interrupts executed in the program are directed to the handlers dictated by the user program. Ideally, the user program doesn't even need to worry about the fact that its running in a boot-loaded manner.
 
@@ -349,6 +351,7 @@ All the addresses are offset by 0x08002000. Now all the bootloader has to do is 
 Dealing with an absent VTOR
 ===========================
 
+
 After I purchased the microcontroller for my project (an STM32F042) I discovered that it was a Cortex-M0 and did not have a VTOR. This was a rather unpleasant surprise and now I know that the M0 sucks compared to the M0+. Nonetheless, I was able to overcome this with a fairly simple software shim and that's what I want to share.
 
 There are two main issues that the VTOR addresses\:
@@ -370,8 +373,6 @@ To address the first problem, I had to make some changes to my bootloader and to
 
 
 I implemented this with these linker script memory modifications\:
-
-
 
 
 
@@ -411,6 +412,8 @@ I implemented this with these linker script memory modifications\:
        FLASH (RX) : ORIGIN = _flash_origin, LENGTH = _flash_length
        RAM (W!RX)  : ORIGIN = 0x20000100, LENGTH = 6K - 256
    }
+
+
 
 
 
@@ -633,6 +636,7 @@ With those two pieces together, we have effectively emulated the VTOR functional
 Debugging the user program
 --------------------------
 
+
 With my other bootloader which relied on the VTOR, the presence of the bootloader was not only transparent to the user program, it was also transparent to the debugger. If I needed to run a stack trace during an interrupt or exception, it knew the names of all the symbols it would find in the trace. But now that we've mixed together the bootloader and user program, that makes things less straightfoward since the elf file from the user program won't have any knowledge of the code executed by the bootloader.
 
 While I didn't overcome this issue completely and stack traces can be a little awkward if they are interrupted at just the right time, I did manage to massage gdb enough to make it somewhat usable\:
@@ -650,6 +654,7 @@ The "add-symbol-file" directive points gdb towards my bootloader's elf file and 
 
 Conclusion
 ==========
+
 
 Here we've seen how the VTOR works, why it's useful to bootloaders, and one way to overcome the issue of not having a VTOR in certain architectures like the Cortex-M0. If you have any questions or comments, feel free to leave a comment on this post. This isn't the most robust way of fixing the problem, but for my hacking around it works just fine. I only hope that this post is useful and maybe sparks some idea with someone who is trying to overcome a similar problem.
 

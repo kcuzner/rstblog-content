@@ -11,7 +11,6 @@ The main object of this bootloader is to facilitate reprogramming of the device 
 Each of these ways has their pros and cons. Option 1 allows for the user program to use all available flash (aside from the blob size and bootstrapping code). It also might not require a relocatable interrupt vector table (something that some ARM Cortex microcontrollers lack). However, it also means that there is no recovery without using JTAG or SWD to reflash the microcontroller if you somehow mess up the switchover into the bootloader. Option 2 allows for a fairly fail-safe bootloader. The bootloader is always there, even if the user program is not working right. So long as the device provides a hardware method for entering bootloader mode, the device can always be recovered. However, Option 2 is difficult to update (you have to flash it with a special program that overwrites the bootloader), wastes unused space in the bootloader-reserved section, and also requires some features that not all microcontrollers have.
 
 Because the STM32L052 has a large amount of flash (64K) and implements the vector-table-offset register (allowing the interrupt vector table to be relocated), I decided to go with Option 2.
-
 **Example code for this post can be found here\:**
 
 
@@ -19,8 +18,10 @@ Because the STM32L052 has a large amount of flash (64K) and implements the vecto
 
 
 
+
 Contents
 ========
+
 
 
 .. rstblog-break::
@@ -50,6 +51,7 @@ Contents
 Parts of a bootloader
 =====================
 
+
 There's a few pieces to the bootloader that I'm going to describe here which are necessary for its function.
 * Since the bootloader runs first\: The ability to detect whether or not the bootloader should run. Also a way for the application to enter bootloader mode.
 
@@ -66,6 +68,7 @@ There's a few pieces to the bootloader that I'm going to describe here which are
 
 Bootloader Entry and Exit
 =========================
+
 
 When the watch first boots, the bootloader is going to be the first thing that runs. Not all bootloaders work like this, but this is one of the simplest ways to get things rolling.
 
@@ -174,6 +177,7 @@ In summary, the bootloader is entered immediately upon device reset. It then dec
 
 Self-programming via USB
 ========================
+
 
 One main goal I had with this bootloader is that it should be driverless and cross-platform. To facilitate this, the bootloader enumerates as a USB Human Interface Device. Here is my report descriptor for the bootloader\:
 
@@ -390,6 +394,7 @@ I do recommend reading through the code for the bootloader state machine (just b
 Considerations for linking the application
 ==========================================
 
+
 One big thing we haven't yet covered is how exactly the user application needs to be changed in order to be compatible with the bootloader. Due to how the bootloader is structured (it just lives in the first bit of flash) and how it is entered (any reset other than power-on will enter bootloader mode), the only real change needed to make a user program compatible is to relocate where the linker script places the user program in flash (leaving the first section of it blank). In my linker script for the LED watch, I changed the MEMORY directive to read as follows\:
 
 .. code-block:: {lang}
@@ -422,6 +427,7 @@ Very simple, very easy.
 Host software
 =============
 
+
 The host software is written in python and uses pyhidapi to talk to the bootloader. It really is nothing complicated, since it just reads intel hex files and dumps them into the watch by operating the state machine. When it is finished, it tells the bootloader the location of the start of the program so that it can read the initial stack pointer and the address of the reset function by issuing the "exit" command. This also boots into the user program. Pretty much all the heavy lifting and "interesting" stuff for a bootloader happens in the bootloader itself, rather than in host software.
 
 One small hack is that the host software does hardcode where it believes the program should start (address 0x08002000). One possible resolution for this hack is to take elf files instead of intel hex files, or just assume the lowest address in the hex file is the starting point.
@@ -430,6 +436,7 @@ One small hack is that the host software does hardcode where it believes the pro
 
 Conclusion
 ==========
+
 
 This is my first bootloader that I've written for one of my projects. There were challenges getting it to work at first, but I hope that I've shown it isn't an incredibly complex thing to write. I actually got better performance flashing over USB than over SWD, so that is an additional win for writing this and if I didn't use the SWD for debugging so much I would probably always use a bootloader like this on my projects.
 

@@ -1,5 +1,4 @@
 For this Christmas I decided to do something fun with my Christmas tree\: Hook it up to the internet.
-
 **Visit the IoTree here (available through the 1st week of January 2019)\:**
 
 
@@ -13,7 +12,9 @@ For this Christmas I decided to do something fun with my Christmas tree\: Hook i
 
 
 
-[caption id="attachment_649" align="alignright" width="1125"].. image:: Christmas-Tree-in-Action-Cropped.png
+
+[caption id="attachment_649" align="alignright" width="1125"]
+.. image:: Christmas-Tree-in-Action-Cropped.png
    :target: http://kevincuzner.com/wp-content/uploads/2018/12/Christmas-Tree-in-Action-Cropped.png
 
  The IoTree[/caption]
@@ -38,6 +39,7 @@ I'm going to go into brief detail about each of these pieces and some of the cha
 WS2811 Control\: A Freescale Kinetis KL26 Microcontroller
 =========================================================
 
+
 My first foray into ARM microcontrollers was a Freescale K20 on the Teensy 3.1. I thought the Kinetis family was awesome, I started designing myself a development/breakout board based on the KL26 some years ago and actually built one up. What I didn't realize at the time was that compared to other ARM Cortex microcontroller lines, the documentation and tools for the Kinetis family is severely lacking. I had a very difficult time getting it to program. I put the project on the shelf and didn't get it out again until several months ago when I `learned <https://learn.adafruit.com/programming-microcontrollers-using-openocd-on-raspberry-pi/overview>`__ that there was a "raspberrypi-native" config script available that is enabled by a compile-time option. I compiled openocd with that option, wired up the KL26, and managed to flash a blinking program! However, I found that the reset procedure using the raspberrypi-native interface wasn't quite as reliable as the reset procedure for the STM32 using the STLink-v2 and I would often have to fiddle with the exact reset/init procedure if something went wrong during the previous programming cycle.
 
 My interest soon declined and I put the KL26 back on the shelf again until this project, since I realized that it was pretty much my only dev/breakout board with an ARM microcontroller on it that I had available. I stuck the KL26 breakout on a breadboard and hooked it up to the WS2811 light string I had purchased off ebay. At first, I tried to get the USB working so I could build myself a little WS2811-USB dongle, but I ended up settling for a simpler SPI-based approach after it was started taking too long to debug the myriad issues I was having with the clocking system and USB peripheral (I believe I didn't have the crystal wired properly to the KL26 on my dev board and it was somewhat unstable).
@@ -48,6 +50,7 @@ In the end, I ended up settling for a dead-reckoning approach where I just send 
 
 Raspberry Pi Webcam Stream\: Fun with v4l2!
 ===========================================
+
 
 While getting the Raspberry Pi to send things over SPI was pretty easy, getting frames from the webcam was not nearly as straightforward as I would have liked. My original plan was to use OpenCV to grab the frames and then use `Redis' PUBSUB <https://redis.io/topics/pubsub>`__ functionality to throw the captured frames up to the cloud. I found that there were two problems with this approach\:
 #. It is difficult to install OpenCV for Arch on the raspberry pi and have it cooperate with Python. I was trying to use virtualenv to keep things encapsulated so that I wouldn't start depending on Arch system packages.
@@ -65,6 +68,7 @@ The final result is here\: `https\://github.com/kcuzner/iotree/blob/master/raspi
 
 Python, Flask, Vue, Streaming, and Websockets
 =============================================
+
 
 The webapp side of this whole project I decided to do in Python because it seemed the fastest way for me to get going. I made a really simple Flask application that serves a single page, a few static files, and the video stream. Most of this was pretty straightforward since its a very common thing to do, but one thing I want to mention briefly was the way I ended up creating the video stream.
 
@@ -122,6 +126,7 @@ I did most of the development of the webapp on my desktop PC, which runs Arch Li
 
 Conclusion
 ==========
+
 
 This project was a lot of fun. Once all the parts were running, seeing my Christmas Tree change in response to the commands of the internet mob turned into a great time for me. I have skipped some stuff (like figuring out a good-enough way to describe LED patterns programmatically, learning Vue for the first time, and other things), but that's what the github repository is for. I am going to shut down the tree in a week or two, since the AWS bandwidth charges per day with multiple simultaneous video streams are somewhat higher than what I am used to with this website and the holiday season will have ended, but I hope that the internet can have some fun with it while it's here.
 

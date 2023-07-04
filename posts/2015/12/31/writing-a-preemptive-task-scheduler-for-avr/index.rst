@@ -26,6 +26,7 @@ I should mention here that there is a certain level of ability assumed with AVRs
 Table of Contents
 =================
 
+
 * `Preemption? <preemption>`__
 
 
@@ -60,6 +61,7 @@ Table of Contents
 Preemption?
 ===========
 
+
 The definition of preemption in computing is being able to interrupt a task, without its cooperation, with the intention of executing it later, in order to run some other task.
 
 Firstly we need to define a task\: **A task is a unit of execution; something that the program structure defines as a self-contained part of the program which accomplishes some purpose**. In our case, a task is basically going to just be a method which never returns. The next thing to define is a **scheduler**. A scheduler is a software component which can decide from a list of tasks which task needs to run on the processor. The scheduler uses a **dispatcher** to actually change the code that is executing from the current task to another one. This is called saving and restoring the **context** of the task.
@@ -79,10 +81,12 @@ A positive side effect of doing things this way (with a scheduler) is that we ca
 Pros and Cons
 =============
 
+
 Before continuing, I would like to point out some pros and cons that I see of writing a task scheduler lest we fall into the "golden hammer" antipattern. There are certainly more, but here is my list (feel free to comment with comments on this).
 
 Some Pros
 ---------
+
 
 * Can reduce the jitter (and possibly the latency) in responding to interrupts. This is of paramount importance in some embedded systems which will have problems if the system cannot respond in a predictable manner to external stimuli.
 
@@ -100,6 +104,7 @@ Some Pros
 
 Some Cons
 ---------
+
 
 * Can add unnecessary complexity to the program in general. A task scheduler is no small thing and brings with it all of the issues seen in concurrent programming in general. However, these issues usually already exist when using interrupts and such.
 
@@ -120,6 +125,7 @@ So...lots of those are contradictory. What is a pro can also be a con. Anyway, I
 
 Implementation
 ==============
+
 
 Mmmkay here's the fun part. At this point you may be asking, "How in the world can we make something that can interrupt during one function and resume into another?" I recently completed a course on Real-Time Operating Systems (RTOS) at my university which opened my eyes into how this can be done (we wrote one for the 8086...so awesome!), so I promptly wrote one for the AVR. For those who come by here who have taken the same course at BYU, they will notice some distinct similarities since I went with what I knew. I've named it KOS, for "Kevin's Operating System", but this was just so I had an easy prefix for my types and function names. If you're going to implement your own based on this article, don't worry about naming it like mine (though a mention of this article somewhere would be cool).
 
@@ -207,6 +213,7 @@ As for source files, we will only have a single C file for the implementation, b
 Implementation\: kos_init and kos_new_task
 ------------------------------------------
 
+
 Firstly, we have the kos_init and kos_new_task functions, which come with some baggage\:
 
 .. code-block:: {lang}
@@ -272,6 +279,7 @@ The kos_new_task function is a little more complex. It performs two operations\:
 Implementation\: kos_run and kos_schedule
 -----------------------------------------
 
+
 Next we have the kos_run function\:
 
 .. code-block:: {lang}
@@ -316,6 +324,7 @@ The purpose of the ATOMIC_BLOCK is to ensure that interrupts are disabled when t
 
 Implementation\: kos_enter_isr and kos_exit_isr
 -----------------------------------------------
+
 
 We are faced with a very particular problem when we want to call our scheduler inside of an interrupt. Let's imagine a scenario where we have two tasks, Task A and Task B (Task A has higher priority than Task B), in addition to the idle task. Task A uses waits on two semaphores (semaphores 1 and 2) that is signaled by an ISR. When task A is running, it signals another semaphore that Task B waits on (semaphore 3). Here is what happens\:
 #. The idle task is running because both Task A and Task B are waiting on semaphores.
@@ -392,6 +401,7 @@ These functions must be run with interrupts disabled since they don't use any so
 
 Implementation\: kos_dispatch
 -----------------------------
+
 
 The dispatcher is written basically entirely in inline assembly because it does the actual stack manipulation\:
 
@@ -531,6 +541,7 @@ After dancing around with bits and restoring the modified SREG, we proceed to po
 Implementation\: Results by code size
 -------------------------------------
 
+
 So, at this point we have implemented a task scheduler and dispatcher. Here is how it weighs in with avr-size when compiled for an ATMega48A running just the idle task\:
 
 ::
@@ -555,6 +566,7 @@ Not the best, but its reasonable. The data usage could be taken down by reducing
 
 Example\: A semaphore
 =====================
+
 
 So, we now have a task scheduler. The thing is, although capable of running multiple tasks, it is not possible for multiple tasks to actually run. Why? Because kos_dispatch is never called! We need something that causes the task to become blocked.
 
@@ -772,6 +784,7 @@ You may have noticed that the interrupt was called three times before we even g
 A word on debugging
 ===================
 
+
 Before I finish up I want to mention a few things about debugging with avr-gdb. This project was the first time I had ever needed to use an simulator and debugger to even get the program to run. It would have been impossible to write this using an actual device since very little is revealed when operating the device. Here are a few things I learned\:
 * avr-gdb is not perfect. For example, it is confused by the huge number of push statements at the beginning of kos_dispatch and will crash if stepped into that function (if it receives a break inside kos_dispatch that seems to work sometimes). This is due to avr-gdb attempting to decode the stack and finding that the frame size of the function is too big. It's weird and I didn't quite understand why that limitation was there, so I didn't really muck around with it. This made debugging the dispatcher super difficult.
 
@@ -788,6 +801,7 @@ Before I finish up I want to mention a few things about debugging with avr-gdb. 
 
 Conclusion
 ==========
+
 
 This has been a long post, but it is a complicated topic. Writing something like this is actually considered writing an operating system (albeit just the kernel portion and a small one at that) and the debug along for just this post took me a while. One must have a good knowledge of how exactly the processor works. I found my knowledge lacking, actually, and I learned a lot about how the AVR works. The other thing is that things like concurrency and interrupts must be considered from the very beginning. They can't be an afterthought.
 

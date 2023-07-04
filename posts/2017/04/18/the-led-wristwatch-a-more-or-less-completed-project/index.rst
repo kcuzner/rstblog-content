@@ -13,16 +13,18 @@ In this post I'm going to go over my general design, some things I was happy wit
 
 
 
-
 **The complete design files can be found here\:**
 
 
 `https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`__
 
+
+
 .. image:: IMG_20170409_222521.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170409_222521.jpg
 
-  .. image:: IMG_20170415_194157.jpg
+  
+.. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
 
 
@@ -46,6 +48,8 @@ There are three main parts to the watch circuit\:
 The Power Supply & Battery Charger
 ----------------------------------
 
+
+
 .. image:: WristwatchPowersupply.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchPowersupply.png
 
@@ -59,6 +63,8 @@ Now, if you were to look at the schematic you would see that I have several diod
 
 The Microcontroller & Accelerometer
 -----------------------------------
+
+
 
 .. image:: WristwatchMicrocontroller.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchMicrocontroller.png
@@ -78,12 +84,15 @@ The only real mistake here was in the USB part\: I did not fully read the microc
 The LEDs
 --------
 
+
+
 .. image:: Wristwatch-LEDs.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LEDs.png
 
 As the main part of the watch that people see, the LEDs needed to be bright enough and work well while still maintaining my target PCB form factor. This part of the design presented some unexpected challenges, some realized while I was still designing, and some realized after I had assembled everything and was scratching my head wondering why things didn't work as planned.
 
 The LEDs I chose are all 0603 form factor, including the central RGB LED which is 0606. This allowed me to create a board about 32mm in diameter, if I went to four layers and sacrificed the edges of the internal layers for some additional routing. Considering how tiny the board was going to be, paying twice as much per square inch of the board wasn't a huge deal.
+
 
 .. image:: Wristwatch-LED-Wiring.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LED-Wiring.png
@@ -98,6 +107,7 @@ To fix the LED problem, I had to reconsider the way I was turning off the LEDs. 
 
 Conclusion
 ==========
+
 
 This project was especially satisfying to me because I managed to actually bring an idea to fruition that had been floating around my mind for many years. I learned a *lot* from this project, especially about USB, and I'll eventually be making some posts about those aspects. I haven't even talked about the mechanical aspect of the project and 3D printing experiments, so I'll get to that eventually as well.
 

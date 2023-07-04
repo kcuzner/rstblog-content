@@ -3,6 +3,7 @@ For the greater part of this week I have been trapped in a car driving across th
 Game State Management
 ---------------------
 
+
 One problem that has constantly plagued my weak attempts at games has been an inability to do menus and manage whether the game is paused or not in a reasonably simple manner. Of course, I could always hack something together, but I could also write the whole thing in assembly language or maybe write it all as one big function in C. The issue is that if I program myself into a hole, I usually end up giving up a bit unless I am getting paid (then I generally bother thinking before programming so that I don't waste people's time). After finishing the game logic and actually getting things to work with the game itself, I remembered a funny tutorial I was once doing for OGRE which introduced a very simple game engine. The concept was one of a "stack" of game states. Using this stack, your main program basically injects input into and then asks a rendering from the state on the top of the stack. The states manipulate the stack, pushing a new state or popping themselves. When the stack is empty, the program exits.
 
 My game state stack works by using an initial state that loads the resources (the render section gives back a loading screen). After it finishes loading the resources, it asks the manager to pop itself from the stack and then push on the main menu state. The menu state is quite simple\: It displays several options where each option either does something immediate (like popping the menu from the stack to end the program in the case of the Quit option) or something more complex (like pushing a sub-menu state on to create a new game with some settings). After that there are states for playing the game, viewing the high scores, etc.
@@ -13,6 +14,7 @@ The second awesome thing is that this helps encourage an inversion of control. R
 
 Event bubbling
 --------------
+
 
 When making my Tetris game, I wanted an easy to way to know when to update or redraw the screen rather than always redrawing it. My idea was to create an event system that would "notice" when the game changed somehow\: whether a block had moved or maybe the score changed. I remembered of two event systems that I really really liked\: C#'s event keyword plus delegate thing and Javascript's event bubbling system. Some people probably hate both of those, but I have learned to love them. Mainly, its just because I'm new to this sort of thing and am still being dazzled by their plethora of uses. Using some knowledge I gleaned from my database abstraction project about the fun data model special function names in Python, I created the following\:
 
@@ -100,6 +102,7 @@ Overall, even though there are those disadvantages, I feel that the advantage ga
 
 Conclusion
 ----------
+
 
 I eventually will put up this Tetris implementation as a gist or repository on github (probably just a gist unless it gets huge...which it could). So far I have learned a great deal about game design and structure, so this should get interesting as I explore other things like networking and such.
 

@@ -31,7 +31,8 @@ Overall, this experience with Arch has allowed me to become much more familiar w
 
 Here is my desktop as it stands\:
 
-[caption id="attachment_206" align="aligncenter" width="1024"].. image:: /wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931-1024x640.png
+[caption id="attachment_206" align="aligncenter" width="1024"]
+.. image:: /wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931-1024x640.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931.png
 
  Arch Linux with Gnome 3[/caption]

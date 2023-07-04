@@ -21,6 +21,7 @@ I intend to show exactly the following, no more and no less\:
 What is TPI?
 ============
 
+
 TPI is the Tiny Programming Interface found on "somewhat newer" AVR microcontrollers (i.e. made in the last decade or so). There is yet a newer one which has shown up on AVRs post-Microchip acquisition (UPDI) which isn't very publicly documented, but there are utilities like `pyupdi <https://github.com/mraardvark/pyupdi>`__ which aim to support that interface without a programmer.
 
 TPI is quite a bit smaller than the older ISP interface. Rather than looking like an SPI port, it has just three lines\:
@@ -38,6 +39,7 @@ The timing of these three lines is described in the part datasheets and isn't co
 
 How to reprogram your usbasp to be capable of TPI
 =================================================
+
 
 If you're like me, you bought your USBASP a decade ago from ebay. It likely has very old firmware which isn't capable of TPI programming just yet. Even the "new" usbasps found on ebay have very old firmware. So, you'll need to update the firmware to the newest version (from 2011!!!!) which gave TPI support. There are a few guides on this process, but one text-based one can be found here\: `https\://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/ <https://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/>`__
 
@@ -66,6 +68,7 @@ I want to focus this guide mostly on actually hooking up TPI on a schematic leve
 How to wire up a TPI-only AVR
 =============================
 
+
 This should be easy to find information on, but it really isn't for some reason. Here's the basics\:
 * Connect #RESET to the ISP connector's #RESET
 
@@ -80,12 +83,14 @@ This should be easy to find information on, but it really isn't for some reason.
 
 
 
+
 .. image:: avr_isp_pinout.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/avr_isp_pinout.png
 
 That's it really. However, some details would probably be useful. The pinout of the standard usbasp ISP headers are shown on the right (note\: VTG = VCC at Target, so it's the programmer-supplied voltage).
 
 I used an ATTiny20 in my design, so I have mine wired up like this (note that I tend to leave pins 4 and 6 disconnected since on some programmers they are disconnected)\:
+
 
 .. image:: ATTiny-TPI-ISP-Connections.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny-TPI-ISP-Connections.png
@@ -116,12 +121,14 @@ So, you need to program at 5V, but your circuit uses different voltages. Here ar
 
 If you've got everything wired up properly and the voltage levels are correct, you can run avrdude and get the following beautiful greeting message\:
 
+
 .. image:: ATTiny20-Signature-Success.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny20-Signature-Success.png
 
 
 
 And if you're even more lucky, reflashing will work too!
+
 
 .. image:: ATTiny20-Reprogramming.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny20-Reprogramming.png
@@ -131,6 +138,7 @@ And if you're even more lucky, reflashing will work too!
 Why you might pick a TPI-only AVR
 =================================
 
+
 While I was researching using TPI with my usbasp, I came across a post where someone said something along the lines of "why waste your money on a 6-pin microncontroller? Just use <insert older AVR here>". Despite the obvious downside of needing to use a new programming interface, I think there is one niche where these cannot be beat\:
 
 The TPI-only AVRs are BY FAR the cheapest "name brand" microcontrollers you can buy. Between these and the PIC10 family, there is nothing cheaper until you start looking at some chinese suppliers (there's a $0.03-in-single-quantity microcontroller that has become somewhat popular). I chose the ATTiny20 for my project because **it was even cheaper than a couple discrete single gate ICs**. I needed to do some OR-ing logic which I would have normally accomplished with discrete parts. Each of those in single quantity is like $0.25 and I would have needed at least 4 or 5. The ATTiny20 I picked was **$0.53**. It was cheaper to use a microcontroller than discrete logic gates! What a world we live in.
@@ -139,6 +147,7 @@ The older ISP AVRs (especially ATMega8 and friends) are losing relevance in the 
 
 Conclusion
 ==========
+
 
 The intention in this post was to communicate how to program TPI-based AVRs without too much hassle using the usbasp. If I've got a detail missing, something wrong, or this post helped you out, feel free to drop a comment!
 

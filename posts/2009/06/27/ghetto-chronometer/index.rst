@@ -7,6 +7,7 @@ For once, I did something simple. I have always wanted to know how fast my potat
 Parts List
 ==========
 
+
 I noticed while building this that I was using parts that were originally purchased on radioshack (aside from the microcontroller) and the home depot/ace hardware. Here is the list of parts with a few prices\:
 * (2) `Infrared Emitter/Detector sets <http://www.radioshack.com/product/index.jsp?productId=2049723>`__ ($3.49, radioshack)
 
@@ -55,6 +56,7 @@ I noticed while building this that I was using parts that were originally purcha
 Instructions
 ============
 
+
 These instructions assume enough knowledge to construct a circuit on a breadboard from a schematic along with enough mechanical skill to saw and drill stuff.
 #. Attach (I would solder them, but you can twist and tape if you like) relatively long wires to the ends of each infrared emitter and detector. There should be two of each in total. Make the wires different colors per pin on each device so that they can be distinguished later. Make a note of where each wire went on the back of the package they came in which should have an internal diagram for each part if you got it at radio shack. Twist each pair of wires together so that each device has a long twisted pair of wires coming off of it.
 
@@ -102,6 +104,7 @@ These instructions assume enough knowledge to construct a circuit on a breadboar
 How it works
 ============
 
+
 Overall its pretty simple\: A potato interrupts the "start" beam which starts the 16-bit timer and it interrupts the "stop" beam a few microseconds later which stops the 16-bit timer. After the timer is stopped, the value of the timer (which also happens to be the number of microseconds between the start and stop pulses) is written to the internal EEPROM at the address specified in location 0x00. The green LED is then turned on and the microcontroller wants for the next "start" interruption. If there is an error (like the EEPROM not being able to write or the timer overflowing), the yellow LED lights up and the microcontroller waits for the next start pulse.
 
 The microcontroller runs on the internal oscillator which gives 1MIPS. The 16-bit timer is connected to the internal oscillator with no prescaler so that it increments every microsecond (1MIPS = 0.000001 per instruction) when the timer is turned on. Since it is a 16-bit timer, it can time a maximum of 65535 microseconds or 0.065535 seconds. This gives a minimum speed of 15.26fps and a maximum speed of 1,000,000fps. I guess this could be used on a rifle, but I am pretty sure the emitter/detector pairs would have to be switched out with something with less lag time.
@@ -110,6 +113,7 @@ To test to see if the infrared emitters are even working try looking at them thr
 
 Things to add
 =============
+
 
 Obviously, there are some things that could be done with this to make it even cooler. Some of my ideas\:
 * Add an LCD screen that shows the milliseconds it took (or even fps)

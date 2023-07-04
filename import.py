@@ -243,7 +243,7 @@ class LinkTag(TagHandler):
                 if len(images) > 1:
                     raise ValueError("Multiple images cannot be in a link")
                 image = images[0].to_rst(*args, **kwargs).strip()
-                return f"{image}\n   :target: {ref}\n\n"
+                return f"\n{image}\n   :target: {ref}\n\n"
             content = "".join([c.to_rst(*args, **kwargs) for c in text]).strip()
             if not content:
                 # Links without content are silently dropped
@@ -296,7 +296,7 @@ class HeaderTag(TagHandler):
             )
         char = "=" if self.tag == "h1" else "-" if self.tag == "h2" else "~"
         line = char * len(content)
-        return f"\n{link}{content}\n{line}\n"
+        return f"\n{link}{content}\n{line}\n\n"
 
 
 @TagHandler.register_tag("em")
@@ -368,6 +368,7 @@ class ListTag(TagHandler):
         items = [
             process(i, c.to_rst(*args, **kwargs)) for i, c in enumerate(self.content)
         ]
+        # Items are separated by a blank space and the list is terminated by a blank space
         return "\n\n".join(items) + "\n\n"
 
 
@@ -438,8 +439,8 @@ class ParagraphTag(TagHandler):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
-        # Passthrough with a newline before and after
-        return "\n" + "".join([c.to_rst(*args, **kwargs) for c in self.content]) + "\n"
+        # The end of a paragraph is marked by two newlines. Passthrough content otherwise.
+        return "".join([c.to_rst(*args, **kwargs) for c in self.content]) + "\n\n"
 
 
 @TagHandler.register_tag("code")

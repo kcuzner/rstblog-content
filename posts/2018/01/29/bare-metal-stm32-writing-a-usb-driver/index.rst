@@ -1,6 +1,7 @@
 A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__ about writing a bare metal USB driver for the Teensy 3.1, which uses Freescale Kinetis K20 microcontroller. Over the past couple years I've switched over to instead using the STM32 series of microcontrollers since they are cheaper to program the "right" way (the dirt-cheap STLink v2 enables that). I almost always prefer to use the microcontroller IC by itself, rather than building around a development kit since I find that to be much more interesting.
 
-[caption id="attachment_565" align="alignright" width="320"].. image:: IMG_20170415_194157.jpg
+[caption id="attachment_565" align="alignright" width="320"]
+.. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
 
  LED Wristwatch with USB[/caption]
@@ -11,7 +12,6 @@ In this post I'm going to only cover a small portion of what I learned from the 
 
 
 
-
 **Example code for this post can be found here\:**
 
 
@@ -19,6 +19,7 @@ In this post I'm going to only cover a small portion of what I learned from the 
 
 
 (mainly in common/src/usb.c and common/include/usb.h)
+
 
 My objective here is to walk quickly through the operation of the USB Peripheral, specifically the Packet Memory Area, then talk a bit about how the USB Peripheral does transfers, and move on to how I structured my code to abstract the USB packetizing logic away from the application.
 
@@ -31,8 +32,8 @@ My code is by no means good. In fact, I believe some of it might be wrong (speci
 Contents
 ========
 
-`The STM32 USB Peripheral <stm32-usb-peripheral>`__
 
+`The STM32 USB Peripheral <stm32-usb-peripheral>`__
 `The Packet Memory Area <pma>`__
 
 
@@ -47,11 +48,12 @@ Contents
 
 `Handling transfers <handling-transfers>`__
 
+
 `The "hook pattern", callbacks based on weak links <hook-pattern>`__
 
 `My USB Peripheral API <peripheral-api>`__
-
 `Transfers <transfers>`__
+
 
 `Where to go from here <where-to>`__
 
@@ -61,6 +63,7 @@ Contents
 
 The STM32 USB Peripheral
 ========================
+
 
 As I have recommended in my previous post, please visit `http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`__ to get up to speed on how USB works.
 
@@ -98,6 +101,7 @@ ST makes these easy to find on their website. For the USB peripheral, there's a 
 The Packet Memory Area
 ----------------------
 
+
 In my opinion, this is the most complex part of the peripheral and something that I spent many hours reading about. Sadly, the documentation is quite sparse on this point and isn't always in the most straightforward locations inside the reference manual and datasheet.
 
 The STM32 provides some amount of general SRAM that is used by the application program. This is arranged in 32-bit words accessible by word, halfword and byte, with some restrictions, through the main memory bus. The packet memory area is completely separate from the general SRAM and instead contains 16-bit words. As I mentioned earlier, it can be accessed concurrently by the main memory bus and the USB Peripheral by way of an Arbiter which moderates between the two without needing the program to intervene or be aware of the USB Peripheral accessing the PMA. There are some differences in how this is implemented between the STM32F1 and the STM32L0\:
@@ -106,6 +110,7 @@ The STM32 provides some amount of general SRAM that is used by the application p
 
 For the STM32F103\:
 ~~~~~~~~~~~~~~~~~~~
+
 
 The PMA is arranged as 256 16-bit words (512 bytes of PMA SRAM), but from the processor bus it must be accessed in a 32-bit aligned fashion. I think this is most easily understood with the following diagram\:
 
@@ -222,6 +227,7 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 For the STM32L052\:
 ~~~~~~~~~~~~~~~~~~~
 
+
 This microcontroller's PMA is actually far simpler than the STM32F1's. It is arranged as 512 16-bit words (so its twice the size) and also does not require access on 32-bit boundaries. The methods I defined for the STM32L103 are now instead\:
 
 .. code-block:: {lang}
@@ -306,6 +312,7 @@ Still naive, still insecure, and still requiring 16-bit aligned buffers in the g
 
 Allocating variables in the PMA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 One fun thing I decided to do was use the GCC linker to manage static allocations in the PMA (continue reading for why I wanted to do this). By way of background, the GCC linker uses a file called a "linker script" to determine how to arrange the contents of a program in the final binary. The program is arranged into various sections (called things like "text", "bss", "data", "rodata", etc) during compilation. During the linking phase, the linker script will instruct the linker to take those sections and place them at specific memory addresses.
 
@@ -408,6 +415,7 @@ In conclusion, by creating this .pma section I have enabled using the pointer ma
 
 Handling Transfers
 ------------------
+
 
 Since USB transfers are all host-initiated, the device must tell the USB Peripheral where it can load/store transfer data and then wait. Every endpoint has a register called the "EPnR" in the USB peripheral which has the following fields\:
 * Correct transfer received flag
@@ -577,6 +585,7 @@ When the application sets up an endpoint, I store the requested size of the endp
 The "hook pattern", callbacks based on weak links
 =================================================
 
+
 At this point in the post, we are starting to see more and more of how I've built this API. My goals were as follows\:
 * I wanted to have a codebase for the USB peripheral that I didn't need to modify in order to implement new device types. One thing I really disliked about the Teensy's USB driver was that there were a bunch of #define's inside the method that handled setup transactions. I wanted to be able to separate out my application's code from the USB driver's code. Maybe someday I could even just distribute it to myself as a static library and have my applications link to it.
 
@@ -684,6 +693,7 @@ If someone knows the real name of this pattern, please enlighten me.
 
 My USB Peripheral API
 =====================
+
 
 Most of this section is taken from the code in common/usb.c and common/usb.h
 
@@ -845,6 +855,7 @@ Much of the guts of these methods are fairly self-explanatory if you read throug
 
 Transfers
 ---------
+
 
 I'm just going to go through the transmit sequence, since the receive works in a similar manner. A transfer is initiated when the user calls usb_endpoint_send, passing a buffer with a length. The sequence is going to go as follows\:
 #. Use an internal structure to store a pointer to the buffer along with its length.
@@ -1080,6 +1091,7 @@ A few things to note\:
 Where to go from here
 =====================
 
+
 Clearly, I haven't shown all of the pieces and that's because copying and pasting 900 lines of code isn't that useful. Instead, I wanted to pick out the highlights of managing the PMA and abstracting away the USB packetizing logic from the application.
 
 Using this framework, it should be fairly simple to implement different types of USB devices or even composite USB devices. There's a couple parts that still aren't fully where I want them to be, however\:
@@ -1095,6 +1107,7 @@ Using this framework, it should be fairly simple to implement different types of
 
 Conclusion
 ==========
+
 
 Wow that was long. TLDR of people who look at this will be rampant and that's fine. The point here was describe how I ended up building my device-side driver so that I could easily extend it without needing to modify too many files while still managing to save code space.
 

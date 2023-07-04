@@ -24,6 +24,7 @@ This can be found as a gist here\: `https\://gist.github.com/kcuzner/5246020 <ht
 Example
 -------
 
+
 Before going into the code, here is an example of what this abstraction can do as it stands. It directly uses the DbObject and DbQuery-inheriting objects which are shown further down in this post.
 
 ::
@@ -83,6 +84,7 @@ This example first loads a user using a DbSelectQuery. The user is then modified
 
 Change Tracking Columns
 -----------------------
+
 
 I started out with columns. I needed columns that track changes and have a mapping to an SQL column name. I came up with the following\:
 
@@ -273,6 +275,7 @@ The Column class describes the column and is implemented as a descriptor. Each C
 
 Generation of SQL using logical predicates
 ------------------------------------------
+
 
 The next thing I had to create was the database querying structure. I decided that rather than actually using the ColumnInstance or Column objects, I would use a go-between object that can be assigned a "prefix". A common thing to do in SQL queries is to rename the tables in the query so that you can reference the same table multiple times or use different tables with the same column names. So, for example if I had a table called posts and I also had a table called users and they both shared a column called 'last_update', I could assign a prefix 'p' to the post columns and a prefix 'u' to the user columns so that the final column name would be 'p.last_update' and 'u.last_update' for posts and users respectively.
 
@@ -635,6 +638,7 @@ Executing the queries can cause a callback "filter" function to be called which 
 
 Table and row objects
 ---------------------
+
 
 At the highest level of this hierarchy is the DbObject. The DbObject definition actually represents a table in the database with a name and a single primary key column. Each instance represents a row. DbObjects also implement the methods for selecting records of their type and also updating themselves when they are changed. They inherit change tracking from the ColumnSet and use DbQueries to accomplish their querying goals. The code is as follows\:
 

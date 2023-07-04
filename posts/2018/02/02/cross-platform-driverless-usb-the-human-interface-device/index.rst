@@ -1,11 +1,11 @@
 During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
 
 What I would like to do in this post is a step-by-step tutorial for modifying a USB device to enumerate as a human interface device. I'll start with an overview of HID, then move on to modifying the USB descriptors and setting up your device endpoints so that it sends reports, followed by a few notes on writing host software for Windows and Linux that communicates to devices using raw reports. With a little bit of work, you should be able to replace many things done exclusively with libusb with a cross-platform system that requires no drivers.
-
 **Example code for this post can be found here\:**
 
 
 `**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
+
 
 One thing to note is that since I'm using my LED Watch as an example, I'm going to be extending using my API, which I describe a little bit `here <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`__. The main source code files for this can be found in common/src/usb.c and common/src/usb_hid.c.
 
@@ -13,31 +13,31 @@ Contents
 ========
 
 
+
 .. rstblog-break::
 
 
 `Overview of HID <overview>`__
-
 `Reports <overview-reports>`__
 
 
 `Report Descriptors <overview-report-descriptors>`__
 
+
 `Step 1\: Extending Setup Requests <step-1>`__
 
 `Step 2\: Descriptors <step-2>`__
-
 `Modifying the configuration descriptor <step-2-configuration>`__
 
 
 `Writing a report descriptor <step-2-report-descriptors>`__
+
 
 `Step 3\: Sending IN Reports <step-3>`__
 
 `Step 4\: Sending OUT Reports <step-4>`__
 
 `Host software <host>`__
-
 `Cross-platform C/C++ <host-c>`__
 
 
@@ -46,12 +46,14 @@ Contents
 
 `C# (Windows) <host-c-sharp>`__
 
+
 `Conclusion <conclusion>`__
 
 .. _overview:
 
 Overview of HID
 ===============
+
 
 Before doing anything HID, you need two pieces of documentation\:
 * The USB HID Specification\: `http\://www.usb.org/developers/hidpage/HID1_11.pdf <http://www.usb.org/developers/hidpage/HID1_11.pdf>`__
@@ -67,6 +69,7 @@ This is one of the few times I have read an industry specification and it hasn't
 
 Reports
 -------
+
 
 HID communicates by way of "Reports". The basic idea is that a "Report" tells the host something going on with the human interface device, be it a mouse moment, a keystroke, or whatever. There are not only reports going to the host, but also those that go from the host to the device. These reports can do things like turn on the caps lock LED and so forth. The reports are named as follows\:
 * IN Reports\: These are reports IN to the host from the device.
@@ -94,6 +97,7 @@ So in total, a HID has either one or two extra endpoints beyond the basic contro
 Report Descriptors
 ------------------
 
+
 One of the key features, and a major motivation behind writing HID devices, is that most operating systems require no drivers for these devices to work. For most other USB devices, the operating system requires a driver which interacts with the device on a low level and provides an interface either back into userspace or kernelspace which can be used by regular programs to interact with the device. However, for human interface devices the OS actually provides a driver which translates whatever reports a custom device may send back to the host into an API usable by programs. For example, if you plug a USB joystick or gamepad which enumerates as a HID into the computer, other programs can call OS methods that allow enumerating the analog joysticks and pushbuttons that the gamepad provides, without needing to use a manufacturer-specific driver to translate the reports into input actions.
 
 This is possible by the use of "Report Descriptors". These serve as a way for the device to self-describe the format of the reports it is going to send back. A joystick from manufacturer A might send four analog values followed by 16 button values, but a joystick from manufacturer B may instead send 16 button values followed by only two analog values. The OS driver makes sense of the report formatting by reading the report descriptors returned by the device when it enumerates. Report descriptors are represented as a series of tokens which are parsed one after another to build up the description of the report. Tokens that may appear include\:
@@ -113,6 +117,7 @@ Building cross-platform report descriptors is one of the more challenging parts 
 
 Step 1\:Extending Setup Requests
 ================================
+
 
 The general USB specification defines a setup request command GET_DESCRIPTOR. The spec defines the high byte of wValue to be the "descriptor type". The HID specification defines the following class-specific descriptors\:
 * 0x21\: HID
@@ -186,10 +191,12 @@ Step 2\: Descriptors
 ====================
 
 
+
 .. _step-2-configuration:
 
 Modifying the configuration descriptor
 --------------------------------------
+
 
 Every USB device has a configuration descriptor. In reality, what I'm calling the "configuration descriptor" here is actually a concatenated list of everything that follows the configuration descriptor. Here are the parts of a configuration descriptor, as they appear in order\:
 * The configuration descriptor itself (Descriptor with bDescriptorType = 2)
@@ -319,6 +326,7 @@ One thing to note here\: The HID Descriptor declares how many Report Descriptors
 
 Writing a report descriptor
 ---------------------------
+
 
 The HID class describes a new class-specific setup request which can be used to read Report Descriptors. When this setup request is sent by the host, the device should return the Report Descriptor requested. Report Descriptors are fairly unique compared to the other descriptors used in USB. One major difference is that they read more like an XML document than a key-value array. There is no set order and no set length. In fact, the only way the host knows how many bytes to read for this setup request is from the HID Descriptor found inside the Configuration Descriptor that says how many bytes to expect. With other descriptors, the host usually reads the descriptor twice\: Once only reading the first 9 bytes to get the wTotalLength and a second time reading the wTotalLength. With the Report Descriptor the host will read exactly as many bytes as were declared by the HID Descriptor. This of course means that if that length value is not set up correctly, then the host will get a truncated report descriptor and will have a hard time parsing it.
 
@@ -527,8 +535,8 @@ Some more interesting things that this example brings up\:
 
 
 
-
 **Note that in the HID Usage Tables document, there are more examples in Appendix A!**
+
 
  
 
@@ -536,6 +544,7 @@ Some more interesting things that this example brings up\:
 
 Step 3\: Sending IN Reports
 ===========================
+
 
 Now that you've got your report descriptors all figured out, you need to actually send the data. This is not complicated.
 
@@ -562,6 +571,7 @@ You'll probably want to set up some system for notifying the program that the re
 Step 4\: Sending OUT Reports
 ============================
 
+
 This is the exact same story as IN reports, except this time you don't construct a report. Instead, you allocate space for it and wait for the host to send. Here's the steps for an OUT report\:
 #. Allocate some memory and point your USB endpoint towards it.
 
@@ -583,6 +593,7 @@ Remember again that if you used the REPORT_ID token, the first byte will be the 
 Host Software
 =============
 
+
 Writing host software for HID devices is not complicated, but there are some gotchas to keep in mind. In general, the operating system will expose USB devices as a file of some kind. On Linux you can use the parsed hid driver or the unparsed hidraw driver (I've only used hidraw). hidraw will let you send raw reports. A similar system exists for Windows. HID devices are exposed as files which can be manipulated either with raw reports (using read and write on the file) or with the hid report parser (via calls to hid.dll).
 
 When choosing how to write your host software you can choose to either use the OS's input system which will parse HID reports for you (abstracting away the reports themselves) or you can talk to the device in terms of reports ("raw"). I can't give much guidance for using the host's report parser, but for talking raw in terms of reports I do have some suggestions\:
@@ -591,6 +602,7 @@ When choosing how to write your host software you can choose to either use the O
 
 C/C++ Cross-Platform
 --------------------
+
 
 If you're application is going to be written in C or C++, then there is a fairly convenient cross-platform option available\: `https\://github.com/signal11/hidapi <https://github.com/signal11/hidapi>`__
 
@@ -601,6 +613,7 @@ This library will take care of all the stuff that is required to enumerate the H
 Python under Linux
 ------------------
 
+
 For python, I highly recommend using the "hid" module\: `https\://pypi.python.org/pypi/hid <https://pypi.python.org/pypi/hid>`__
 
 An example of using this can be found in the "host" directory in my LED watch repository.
@@ -609,6 +622,7 @@ An example of using this can be found in the "host" directory in my LED watch re
 
 C# under Windows
 ----------------
+
 
 The enumeration of human interface devices and communication with them happens using some methods in hid.dll and kernel32.dll. Using P/Invoke you can talk to these using C#. There are several libraries for this, but the lightest weight one I can find is here\: `https\://github.com/MightyDevices/MightyHID <https://github.com/MightyDevices/MightyHID>`__
 
@@ -634,6 +648,7 @@ I don't actually recommend using the library itself. Rather, I would recommend r
 
 Conclusion
 ==========
+
 
 At this point, I hope that I've armed you with enough information that you can implement a human interface device with any microcontroller that you have a working USB implementation for. We've gone through modifying the configuration descriptor, writing a report descriptor, sending and receiving reports, and briefly touched on writing host software to talk to the HID devices.
 

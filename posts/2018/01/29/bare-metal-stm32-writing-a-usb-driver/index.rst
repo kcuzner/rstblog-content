@@ -1,11 +1,11 @@
-A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`_ about writing a bare metal USB driver for the Teensy 3.1, which uses Freescale Kinetis K20 microcontroller. Over the past couple years I've switched over to instead using the STM32 series of microcontrollers since they are cheaper to program the "right" way (the dirt-cheap STLink v2 enables that). I almost always prefer to use the microcontroller IC by itself, rather than building around a development kit since I find that to be much more interesting.
+A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__ about writing a bare metal USB driver for the Teensy 3.1, which uses Freescale Kinetis K20 microcontroller. Over the past couple years I've switched over to instead using the STM32 series of microcontrollers since they are cheaper to program the "right" way (the dirt-cheap STLink v2 enables that). I almost always prefer to use the microcontroller IC by itself, rather than building around a development kit since I find that to be much more interesting.
 
 [caption id="attachment_565" align="alignright" width="320"].. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
 
  LED Wristwatch with USB[/caption]
 
-One of my recent (or not so recent) projects was an `LED Wristwatch <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`_ which utilized an STM32L052. This microcontroller is optimized for low power, but contains a USB peripheral which I used for talking to the wristwatch from my PC, both for setting the time and for reflashing the firmware. This was one of my first hobby projects where I designed something without any prior breadboarding (beyond the battery charger circuit). The USB and such was all rather "cross your fingers and hope it works" and it just so happened to work without a problem.
+One of my recent (or not so recent) projects was an `LED Wristwatch <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ which utilized an STM32L052. This microcontroller is optimized for low power, but contains a USB peripheral which I used for talking to the wristwatch from my PC, both for setting the time and for reflashing the firmware. This was one of my first hobby projects where I designed something without any prior breadboarding (beyond the battery charger circuit). The USB and such was all rather "cross your fingers and hope it works" and it just so happened to work without a problem.
 
 In this post I'm going to only cover a small portion of what I learned from the USB portion of the watch. There will be a further followup on making the watch show up as a HID Device and writing a USB bootloader.
 
@@ -15,7 +15,7 @@ In this post I'm going to only cover a small portion of what I learned from the 
 **Example code for this post can be found here\:**
 
 
-`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`_
+`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
 
 
 (mainly in common/src/usb.c and common/include/usb.h)
@@ -31,38 +31,38 @@ My code is by no means good. In fact, I believe some of it might be wrong (speci
 Contents
 ========
 
-`The STM32 USB Peripheral <stm32-usb-peripheral>`_
+`The STM32 USB Peripheral <stm32-usb-peripheral>`__
 
-`The Packet Memory Area <pma>`_
-
-
-`PMA in the STM32F103 <pma-stm32f103>`_
+`The Packet Memory Area <pma>`__
 
 
-`PMA in the STM32L052 <pma-stm32l052>`_
+`PMA in the STM32F103 <pma-stm32f103>`__
 
 
-`Allocating variables in the PMA <pma-variables>`_
+`PMA in the STM32L052 <pma-stm32l052>`__
 
 
-`Handling transfers <handling-transfers>`_
+`Allocating variables in the PMA <pma-variables>`__
 
-`The "hook pattern", callbacks based on weak links <hook-pattern>`_
 
-`My USB Peripheral API <peripheral-api>`_
+`Handling transfers <handling-transfers>`__
 
-`Transfers <transfers>`_
+`The "hook pattern", callbacks based on weak links <hook-pattern>`__
 
-`Where to go from here <where-to>`_
+`My USB Peripheral API <peripheral-api>`__
 
-`Conclusion <conclusion>`_
+`Transfers <transfers>`__
+
+`Where to go from here <where-to>`__
+
+`Conclusion <conclusion>`__
 
 .. _stm32-usb-peripheral:
 
 The STM32 USB Peripheral
 ========================
 
-As I have recommended in my previous post, please visit `http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`_ to get up to speed on how USB works.
+As I have recommended in my previous post, please visit `http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`__ to get up to speed on how USB works.
 
 Next, you will need to locate the appropriate datasheets. As I've discovered is very common for microcontrollers, you need the following\:
 * The family reference manual (very very long document, >1000 pages usually)
@@ -676,7 +676,7 @@ And in my main USB C file I have the following\:
    void __attribute__ ((weak)) hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len) { }
 
 
-Notice these are `weak symbols <https://en.wikipedia.org/wiki/Weak_symbol>`_. Elsewhere in the application I can redefine these and that implementation will take precedence over these. When events happen during the USB interrupt, these functions will be called to inform the application and get its response. In most cases, no return result is needed except in the case of the hook_usb_handle_setup_request, which is used for extending the endpoint 0 setup request handler.
+Notice these are `weak symbols <https://en.wikipedia.org/wiki/Weak_symbol>`__. Elsewhere in the application I can redefine these and that implementation will take precedence over these. When events happen during the USB interrupt, these functions will be called to inform the application and get its response. In most cases, no return result is needed except in the case of the hook_usb_handle_setup_request, which is used for extending the endpoint 0 setup request handler.
 
 If someone knows the real name of this pattern, please enlighten me.
 

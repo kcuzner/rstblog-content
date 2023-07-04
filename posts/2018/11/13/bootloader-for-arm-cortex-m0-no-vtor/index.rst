@@ -5,23 +5,23 @@ I want to talk about how I overcame the lack of a VTOR to write a USB bootloader
 **The source for this post can be found here (look in the "bootloader" folder)\:**
 
 
-`https\://github.com/kcuzner/midi-fader/tree/master/firmware <https://github.com/kcuzner/midi-fader/tree/master/firmware>`_
+`https\://github.com/kcuzner/midi-fader/tree/master/firmware <https://github.com/kcuzner/midi-fader/tree/master/firmware>`__
 
 
 .. rstblog-break::
 
 
 **Table of contents\:**
-* `What is the VTOR? <what-is-vtor>`_
+* `What is the VTOR? <what-is-vtor>`__
 
 
-* `Bootloaders and the VTOR <bootloader-vtor>`_
+* `Bootloaders and the VTOR <bootloader-vtor>`__
 
 
-* `Dealing with an absent VTOR <no-vtor>`_ (TL;DR\: look here)
-* `Debugging the user program <debugging>`_
+* `Dealing with an absent VTOR <no-vtor>`__ (TL;DR\: look here)
+* `Debugging the user program <debugging>`__
 
-* `Conclusion <conclusion>`_
+* `Conclusion <conclusion>`__
 
 
 
@@ -71,13 +71,13 @@ Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Control
 
 
 When an interrupt occurs, the NVIC will examine this table, read the handler address from it, push some special information onto the stack (the exception frame), and then execute the handler. This exact sequence is fairly complex, but here are some resources if you're interested in learning more\:
-* `http\://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm <http://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm>`_
+* `http\://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm <http://users.ece.utexas.edu/~valvano/Volume1/E-Book/C12_Interrupts.htm>`__
 
 
-* `http\://www.eng.auburn.edu/~nelson/courses/elec5260_6260/slides/ARM%20STM32F407%20Interrupts.pdf <http://www.eng.auburn.edu/~nelson/courses/elec5260_6260/slides/ARM%20STM32F407%20Interrupts.pdf>`_ (slide 5)
+* `http\://www.eng.auburn.edu/~nelson/courses/elec5260_6260/slides/ARM%20STM32F407%20Interrupts.pdf <http://www.eng.auburn.edu/~nelson/courses/elec5260_6260/slides/ARM%20STM32F407%20Interrupts.pdf>`__ (slide 5)
 
 
-* `http\://infocenter.arm.com/help/topic/com.arm.doc.dui0553a/Babefdjc.html <http://infocenter.arm.com/help/topic/com.arm.doc.dui0553a/Babefdjc.html>`_ (ARM Cortex-M4 documentation on the exception frame)
+* `http\://infocenter.arm.com/help/topic/com.arm.doc.dui0553a/Babefdjc.html <http://infocenter.arm.com/help/topic/com.arm.doc.dui0553a/Babefdjc.html>`__ (ARM Cortex-M4 documentation on the exception frame)
 
 
 
@@ -222,7 +222,7 @@ The assembly snippet creates the table for the NVIC (g_pfnVectors in this exampl
 
 For the first several 32-bit words I have created a bunch of function pointers which make up the table that the NVIC will read. After that table, the actual code starts.
 
-So, what is the VTOR? In some ARM Cortex architectures (I know at least the ARM Cortex-M0+, ARM Cortex-M3, and ARM Cortex-M4 support this) there is a register located at address `0xE000ED08 <http://infocenter.arm.com/help/topic/com.arm.doc.dui0552a/Ciheijba.html>`_ called the "Vector Table Offset Register". This is a 7-bit aligned address (so its 7 LSBs must be zero) which points to the location of this interrupt vector table. On boot this register contains 0x00000000 and so when power comes up, the handler whose address lives at 0x00000004 is executed to handle the reset. Later on, the program might modify the VTOR so that it points at some other location in memory. For an example, let's say 0x08008000. After that point, the NVIC will look up the addresses for each handler relative to that address. So if an SVCall exception occurred the NVIC would read 0x0800802C to determine the address of the handler to call.
+So, what is the VTOR? In some ARM Cortex architectures (I know at least the ARM Cortex-M0+, ARM Cortex-M3, and ARM Cortex-M4 support this) there is a register located at address `0xE000ED08 <http://infocenter.arm.com/help/topic/com.arm.doc.dui0552a/Ciheijba.html>`__ called the "Vector Table Offset Register". This is a 7-bit aligned address (so its 7 LSBs must be zero) which points to the location of this interrupt vector table. On boot this register contains 0x00000000 and so when power comes up, the handler whose address lives at 0x00000004 is executed to handle the reset. Later on, the program might modify the VTOR so that it points at some other location in memory. For an example, let's say 0x08008000. After that point, the NVIC will look up the addresses for each handler relative to that address. So if an SVCall exception occurred the NVIC would read 0x0800802C to determine the address of the handler to call.
 
 One thing you may have noticed at this point is that my assembly dump earlier had everything living relative to address 0x08000000. However, I said that that the VTOR's reset value was 0x00000000. So, how does the STM32's ARM core know where to find the table? All STM32's I've seen so far implement a "boot remapping" feature which uses the physical "BOOT0" pin to map the flash (which starts at 0x08000000) onto the memory space starting at 0x00000000 like so (may vary slightly by STM32)\:
 
@@ -246,7 +246,7 @@ Some STM32s have support for extra modes like mapping the SRAM (address 0x200000
 Bootloaders and the VTOR
 ========================
 
-At this point we can talk about how bootloaders would use the VTOR. In my `last post on the subject <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`_, I didn't really talk extensively about interrupts beyond mentioning that the VTOR is overwritten as part of the process of jumping to the user program. The reason this is done is so that after the bootloader has decided to transfer execution to the user program that interrupts executed in the program are directed to the handlers dictated by the user program. Ideally, the user program doesn't even need to worry about the fact that its running in a boot-loaded manner.
+At this point we can talk about how bootloaders would use the VTOR. In my `last post on the subject <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`__, I didn't really talk extensively about interrupts beyond mentioning that the VTOR is overwritten as part of the process of jumping to the user program. The reason this is done is so that after the bootloader has decided to transfer execution to the user program that interrupts executed in the program are directed to the handlers dictated by the user program. Ideally, the user program doesn't even need to worry about the fact that its running in a boot-loaded manner.
 
 On a microcontroller with a separate bootloader and user program the flash is partitioned into two segments\: The bootloader which *always* lives right at the beginning of flash so that the STM32 boots into the bootloader and the user program which lives much further down in the flash. I usually put my user programs at around the 8KB mark since the (inefficient and clumsy) hobbyist bootloaders i write tend to use just a little over 4K of the flash. When the bootloader runs it performs the following sequence\:
 #. Determine if a user program exists. If the user program does not exist, start running the main bootloader program and abort this sequence.

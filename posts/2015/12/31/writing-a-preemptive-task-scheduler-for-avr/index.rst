@@ -26,31 +26,31 @@ I should mention here that there is a certain level of ability assumed with AVRs
 Table of Contents
 =================
 
-* `Preemption? <preemption>`_
+* `Preemption? <preemption>`__
 
 
-* `Pros and Cons <prosandcons>`_
+* `Pros and Cons <prosandcons>`__
 
 
-* `Implementation <implementation>`_
-* `kos_init and kos_new_task <initnewtask>`_
+* `Implementation <implementation>`__
+* `kos_init and kos_new_task <initnewtask>`__
 
 
-  * `kos_run and kos_schedule <runschedule>`_
+  * `kos_run and kos_schedule <runschedule>`__
 
 
-  * `kos_enter_isr and kos_exit_isr <isr>`_
+  * `kos_enter_isr and kos_exit_isr <isr>`__
 
 
-  * `kos_dispatch <dispatch>`_
+  * `kos_dispatch <dispatch>`__
 
 
-  * `Results by code size <codesize>`_
+  * `Results by code size <codesize>`__
 
-* `Example\: A semaphore <semaphore>`_
+* `Example\: A semaphore <semaphore>`__
 
 
-* `Conclusion <conclusion>`_
+* `Conclusion <conclusion>`__
 
 
 
@@ -70,7 +70,7 @@ In the state machine example above, I used state machines as a way to break up c
 
 Using tasks removes a lot of these latency problems since the interrupt can halt the current task (**block**) and begin executing another which was waiting on the interrupt to occur (**unblock** or **resume**). Once the higher priority task is blocked again (through a call to some function asking it to wait for some event), the scheduler will change back to the original task and things go on as usual. Using tasks also has the effect of making the code easier to read. While state machines are easy to write, they are not always easy to follow. A function is invoked over and over again and that requires more thought than simply reading a linear function. Tasks can be very linear since the state machine is embodied in calls which could possibly block the task.
 
-A positive side effect of doing things this way (with a scheduler) is that we can now implement the familiar things such as `semaphores <https://en.wikipedia.org/wiki/Semaphore_(programming)>`_ and `queues <https://en.wikipedia.org/wiki/Message_queue>`_ to communicate between our tasks in a fine grained manner. At their core these are simply methods that can manipulate the list of tasks and call the scheduler to decide which task to execute next.
+A positive side effect of doing things this way (with a scheduler) is that we can now implement the familiar things such as `semaphores <https://en.wikipedia.org/wiki/Semaphore_(programming)>`__ and `queues <https://en.wikipedia.org/wiki/Message_queue>`__ to communicate between our tasks in a fine grained manner. At their core these are simply methods that can manipulate the list of tasks and call the scheduler to decide which task to execute next.
 
 **Summary\:** Using a preemptive scheduler can allow for lower latency and jitter between an interrupt occurring and some non-ISR code responding to it when compared to using several state machines. This means it will respond more consistently to interrupts occurring, though not necessarily in a more timely fashion. It also allows for fine-grained priority control with these responses.
 
@@ -125,7 +125,7 @@ Mmmkay here's the fun part. At this point you may be asking, "How in the world c
 
 **Disclaimer\: I have only started to scratch the surface of this stuff myself and I may have made some errors.** I appreciate any insight anyone can give me into either suggestions for this or problems with my implementation. Just leave it in the comments \:)
 
-**All of the code can be found here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`_**
+**All of the code can be found here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`__**
 
 The focus of a scheduler/dispatcher system for tasks is manipulating the stack pointer and the stack itself. "Traditionally," programs written for microcontrollers have a single stack which grows from the bottom of memory up and all code is executed on that stack. The concept here is that we still start out with that stack, but we actually execute the tasks on their own separate stacks. When we want to switch to a task, we point the AVR's stack pointer to the desired task's stack and start executing (its the "start executing" part where things get fun).
 
@@ -512,7 +512,7 @@ The dispatcher is written basically entirely in inline assembly because it does 
 
 So, a lot is happening here. There are 4 basic steps\: Save the current context, update the current task's stack pointer, change the stack pointer to the next task, and restore the next task's context.
 
-Inline assembly has an interesting syntax in GCC. I don't believe it is fully portable into non-GCC compilers, so this makes the code depend more or less on GCC. Inline assembly works by way of placeholders (called Operands in the `manual <https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html>`_). At the very end of the assembly statement, we see a series of comma-separated statements which define these placeholders/operands and how the assembly is going to use registers and such. First off, we pass in the SREG, SPL, and SPH registers as type "i", which is a constant number known at compile-time. These are simply the IO addresses for these registers (found in avr/io.h if you follow the #include chain deep enough). The next couple parameters are also "i" and are simply bit numbers and masks. The last parameter is the next task pointer passed in as an argument. This is the part where we see the reason why it is more convenient to do this in inline assembly rather than writing it up in an assembly file. While it is possible to look up how avr-gcc passes arguments to functions and discover that the arguments are stored in a certain order in certain registers, it is far simpler and less breakable to allow gcc to fill in the blanks for us. By stating that the _next_task_ placeholder is of type "r" (register), we force GCC to place that variable into some registers of its choosing. Now, if we were using some global variable or a static local, gcc would generate some code before our asm block placing those values into some registers. For this application, that could be quite bad since we depend on no (possibly stack-manipulating) code appearing between the function label and our asm block (more on this in the next paragraph). However, since arguments are passed by way of register, gcc will simply give us the registers by which they are passed in to the function. Since pointers are usually 16 bits on an 8-bit AVR (larger ones will have 3 bytes maybe...but I'm really not sure about this), it fits into two registers. We reference these in the inline assembly by way of "%A[_next_task_]" and "%B[_next_task_]" (note the A and B...these denote the LSB and MSB registers).
+Inline assembly has an interesting syntax in GCC. I don't believe it is fully portable into non-GCC compilers, so this makes the code depend more or less on GCC. Inline assembly works by way of placeholders (called Operands in the `manual <https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html>`__). At the very end of the assembly statement, we see a series of comma-separated statements which define these placeholders/operands and how the assembly is going to use registers and such. First off, we pass in the SREG, SPL, and SPH registers as type "i", which is a constant number known at compile-time. These are simply the IO addresses for these registers (found in avr/io.h if you follow the #include chain deep enough). The next couple parameters are also "i" and are simply bit numbers and masks. The last parameter is the next task pointer passed in as an argument. This is the part where we see the reason why it is more convenient to do this in inline assembly rather than writing it up in an assembly file. While it is possible to look up how avr-gcc passes arguments to functions and discover that the arguments are stored in a certain order in certain registers, it is far simpler and less breakable to allow gcc to fill in the blanks for us. By stating that the _next_task_ placeholder is of type "r" (register), we force GCC to place that variable into some registers of its choosing. Now, if we were using some global variable or a static local, gcc would generate some code before our asm block placing those values into some registers. For this application, that could be quite bad since we depend on no (possibly stack-manipulating) code appearing between the function label and our asm block (more on this in the next paragraph). However, since arguments are passed by way of register, gcc will simply give us the registers by which they are passed in to the function. Since pointers are usually 16 bits on an 8-bit AVR (larger ones will have 3 bytes maybe...but I'm really not sure about this), it fits into two registers. We reference these in the inline assembly by way of "%A[_next_task_]" and "%B[_next_task_]" (note the A and B...these denote the LSB and MSB registers).
 
 Storing the context is pretty straightforward\: push all of the registers and push the status register. At this point you may ask, "What about the program counter? Didn't we have to push that earlier during kos_new_task?" When the function was called (using the CALL instruction), the return address was pushed onto the stack as a side-effect of that instruction. So, we don't need to push the program counter because it is already on there. This is also why it would be very bad if some code appeared before our asm block. It is likely that gcc will clear out some space on the stack and so we would end up with some junk between the return address on the stack and our first "push" instruction. This would mess up the task context frame and we will see later in the code that this will prevent this function from dispatching the task correctly when it became time for the task to be resumed.
 
@@ -522,7 +522,7 @@ I should note here something about clearing the interrupt flag. Normally, we wou
 
 After updating kos_current_task's stack pointer, we get to move the stack to the next task and set kos_current_task to point to the next task. This is essentially the reverse of the previous operation. Instead of writing to Indirect Register X (which points to the stack pointer of the task), we get to read from it. We also slip in a couple instructions to update the kos_current_task pointer so that it points to the next task. After we have changed the SPL and SPH registers to point to our new stack, the task passed into kos_dispatch is ready to be resumed.
 
-Resuming the next task's context is a little less straightforward than saving it. We need to prevent interrupts from occurring while we restore the context. The reason for this is to ensure that we don't end up storing more than one context on that task's stack (and thereby increase the minimum required stack size to prevent a stack overflow). The problem here is that when we restore the status register, interrupts could be enabled at that point, rather that at the end when the context is done being restored. So, we need to restore in three steps\: Restore the status register without the interrupt flag, restore all other registers, and then restore the interrupt flag. This is done by transferring the interrupt flag in the status register into the T (transfer) bit in the status register (that's the "bst" and "bld" instructions), clearing the interrupt flag, and then later executing either the ret or reti instruction based on this flag. The side effect is that we trash the T bit. **I am not sure I can actually do this.** This is one part that is tricky\: The avr-gcc manual `states <https://gcc.gnu.org/wiki/avr-gcc#Call-Used_Register>`_ that the T flag is a scratchpad, just like r0, and doesn't need to be restored by called functions. My logic here is that since the only way for a task to become blocked is either it being executed initially or from a call to kos_dispatch, gcc sees the dispatch call as a normal function call and will not assume that the T flag will remain unchanged.
+Resuming the next task's context is a little less straightforward than saving it. We need to prevent interrupts from occurring while we restore the context. The reason for this is to ensure that we don't end up storing more than one context on that task's stack (and thereby increase the minimum required stack size to prevent a stack overflow). The problem here is that when we restore the status register, interrupts could be enabled at that point, rather that at the end when the context is done being restored. So, we need to restore in three steps\: Restore the status register without the interrupt flag, restore all other registers, and then restore the interrupt flag. This is done by transferring the interrupt flag in the status register into the T (transfer) bit in the status register (that's the "bst" and "bld" instructions), clearing the interrupt flag, and then later executing either the ret or reti instruction based on this flag. The side effect is that we trash the T bit. **I am not sure I can actually do this.** This is one part that is tricky\: The avr-gcc manual `states <https://gcc.gnu.org/wiki/avr-gcc#Call-Used_Register>`__ that the T flag is a scratchpad, just like r0, and doesn't need to be restored by called functions. My logic here is that since the only way for a task to become blocked is either it being executed initially or from a call to kos_dispatch, gcc sees the dispatch call as a normal function call and will not assume that the T flag will remain unchanged.
 
 After dancing around with bits and restoring the modified SREG, we proceed to pop off the rest of the registers in the reverse order that they were stored at the beginning of the function. At the very end, we use a T flag branch instruction to determine which return instruction to use. "ret" will return normally without setting the interrupt flag and "reti" will set the interrupt flag.
 
@@ -794,14 +794,14 @@ This has been a long post, but it is a complicated topic. Writing something like
 The scheduler and dispatcher I have described here are not perfect nor are they the most optimal efficient design. For one thing, my design uses a huge amount of RAM compared to other RTOS options. My scheduler and dispatcher are also inefficient, with the scheduler having an O(N) complexity depending on the number of tasks. My structure does, however, allow for O(1) time when suspending a task (although I question the utility of this...it worked better with the 8086 scheduler I made for class than with the AVR). Another problem is that kos_dispatch will not work with avr-gdb if the program is stopped during this function (it has a hard time decoding the function prologue because of the large number of push instructions). I haven't found a solution to this problem and it certainly made debugging a little more difficult.
 
 So, now that I've told you some of what's wrong with the above, here are two RTOS which can be used with the AVR and are well tested\:
-* `FemtoOS <http://www.femtoos.org/>`_. This is an extremely tiny and highly configurable RTOS. The bare implementation needs only 270 bytes of flash and 10 bytes of RAM. Ridiculous! My only serious issue with it is that it is GPLv3 licensed and due to how the application is compiled, licensing can be troublesome unless you want to also be GPLv3.
+* `FemtoOS <http://www.femtoos.org/>`__. This is an extremely tiny and highly configurable RTOS. The bare implementation needs only 270 bytes of flash and 10 bytes of RAM. Ridiculous! My only serious issue with it is that it is GPLv3 licensed and due to how the application is compiled, licensing can be troublesome unless you want to also be GPLv3.
 
 
-* `FreeRTOS <http://www.freertos.org/>`_. Very popular RTOS that has all sorts of support for many processors (ARM, PPC, AVR...you name it). I've never used it myself, but it also seems to have networking support and stuff like that. The site says that it's "market leading."
+* `FreeRTOS <http://www.freertos.org/>`__. Very popular RTOS that has all sorts of support for many processors (ARM, PPC, AVR...you name it). I've never used it myself, but it also seems to have networking support and stuff like that. The site says that it's "market leading."
 
 
 
-Anyway, I hope that this article is useful and as usual, any suggestions and such can be left in the comments. As mentioned before, the code for this article can be found on github here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`_
+Anyway, I hope that this article is useful and as usual, any suggestions and such can be left in the comments. As mentioned before, the code for this article can be found on github here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`__
 
 .. rstblog-settings::
    :title: Writing a preemptive task scheduler for AVR

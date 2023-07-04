@@ -1,13 +1,13 @@
-During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`_, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
+During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
 
 What I would like to do in this post is a step-by-step tutorial for modifying a USB device to enumerate as a human interface device. I'll start with an overview of HID, then move on to modifying the USB descriptors and setting up your device endpoints so that it sends reports, followed by a few notes on writing host software for Windows and Linux that communicates to devices using raw reports. With a little bit of work, you should be able to replace many things done exclusively with libusb with a cross-platform system that requires no drivers.
 
 **Example code for this post can be found here\:**
 
 
-`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`_
+`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
 
-One thing to note is that since I'm using my LED Watch as an example, I'm going to be extending using my API, which I describe a little bit `here <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`_. The main source code files for this can be found in common/src/usb.c and common/src/usb_hid.c.
+One thing to note is that since I'm using my LED Watch as an example, I'm going to be extending using my API, which I describe a little bit `here <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`__. The main source code files for this can be found in common/src/usb.c and common/src/usb_hid.c.
 
 Contents
 ========
@@ -16,37 +16,37 @@ Contents
 .. rstblog-break::
 
 
-`Overview of HID <overview>`_
+`Overview of HID <overview>`__
 
-`Reports <overview-reports>`_
-
-
-`Report Descriptors <overview-report-descriptors>`_
-
-`Step 1\: Extending Setup Requests <step-1>`_
-
-`Step 2\: Descriptors <step-2>`_
-
-`Modifying the configuration descriptor <step-2-configuration>`_
+`Reports <overview-reports>`__
 
 
-`Writing a report descriptor <step-2-report-descriptors>`_
+`Report Descriptors <overview-report-descriptors>`__
 
-`Step 3\: Sending IN Reports <step-3>`_
+`Step 1\: Extending Setup Requests <step-1>`__
 
-`Step 4\: Sending OUT Reports <step-4>`_
+`Step 2\: Descriptors <step-2>`__
 
-`Host software <host>`_
-
-`Cross-platform C/C++ <host-c>`_
+`Modifying the configuration descriptor <step-2-configuration>`__
 
 
-`Python (Linux) <host-python>`_
+`Writing a report descriptor <step-2-report-descriptors>`__
+
+`Step 3\: Sending IN Reports <step-3>`__
+
+`Step 4\: Sending OUT Reports <step-4>`__
+
+`Host software <host>`__
+
+`Cross-platform C/C++ <host-c>`__
 
 
-`C# (Windows) <host-c-sharp>`_
+`Python (Linux) <host-python>`__
 
-`Conclusion <conclusion>`_
+
+`C# (Windows) <host-c-sharp>`__
+
+`Conclusion <conclusion>`__
 
 .. _overview:
 
@@ -54,10 +54,10 @@ Overview of HID
 ===============
 
 Before doing anything HID, you need two pieces of documentation\:
-* The USB HID Specification\: `http\://www.usb.org/developers/hidpage/HID1_11.pdf <http://www.usb.org/developers/hidpage/HID1_11.pdf>`_
+* The USB HID Specification\: `http\://www.usb.org/developers/hidpage/HID1_11.pdf <http://www.usb.org/developers/hidpage/HID1_11.pdf>`__
 
 
-* The USB HID Usage Tables documentation\: `http\://www.usb.org/developers/hidpage/Hut1_12v2.pdf <http://www.usb.org/developers/hidpage/Hut1_12v2.pdf>`_
+* The USB HID Usage Tables documentation\: `http\://www.usb.org/developers/hidpage/Hut1_12v2.pdf <http://www.usb.org/developers/hidpage/Hut1_12v2.pdf>`__
 
 
 
@@ -398,7 +398,7 @@ I'm not going to go through the token types exhaustively since those are in the 
 * 0x08\: USAGE. Every field in a report has a "Usage" associated with it. This token is followed by one or two more bytes and indicates to the host how the field is meant to be used. For example, there is a usage called "Wheel" and another called "D-pad up".
 
 
-* 0x04\: USAGE_PAGE. This token is usually followed by one or two more bytes which encode the Usage Page that the next Usage token is using, LSB first. There are so many usages that they are categorized into pages. The full list is found in the `HID Usage Tables specification <http://www.usb.org/developers/hidpage/Hut1_12v2.pdf>`_.
+* 0x04\: USAGE_PAGE. This token is usually followed by one or two more bytes which encode the Usage Page that the next Usage token is using, LSB first. There are so many usages that they are categorized into pages. The full list is found in the `HID Usage Tables specification <http://www.usb.org/developers/hidpage/Hut1_12v2.pdf>`__.
 
 
 * 0xA0\: COLLECTION. All fields are enclosed in a collection. In addition, collections can be nested in collections. This token followed by one byte which describes the type of collection.
@@ -592,7 +592,7 @@ When choosing how to write your host software you can choose to either use the O
 C/C++ Cross-Platform
 --------------------
 
-If you're application is going to be written in C or C++, then there is a fairly convenient cross-platform option available\: `https\://github.com/signal11/hidapi <https://github.com/signal11/hidapi>`_
+If you're application is going to be written in C or C++, then there is a fairly convenient cross-platform option available\: `https\://github.com/signal11/hidapi <https://github.com/signal11/hidapi>`__
 
 This library will take care of all the stuff that is required to enumerate the HID devices attached the computer. It will also handle reading and writing to the device using raw reports.
 
@@ -601,7 +601,7 @@ This library will take care of all the stuff that is required to enumerate the H
 Python under Linux
 ------------------
 
-For python, I highly recommend using the "hid" module\: `https\://pypi.python.org/pypi/hid <https://pypi.python.org/pypi/hid>`_
+For python, I highly recommend using the "hid" module\: `https\://pypi.python.org/pypi/hid <https://pypi.python.org/pypi/hid>`__
 
 An example of using this can be found in the "host" directory in my LED watch repository.
 
@@ -610,7 +610,7 @@ An example of using this can be found in the "host" directory in my LED watch re
 C# under Windows
 ----------------
 
-The enumeration of human interface devices and communication with them happens using some methods in hid.dll and kernel32.dll. Using P/Invoke you can talk to these using C#. There are several libraries for this, but the lightest weight one I can find is here\: `https\://github.com/MightyDevices/MightyHID <https://github.com/MightyDevices/MightyHID>`_
+The enumeration of human interface devices and communication with them happens using some methods in hid.dll and kernel32.dll. Using P/Invoke you can talk to these using C#. There are several libraries for this, but the lightest weight one I can find is here\: `https\://github.com/MightyDevices/MightyHID <https://github.com/MightyDevices/MightyHID>`__
 
 I don't actually recommend using the library itself. Rather, I would recommend reading through it and seeing how it does things and implementing that in your application directly. Sadly, although I have written an application in C# that talked pretty well to HID devices I do not have the source code available. Instead, I can give some tips\:
 * **Don't be afraid of using P/Invoke.** At a bare minimum, you're going to have to to enumerate the HID devices in the system this way.

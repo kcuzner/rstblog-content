@@ -1,51 +1,51 @@
 One of the things that has intrigued me for the past couple years is making embedded USB devices. It's an industry standard bus that just about any piece of computing hardware can connect with yet is complex enough that doing it yourself is a bit of a chore.
 
-Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`_ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
+Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`__ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
 
 [caption id="" align="alignright" width="328"].. image:: /teensy/teensy31.png
    :target: http://www.pjrc.com/teensy/teensy31.html
 
  Teensy 3.1[/caption]
 
-Over the thanksgiving break I started cobbling together some software with the intent of writing a driver for the USB module in the Teensy myself. I started originally with `my bare metal stuff <http://kevincuzner.com/2014/04/28/teensy-3-1-bare-metal/>`_, but I ended up going with something closer to `Karl Lunt's solution <http://www.seanet.com/~karllunt/bareteensy31.html>`_. I configured code\:\:blocks to use the arm-none-eabi compiler that I had installed and created a code blocks project for my code and used that to build it (with a post-compile event translating the generated elf file into a hex file).
+Over the thanksgiving break I started cobbling together some software with the intent of writing a driver for the USB module in the Teensy myself. I started originally with `my bare metal stuff <http://kevincuzner.com/2014/04/28/teensy-3-1-bare-metal/>`__, but I ended up going with something closer to `Karl Lunt's solution <http://www.seanet.com/~karllunt/bareteensy31.html>`__. I configured code\:\:blocks to use the arm-none-eabi compiler that I had installed and created a code blocks project for my code and used that to build it (with a post-compile event translating the generated elf file into a hex file).
 
 **This is a work in progress and the git repository will be updated as things progress since it's not a dedicated demonstration of the USB driver.**
 
 The github repository here will be eventually turned in to a really really rudimentary 500-800ksps oscilloscope.
 
-**The code\:** `https\://github.com/kcuzner/teensy-oscilloscope <https://github.com/kcuzner/teensy-oscilloscope>`_
+**The code\:** `https\://github.com/kcuzner/teensy-oscilloscope <https://github.com/kcuzner/teensy-oscilloscope>`__
 
 The code for this post was taken from the following commit\:
 
-`https\://github.com/kcuzner/teensy-oscilloscope/tree/9a5a4c9108717cfec0174709a72edeab93fcf2b8 <https://github.com/kcuzner/teensy-oscilloscope/tree/9a5a4c9108717cfec0174709a72edeab93fcf2b8>`_
+`https\://github.com/kcuzner/teensy-oscilloscope/tree/9a5a4c9108717cfec0174709a72edeab93fcf2b8 <https://github.com/kcuzner/teensy-oscilloscope/tree/9a5a4c9108717cfec0174709a72edeab93fcf2b8>`__
 
 At the end of this post, I will have outlined all of the pieces needed to have a simple USB device setup that responds with a descriptor on endpoint 0.
 
 Contents
 ========
 
-`USB Basics <usb-basics>`_
+`USB Basics <usb-basics>`__
 
-`The Freescale K20 Family and their USB module <freescale-usb>`_
+`The Freescale K20 Family and their USB module <freescale-usb>`__
 
-`Part 1\: The clocks <part-1-clocks>`_
+`Part 1\: The clocks <part-1-clocks>`__
 
-`Part 2\: The startup sequence <part-2-startup>`_
+`Part 2\: The startup sequence <part-2-startup>`__
 
-`Part 3\: The interrupt handler state machine <part-3-interrupts>`_
+`Part 3\: The interrupt handler state machine <part-3-interrupts>`__
 
-`Part 4\: Token processing & descriptors <part-4-tokens>`_
+`Part 4\: Token processing & descriptors <part-4-tokens>`__
 
-`Where to go from here <where-next>`_
+`Where to go from here <where-next>`__
 
-`Conclusion <conclusion>`_
+`Conclusion <conclusion>`__
 
 USB Basics
 ==========
 
 I will actually not be talking about these here as I am most definitely no expert. However, I will point to the page that I found most helpful when writing this\:
 
-`http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`_
+`http\://www.usbmadesimple.co.uk/index.html <http://www.usbmadesimple.co.uk/index.html>`__
 
 
 This site explained very clearly exactly what was going on with USB. Coupled with my previous knowledge, it was almost all I needed in terms of getting the protocol.
@@ -58,10 +58,10 @@ The Freescale K20 Family and their USB module
 The one thing that I don't like about all of these great microcontrollers that come out with USB support is that all of them have their very own special USB module which doesn't work like anyone else. Sure, there are similarities, but there are no two *exactly* alike. Since I have a Teensy and the K20 family of microcontrollers seem to be relatively popular, I don't feel bad about writing such specific software.
 
 There are two documents I found to be essential to writing this driver\:
-#. The family manual. Getting a correct version for the MK20DX256VLH7 (the processor on the Teensy) can be a pain. PJRC comes to the rescue here\: `http\://www.pjrc.com/teensy/K20P64M72SF1RM.pdf <http://www.pjrc.com/teensy/K20P64M72SF1RM.pdf>`_ (note, the Teensies based on the MK20DX128VLH5 use a different manual)
+#. The family manual. Getting a correct version for the MK20DX256VLH7 (the processor on the Teensy) can be a pain. PJRC comes to the rescue here\: `http\://www.pjrc.com/teensy/K20P64M72SF1RM.pdf <http://www.pjrc.com/teensy/K20P64M72SF1RM.pdf>`__ (note, the Teensies based on the MK20DX128VLH5 use a different manual)
 
 
-#. The Kinetis Peripheral Module Quick Reference\: `http\://cache.freescale.com/files/32bit/doc/quick_ref_guide/KQRUG.pdf <http://cache.freescale.com/files/32bit/doc/quick_ref_guide/KQRUG.pdf>`_. This specifies the initialization sequence and other things that will be needed for the module.
+#. The Kinetis Peripheral Module Quick Reference\: `http\://cache.freescale.com/files/32bit/doc/quick_ref_guide/KQRUG.pdf <http://cache.freescale.com/files/32bit/doc/quick_ref_guide/KQRUG.pdf>`__. This specifies the initialization sequence and other things that will be needed for the module.
 
 
 
@@ -84,9 +84,9 @@ In writing this, I must confess that I looked quite a lot at the Teensyduino cod
 Part 1\: The clocks
 ===================
 
-The K20 family of microcontrollers utilizes a miraculous hardware module which they call the "Multipurpose Clock Generator" (hereafter called the MCG). This is a module which basically allows the microcontroller to take any clock input between a few kilohertz and several megahertz and transform it into a higher frequency clock source that the microcontroller can actually use. This is how the Teensy can have a rated speed of 96Mhz but only use a 16Mhz crystal. The configuration that this project uses is the Phase Locked Loop (PLL) from the high speed crystal source. The exact setup of this configuration is done by the `sysinit code <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/sysinit.c>`_.
+The K20 family of microcontrollers utilizes a miraculous hardware module which they call the "Multipurpose Clock Generator" (hereafter called the MCG). This is a module which basically allows the microcontroller to take any clock input between a few kilohertz and several megahertz and transform it into a higher frequency clock source that the microcontroller can actually use. This is how the Teensy can have a rated speed of 96Mhz but only use a 16Mhz crystal. The configuration that this project uses is the Phase Locked Loop (PLL) from the high speed crystal source. The exact setup of this configuration is done by the `sysinit code <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/sysinit.c>`__.
 
-The PLL operates by using a divider-multiplier setup where we give it a divisor to divide the input clock frequency by and then a multiplier to multiply that result by to give us the final clock speed. After that, it heads into the System Integration Module (SIM) which distributes the clock. Since the Teensy uses a 16Mhz crystal and we need a 96Mhz system clock (the reason will become apparent shortly), we set our divisor to 4 and our multiplier to 24 (see `common.h <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/include/common.h>`_). If the other type of Teensy 3 is being used (the one with the MK20DX128VLH5), the divisor would be 8 and the multiplier 36 to give us 72Mhz.
+The PLL operates by using a divider-multiplier setup where we give it a divisor to divide the input clock frequency by and then a multiplier to multiply that result by to give us the final clock speed. After that, it heads into the System Integration Module (SIM) which distributes the clock. Since the Teensy uses a 16Mhz crystal and we need a 96Mhz system clock (the reason will become apparent shortly), we set our divisor to 4 and our multiplier to 24 (see `common.h <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/include/common.h>`__). If the other type of Teensy 3 is being used (the one with the MK20DX128VLH5), the divisor would be 8 and the multiplier 36 to give us 72Mhz.
 
 Every module on a K20 microcontroller has a gate on its clock. This saves power since there are many modules on the microcontroller that are not being used in any given application. Distributing the clock to each of these is expensive in terms of power and would be wasted if that module wasn't used. The SIM handles this gating in the SIM_SCGC\* registers. Before using any module, its clock gate must be enabled. If this is not done, the microcontroller will "crash" and stop executing when it tries to talk to the module registers (I think a handler for this can be specified, but I'm not sure). I had this happen once or twice while messing with this. So, the first step is to "turn on" the USB module by setting the appropriate bit in SIM_SCGC4 (per the family manual mentioned above, page 252)\:
 
@@ -190,9 +190,9 @@ One caveat of the BDT is that it must be aligned with a 512-byte boundary in mem
    } > sram
 
 
-The position of this in the file is mildly important, so looking at the full `linker script <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/Teensy31_flash.ld>`_ would probably be good. This particular declaration I more or less lifted from the Teensyduino linker script, with some changes to make it fit into my linker script.
+The position of this in the file is mildly important, so looking at the full `linker script <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/Teensy31_flash.ld>`__ would probably be good. This particular declaration I more or less lifted from the Teensyduino linker script, with some changes to make it fit into my linker script.
 
-Steps 5-6 set up the interrupts. There is only one USB interrupt, but there are two registers of flags. We first reset all of the flags. Interestingly, to reset a flag we write back a '1' to the particular flag bit. This has the effect of being able to set a flag register to itself to reset all of the flags since a flag bit is '1' when it is triggered. After resetting the flags, we enable the interrupt in the NVIC (Nested Vector Interrupt Controller). I won't discuss the NVIC much, but it is a fairly complex piece of hardware. It has support for lots and lots of interrupts (over 100) and separate priorities for each one. I don't have reliable code for setting interrupt priorities yet, but eventually I'll get around to messing with that. The "enable_irq()" call is a function that is provided in `arm_cm4.c <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/arm_cm4.c>`_ and all that it does is enable the interrupt specified by the passed vector number. These numbers are specified in the datasheet, but we have a #define specified in the `mk20d7 header file <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/include/MK20D7.h>`_ (warning! 12000 lines ahead) which gives us the number.
+Steps 5-6 set up the interrupts. There is only one USB interrupt, but there are two registers of flags. We first reset all of the flags. Interestingly, to reset a flag we write back a '1' to the particular flag bit. This has the effect of being able to set a flag register to itself to reset all of the flags since a flag bit is '1' when it is triggered. After resetting the flags, we enable the interrupt in the NVIC (Nested Vector Interrupt Controller). I won't discuss the NVIC much, but it is a fairly complex piece of hardware. It has support for lots and lots of interrupts (over 100) and separate priorities for each one. I don't have reliable code for setting interrupt priorities yet, but eventually I'll get around to messing with that. The "enable_irq()" call is a function that is provided in `arm_cm4.c <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/arm_cm4.c>`__ and all that it does is enable the interrupt specified by the passed vector number. These numbers are specified in the datasheet, but we have a #define specified in the `mk20d7 header file <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/include/MK20D7.h>`__ (warning! 12000 lines ahead) which gives us the number.
 
 The very last step in initialization is to set the internal pullup on D+. According to the USB specification, a pullup on D- specifies a low speed device (1.2Mbit/s) and a pullup on D+ specifies a full speed device (12Mbit/s). We want to use the higher speed grade. The Kinetis USB module does not support high speed (480Mbit/s) mode.
 
@@ -295,7 +295,7 @@ The USB protocol can be interpreted in the context of a state machine with each 
        }
    }
 
-The above code will be executed whenever the IRQ for the USB module fires. This function is set up in the `crt0.S <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/crt0.s>`_ file, but with a weak reference, allowing us to override it easily by simply defining a function called USBOTG_IRQHandler. We then proceed to handle all of the USB interrupt flags. If we don't handle all of the flags, the interrupt will execute again, giving us the opportunity to fully process all of them.
+The above code will be executed whenever the IRQ for the USB module fires. This function is set up in the `crt0.S <https://github.com/kcuzner/teensy-oscilloscope/blob/master/scope-teensy/common/crt0.s>`__ file, but with a weak reference, allowing us to override it easily by simply defining a function called USBOTG_IRQHandler. We then proceed to handle all of the USB interrupt flags. If we don't handle all of the flags, the interrupt will execute again, giving us the opportunity to fully process all of them.
 
 Reading through the code is should be obvious that I have not done much with many of the flags, including USB sleep, errors, and stall. For the purposes of this super simple driver, we really only care about USB resets and USB token decoding.
 
@@ -581,7 +581,7 @@ The guts of handling a SETUP request are as follows\:
    }
 
 
-This is the part that took me the longest once I managed to get the module talking. Handling of SETUP tokens on endpoint 0 must be done in a rather exact fashion and the slightest mistake gives some `very cryptic errors <http://stackoverflow.com/questions/27287610/linux-device-descriptor-read-64-error-18>`_.
+This is the part that took me the longest once I managed to get the module talking. Handling of SETUP tokens on endpoint 0 must be done in a rather exact fashion and the slightest mistake gives some `very cryptic errors <http://stackoverflow.com/questions/27287610/linux-device-descriptor-read-64-error-18>`__.
 
 This is a very very very minimalistic setup token handler and *is not by any means complete*. It does only what is necessary to get the computer to see the device successfully read its descriptors. There is no functionality for actually doing things with the USB device. Most of the space is devoted to actually returning the various descriptors. In this example, the descriptor is for a device with a single configuration and a single interface which uses no additional endpoints. In a real device, this would almost certainly not be the case (unless one uses V-USB...this is how V-USB sets up their device if no other endpoints are compiled in).
 

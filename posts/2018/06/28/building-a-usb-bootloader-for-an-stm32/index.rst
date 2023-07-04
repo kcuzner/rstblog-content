@@ -1,4 +1,4 @@
-As my final installment for the posts about my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`_ I wanted to write about the self-programming bootloader I made for an STM32L052 and describe how it works. So far it has shown itself to be fairly robust and I haven't had to get out my STLink to reprogram the watch for quite some time.
+As my final installment for the posts about my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ I wanted to write about the self-programming bootloader I made for an STM32L052 and describe how it works. So far it has shown itself to be fairly robust and I haven't had to get out my STLink to reprogram the watch for quite some time.
 
 The main object of this bootloader is to facilitate reprogramming of the device without requiring a external programmer. There are two ways that a microcontroller can accomplish this generally\:
 #. Include a binary image in every compiled program that is copied into RAM and runs a bootloader program that allows for self-reprogramming.
@@ -15,7 +15,7 @@ Because the STM32L052 has a large amount of flash (64K) and implements the vecto
 **Example code for this post can be found here\:**
 
 
-`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`_
+`**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
 
 
 
@@ -25,22 +25,22 @@ Contents
 
 .. rstblog-break::
 
-* `Parts of a bootloader <parts>`_
+* `Parts of a bootloader <parts>`__
 
 
-* `Bootloader entry and exit <enter-exit>`_
+* `Bootloader entry and exit <enter-exit>`__
 
 
-* `Self-programming via USB <self-programming>`_
+* `Self-programming via USB <self-programming>`__
 
 
-* `Considerations for linking the application <linking>`_
+* `Considerations for linking the application <linking>`__
 
 
-* `Host software <host>`_
+* `Host software <host>`__
 
 
-* `Conclusion <conclusion>`_
+* `Conclusion <conclusion>`__
 
 
 
@@ -246,7 +246,7 @@ To program the device, this bootloader implements a state machine that interpret
 
 
 
-A more detailed description of this protocol can be found at `https\://github.com/kcuzner/led-watch/blob/master/bootloader/README.md <https://github.com/kcuzner/led-watch/blob/master/bootloader/README.md>`_.
+A more detailed description of this protocol can be found at `https\://github.com/kcuzner/led-watch/blob/master/bootloader/README.md <https://github.com/kcuzner/led-watch/blob/master/bootloader/README.md>`__.
 
 I'll cover briefly the process for writing the flash on the STM32. On my particular model, flash pages are 128 bytes and writes are always done in 64-byte groups. This is fairly standard for NOR flash that is seen in microcontrollers. When self-programming, one of the main issues I ran into was that the processor is not allowed to access the flash memory while a flash write is occurring. This is a problem since the flash write process requires the program to poll registers and wait for events to finish. Since this code by default resides in the flash memory, that will cause the write to fail. The solution to this is fairly straightforward\: We have to ensure that the code that actually performs flash writes lives in RAM. Since RAM is executable on the STM32, this is just as simple as requesting the linker to locate the functions in RAM. Here's my code that does flash erases and writes\:
 

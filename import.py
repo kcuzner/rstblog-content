@@ -248,7 +248,7 @@ class LinkTag(TagHandler):
             if not content:
                 # Links without content are silently dropped
                 return f""
-            return f"`{content} <{ref}>`_"
+            return f"`{content} <{ref}>`__"
 
 
 @TagHandler.register_tag("img")

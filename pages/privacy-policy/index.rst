@@ -46,7 +46,7 @@ These websites may collect data about you, use cookies, embed additional third-p
 Analytics
 ~~~~~~~~~
 
-This website uses google analytics. Their privacy policy can be found here\: `https\://policies.google.com/privacy <https://policies.google.com/privacy>`_
+This website uses google analytics. Their privacy policy can be found here\: `https\://policies.google.com/privacy <https://policies.google.com/privacy>`__
 
 Who we share your data with
 ---------------------------

@@ -21,7 +21,7 @@ I intend to show exactly the following, no more and no less\:
 What is TPI?
 ============
 
-TPI is the Tiny Programming Interface found on "somewhat newer" AVR microcontrollers (i.e. made in the last decade or so). There is yet a newer one which has shown up on AVRs post-Microchip acquisition (UPDI) which isn't very publicly documented, but there are utilities like `pyupdi <https://github.com/mraardvark/pyupdi>`_ which aim to support that interface without a programmer.
+TPI is the Tiny Programming Interface found on "somewhat newer" AVR microcontrollers (i.e. made in the last decade or so). There is yet a newer one which has shown up on AVRs post-Microchip acquisition (UPDI) which isn't very publicly documented, but there are utilities like `pyupdi <https://github.com/mraardvark/pyupdi>`__ which aim to support that interface without a programmer.
 
 TPI is quite a bit smaller than the older ISP interface. Rather than looking like an SPI port, it has just three lines\:
 * #RESET\: Just the same as before, the reset pin is used to control whether or not the interface is active.
@@ -39,13 +39,13 @@ The timing of these three lines is described in the part datasheets and isn't co
 How to reprogram your usbasp to be capable of TPI
 =================================================
 
-If you're like me, you bought your USBASP a decade ago from ebay. It likely has very old firmware which isn't capable of TPI programming just yet. Even the "new" usbasps found on ebay have very old firmware. So, you'll need to update the firmware to the newest version (from 2011!!!!) which gave TPI support. There are a few guides on this process, but one text-based one can be found here\: `https\://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/ <https://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/>`_
+If you're like me, you bought your USBASP a decade ago from ebay. It likely has very old firmware which isn't capable of TPI programming just yet. Even the "new" usbasps found on ebay have very old firmware. So, you'll need to update the firmware to the newest version (from 2011!!!!) which gave TPI support. There are a few guides on this process, but one text-based one can be found here\: `https\://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/ <https://blog.podkalicki.com/how-to-update-avr-usbasp-firmware-to-latest-version/>`__
 
 I'll summarize here what you need to do\:
 #. Buy a second usbasp. One will be the programmer, and one will be the target that is going to become TPI capable.
 
 
-#. Download the latest firmware from Thomas Fischl's website\: `https\://www.fischl.de/usbasp/ <https://www.fischl.de/usbasp/>`_
+#. Download the latest firmware from Thomas Fischl's website\: `https\://www.fischl.de/usbasp/ <https://www.fischl.de/usbasp/>`__
 
 
 #. Switch the programming jumper on the target by shorting the appropriate header (sometimes labeled JP1, sometimes labeled JP2). It's a two-pin jumper and is NOT the target voltage jumper, nor the "slow clock" jumper.
@@ -99,7 +99,7 @@ So, you need to program at 5V, but your circuit uses different voltages. Here ar
 
 
 * Think about having the microcontroller live on a separate power rail and use a switch (physical or solid state) to swap between the main board power and the ISP power.
-* Consider a solid state switch. These are quite cheap and small. Here's digikey's complete list\: `https\://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726 <https://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726>`_
+* Consider a solid state switch. These are quite cheap and small. Here's digikey's complete list\: `https\://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726 <https://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726>`__
 
 
   * Be sure to consider the pins going to the other devices on your board. When the microcontroller isn't in reset, it may drive 5V out to the other components. Either build in some logic at program startup so that if you know you're about to program the microcontroller you don't drive the pins (such as wiring the control pins for the switches into the microcontroller as well), or consider using a level translator or something.

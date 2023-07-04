@@ -39,7 +39,7 @@ I make the following assumptions\:
 
 All code, makefiles, and configuration stuff can be found in the project repository on github.
 
-**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`_**
+**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
 
 
 
@@ -50,10 +50,10 @@ You will require the following materials\:
 * A computer running Linux. **If you run Windows only, please don't be dissuaded. **I'm just lazy and don't want to test this for Windows. It may require some finagling. Manufacturer support is actually better for Windows since they provide some interesting configuration and programming software that is Windows only...but who needs that stuff anyway?
 
 
-* A STLinkv2 Clone from eBay. `Here's <http://www.ebay.com/itm/Mini-ST-Link-V2-stlink-Emulator-Downloader-STM8-STM32-With-Metal-Shell-/271699556039?hash=item3f428e36c7:g:968AAOSw0vBUhHLX>`_ one very similar to the one I bought. ~$3
+* A STLinkv2 Clone from eBay. `Here's <http://www.ebay.com/itm/Mini-ST-Link-V2-stlink-Emulator-Downloader-STM8-STM32-With-Metal-Shell-/271699556039?hash=item3f428e36c7:g:968AAOSw0vBUhHLX>`__ one very similar to the one I bought. ~$3
 
 
-* `Some STM32F103C8's from eBay <http://www.ebay.com/itm/291550040874?_trksid=p2057872.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT>`_. Try going with the TQFP-48 package. Why this microcontroller? Because for some reason it is all over the place on eBay. I suspect that the lot I bought (and all of the ones on eBay) is probably not authentic from ST. I hear that Chinese STM32 clones abound nowadays. I got 10 for $12.80.
+* `Some STM32F103C8's from eBay <http://www.ebay.com/itm/291550040874?_trksid=p2057872.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT>`__. Try going with the TQFP-48 package. Why this microcontroller? Because for some reason it is all over the place on eBay. I suspect that the lot I bought (and all of the ones on eBay) is probably not authentic from ST. I hear that Chinese STM32 clones abound nowadays. I got 10 for $12.80.
 
 
 * A breakout board for a TQFP-48 with 0.5mm pitch. Yes, you will need to solder surface mount. I found mine for $1. I'm sure you can find one for a similar price.
@@ -74,7 +74,7 @@ You will require the following materials\:
 
 I was able to acquire all of these parts for less than $20. Now, I did have stuff like the capacitors, led, resistor, and wires lying around in parts boxes, but those are quite cheap anyway.
 
-Side note\: Here is an excellent video by the EE guru Dave Jones on surface mount soldering if the prospect is less than palatable to you\: `https\://www.youtube.com/watch?v=b9FC9fAlfQE <https://www.youtube.com/watch?v=b9FC9fAlfQE>`_
+Side note\: Here is an excellent video by the EE guru Dave Jones on surface mount soldering if the prospect is less than palatable to you\: `https\://www.youtube.com/watch?v=b9FC9fAlfQE <https://www.youtube.com/watch?v=b9FC9fAlfQE>`__
 
 Step 1\: Download the datasheets
 ================================
@@ -109,7 +109,7 @@ All this for ~$1.20/part no less! Of course, its like $6 on digikey, but for my 
 
 Ok, so when messing with any microcontroller we need to look at its datasheet to know where to plug stuff in. **For almost all ARM Microcontrollers there will be no less than 2 datasheet-like documents you will need\: The part datasheet and the family reference manual**. The datasheet contains information such as the specific pinouts and electrical characteristics and the family reference manual contains the detailed information on how the microcontroller works (core and peripherals). These are both extremely important and will be indispensable for doing anything at all with one of these microcontrollers bare metal.
 
-Find the STM32F103C8 datasheet and family reference manual here (datasheet is at the top of the page, reference manual is at the bottom)\: `http\://www.st.com/en/microcontrollers/stm32f103c8.html <http://www.st.com/en/microcontrollers/stm32f103c8.html>`_. They are also found in the "ref" folder of the repository.
+Find the STM32F103C8 datasheet and family reference manual here (datasheet is at the top of the page, reference manual is at the bottom)\: `http\://www.st.com/en/microcontrollers/stm32f103c8.html <http://www.st.com/en/microcontrollers/stm32f103c8.html>`__. They are also found in the "ref" folder of the repository.
 
 Step 2\: Figure out where to solder and do it
 =============================================
@@ -195,9 +195,9 @@ Step 4\: Download the STM32F1xx C headers
 =========================================
 
 
-**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`_**
+**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
 
-Since we are going to write a program, we need the headers. These are part of the STM32CubeF1 library found `here <http://www.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef1.html>`_.
+Since we are going to write a program, we need the headers. These are part of the STM32CubeF1 library found `here <http://www.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef1.html>`__.
 
 Visit the page and download the STM32CubeF1 zip file. It will ask for an email address. If you really don't want to give them your email address, the necessary headers can be found in the project github repository.
 
@@ -248,7 +248,7 @@ Ok, so we need to write a program for this microcontroller. We are going to simp
 #. Enable the clock to PORTB. Most ARM microcontrollers, the STM32 included, have a clock gating system that actually turns off the clock to pretty much all peripherals after system reset. This is a power saving measure as it allows parts of the microcontroller to remain dormant and not consume power until needed. So, we need to turn on the GPIO port before we can use it.
 
 
-#. Set PB0 to a push-pull output. This microcontroller has many different options for the pins including analog input, an `open-drain output <https://en.wikipedia.org/wiki/Open_collector>`_, a `push-pull output <https://en.wikipedia.org/wiki/Push%E2%80%93pull_output>`_, and an alternate function (usually the output of a peripheral such as a timer PWM). We don't want to run our LED open drain for now (though we certainly could), so we choose the push-pull output. Most microcontrollers have push-pull as the default method for driving their outputs.
+#. Set PB0 to a push-pull output. This microcontroller has many different options for the pins including analog input, an `open-drain output <https://en.wikipedia.org/wiki/Open_collector>`__, a `push-pull output <https://en.wikipedia.org/wiki/Push%E2%80%93pull_output>`__, and an alternate function (usually the output of a peripheral such as a timer PWM). We don't want to run our LED open drain for now (though we certainly could), so we choose the push-pull output. Most microcontrollers have push-pull as the default method for driving their outputs.
 
 
 #. Toggle the output state on. Once we get to this point, it's success! We can control the GPIO by just flipping a bit in a register.
@@ -302,7 +302,7 @@ After talking to the CRL, we get to talk to the BSRR register. This register all
 
 It's not a complicated program. Half the battle is knowing where all the pieces fit. The STM32F1Cube zip file contains some examples which could prove quite revealing into the specifics on using the various peripherals on the device. In fact, it includes an entire hardware abstraction layer (HAL) which you could compile into your program if you wanted to. However, I have heard some bad things about it from a software engineering perspective (apparently it's badly written and quite ugly). I'm sure it works, though.
 
-So, the next step is to compile the program. See the `makefile <https://github.com/kcuzner/stm32f103c8-blink/blob/master/Makefile>`_ in the repository. Basically what we are going to do is first compile the main source file, the assembly file we pulled in from the STM32Cube library, and the C file we pulled in from the STM32Cube library. We will then link them using the linker script from the STM32Cube and then dump the output into a binary file.
+So, the next step is to compile the program. See the `makefile <https://github.com/kcuzner/stm32f103c8-blink/blob/master/Makefile>`__ in the repository. Basically what we are going to do is first compile the main source file, the assembly file we pulled in from the STM32Cube library, and the C file we pulled in from the STM32Cube library. We will then link them using the linker script from the STM32Cube and then dump the output into a binary file.
 
 ::
 
@@ -416,7 +416,7 @@ The result of this makefile is that it will create a file called "bin/blink.bin"
 Step 7\: Flashing the program to the microcontroller
 ====================================================
 
-Source for this step\: `https\://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux <https://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux>`_
+Source for this step\: `https\://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux <https://github.com/rogerclarkmelbourne/Arduino_STM32/wiki/Programming-an-STM32F103XXX-with-a-generic-%22ST-Link-V2%22-programmer-from-Linux>`__
 
 This is the very last step. We get to do some openocd configuration. Firstly, we need to write a small configuration script that will tell openocd how to flash our program. Here it is\:
 

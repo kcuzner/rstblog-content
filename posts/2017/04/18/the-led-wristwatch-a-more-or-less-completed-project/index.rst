@@ -1,15 +1,15 @@
-About 2009 I saw an article written by Dr. Paul Pounds in which he detailed a pocketwatch he had designed that fit inside a standard pocketwatch case and used LEDs as the dial. While the article has since disappeared, the `youtube video <https://www.youtube.com/watch?v=lex53AY7Fmo>`_ remains. The wayback machine has a `cached version <https://web.archive.org/web/20160322025932/http://www.eng.yale.edu/pep5/pocket_watch.html>`_ of the page. Anyway, the idea has kind of stuck with me for a while and so a year or so ago I decided that I wanted to build a wristwatch inspired by that idea.
+About 2009 I saw an article written by Dr. Paul Pounds in which he detailed a pocketwatch he had designed that fit inside a standard pocketwatch case and used LEDs as the dial. While the article has since disappeared, the `youtube video <https://www.youtube.com/watch?v=lex53AY7Fmo>`__ remains. The wayback machine has a `cached version <https://web.archive.org/web/20160322025932/http://www.eng.yale.edu/pep5/pocket_watch.html>`__ of the page. Anyway, the idea has kind of stuck with me for a while and so a year or so ago I decided that I wanted to build a wristwatch inspired by that idea.
 
 Although the project started out as an AVR project, I decided after my escapades with the STM32 in August that I really wanted to make it an STM32 project, so around November I started making a new design that used the STM32L052C8 ARM Cortex-M0+ ultra-low power USB microcontroller. The basic concept of the design is to mock up an analog watch face using a ring of LEDs for the hours, minutes, and seconds. I found three full rings to be expecting a bit much if I wanted to keep this small, so I ended up using two rings\: One for the hours and another for combined minutes and seconds (the second hand is recognized by the fact that it is "moving" perceptibly).
 
 In this post I'm going to go over my general design, some things I was happy with, and some things that I wasn't happy with. I'll make some follow-up posts for the following topics\:
-* `USB on the STM32 <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`_
+* `USB on the STM32 <http://kevincuzner.com/2018/01/29/bare-metal-stm32-writing-a-usb-driver/>`__
 
 
-* `Creating a Human Interface Device <http://kevincuzner.com/2018/02/02/cross-platform-driverless-usb-the-human-interface-device/>`_
+* `Creating a Human Interface Device <http://kevincuzner.com/2018/02/02/cross-platform-driverless-usb-the-human-interface-device/>`__
 
 
-* `Writing a USB Bootloader on the STM32L052 <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`_
+* `Writing a USB Bootloader on the STM32L052 <http://kevincuzner.com/2018/06/28/building-a-usb-bootloader-for-an-stm32/>`__
 
 
 
@@ -17,7 +17,7 @@ In this post I'm going to go over my general design, some things I was happy wit
 **The complete design files can be found here\:**
 
 
-`https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`_
+`https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`__
 
 .. image:: IMG_20170409_222521.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170409_222521.jpg
@@ -49,7 +49,7 @@ The Power Supply & Battery Charger
 .. image:: WristwatchPowersupply.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchPowersupply.png
 
-The key constraint for the power supply (shown on the right with mistakes, see further down for explanation and fixes) was quiescent current. Last year I did a little experiment with a buck converter I had selected for its small size and low part count. I connected it to my battery and waited to see how long my battery would last (I posted a little about the experiment `here <http://kevincuzner.com/2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1/>`_) when powering that regulator. It barely lasted a day. This was very disappointing since my expectation was for this thing to last me at least 4-5 days between charges. I looked deeper in the datasheet and saw that the buck controller I had selected actually had a fairly high quiescent current compared to my load. It claimed very high efficiency, but its load was meant to be somewhere in the several hundred milliamps. My load was going to live in the microamp range most of the time and I needed a buck controller that would also have a quiescent current in that same range.
+The key constraint for the power supply (shown on the right with mistakes, see further down for explanation and fixes) was quiescent current. Last year I did a little experiment with a buck converter I had selected for its small size and low part count. I connected it to my battery and waited to see how long my battery would last (I posted a little about the experiment `here <http://kevincuzner.com/2016/07/05/quick-n-dirty-data-acquisition-with-a-teensy-3-1/>`__) when powering that regulator. It barely lasted a day. This was very disappointing since my expectation was for this thing to last me at least 4-5 days between charges. I looked deeper in the datasheet and saw that the buck controller I had selected actually had a fairly high quiescent current compared to my load. It claimed very high efficiency, but its load was meant to be somewhere in the several hundred milliamps. My load was going to live in the microamp range most of the time and I needed a buck controller that would also have a quiescent current in that same range.
 
 Enter the TPS62736 from TI. I saw this used on another ultra-low-power design that measured radioactivity or something like that. I can't find the original project and I suspect that the files have since disappeared since I had a difficult time finding them last year when I first looked at this. It has an extremely low quiescent current and is 90% efficient at a 10nA output current. It achieves this through various power saving methods, the most public of which is its clever use of polling the voltage set-point divider only once every few milliseconds rather than having it tied directly into the error amplifier like most other integrated buck controllers. The only downside was that it came only in a QFN package and this project was to be hand soldered. However, I really wanted to hit my battery and size target and there were already two other QFN chips lined up for being soldered in this project, so I decided to use it.
 
@@ -71,7 +71,7 @@ One interesting feature of the STM32L052C8 is that it has a real-time clock (RTC
 
 The accelerometer is the "standard" MMA8652 from Freescale/NXP which is found on breakout boards all over the DIY community. My only qualm about choosing this part was that was an extraordinarily small 2mm x 2mm DFN and had some fairly strict layout guidances, with even the solder mask having an appreciable impact on how the chip would sit on the board. It was at this point that I realized that this, combined with the power supply chip, would basically require me to use solder paste and a hot air gun for reflow. I had built a previous design that used thermal vias to an exposed pad on the secondary side of the board to solder QFNs by heating them through the board, but that technique would not work on this design since it was going to be quite tight.
 
-Another component to note here is the buzzer. This was a bit of an afterthought, `but its a small, 5mm, magnetic buzzer <https://www.digikey.com/products/en?x=0&y=0&lang=en&site=us&keywords=102-2201-1-ND>`_. I figured that I might want the watch to beep for an alarm of something if the software ever got to that point, so why not add a tiny buzzer to it. This part worked more or less as designed, though it did cause the 3.3V rail to drop a half volt or so when it was turned on at 1KHz (mitigated by changing the duty cycle to like 2%..adds some high frequency overtones to the sound, but works just fine and minimizes the perturbation).
+Another component to note here is the buzzer. This was a bit of an afterthought, `but its a small, 5mm, magnetic buzzer <https://www.digikey.com/products/en?x=0&y=0&lang=en&site=us&keywords=102-2201-1-ND>`__. I figured that I might want the watch to beep for an alarm of something if the software ever got to that point, so why not add a tiny buzzer to it. This part worked more or less as designed, though it did cause the 3.3V rail to drop a half volt or so when it was turned on at 1KHz (mitigated by changing the duty cycle to like 2%..adds some high frequency overtones to the sound, but works just fine and minimizes the perturbation).
 
 The only real mistake here was in the USB part\: I did not fully read the microcontroller datasheet before ordering parts and I neglected to change the series terminators to 33 ohms. I ended up needing to use some extra 47 ohm resistors I happened to get for the LED part of the design as terminators. They work well enough and the signal integrity looks ok (the traces are like an inch anyway).
 

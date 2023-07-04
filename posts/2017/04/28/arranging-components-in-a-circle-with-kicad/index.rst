@@ -6,7 +6,7 @@ In my most recent design, the LED Watch, I used this to script myself a tool for
 
 **Step 1\: Write the script**
 
-When writing a script for pcbnew, it is usually helpful to have some documentation. Some can be found `here <http://ci.kicad-pcb.org/job/kicad-doxygen/ws/build/pcbnew/doxygen-python/html/namespacepcbnew.html>`_, though I mostly used "dir" a whole bunch and had it print me the structure of the various things once I found the points to hook in. The documentation is fairly spartan at this point, so that made things easier.
+When writing a script for pcbnew, it is usually helpful to have some documentation. Some can be found `here <http://ci.kicad-pcb.org/job/kicad-doxygen/ws/build/pcbnew/doxygen-python/html/namespacepcbnew.html>`__, though I mostly used "dir" a whole bunch and had it print me the structure of the various things once I found the points to hook in. The documentation is fairly spartan at this point, so that made things easier.
 
 Here's my script\:
 

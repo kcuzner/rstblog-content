@@ -31,7 +31,7 @@ So now, the plan to proceed is as follows\:
 
 
 
-As always, the source is available at `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`_
+As always, the source is available at `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`__
 
 .. rstblog-settings::
    :title: Multiprocessing with the WebSocketServer

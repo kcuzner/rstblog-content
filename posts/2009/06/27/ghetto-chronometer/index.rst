@@ -8,7 +8,7 @@ Parts List
 ==========
 
 I noticed while building this that I was using parts that were originally purchased on radioshack (aside from the microcontroller) and the home depot/ace hardware. Here is the list of parts with a few prices\:
-* (2) `Infrared Emitter/Detector sets <http://www.radioshack.com/product/index.jsp?productId=2049723>`_ ($3.49, radioshack)
+* (2) `Infrared Emitter/Detector sets <http://www.radioshack.com/product/index.jsp?productId=2049723>`__ ($3.49, radioshack)
 
 
 * (2) 330Ω 1/4W resistors ( $0.02 apiece if you get the 500 piece resistor set, otherwise $0.20 apiece in the 5-pack; radioshack). This value can be fudged just about anywhere as long as it doesn't drop below 90Ω or so. The lower the value, the more chance of breaking the infrared emitters. The higher the value, the less light the emitters give off (which increases the chance for noise). Use the values on the back of the package to calculate the exact resistor value if you want a fully bright light. I think about 37Ω or so will push 150mA through it with a ~3V drop.
@@ -23,7 +23,7 @@ I noticed while building this that I was using parts that were originally purcha
 * (1) solderless breadboard (what I used) or those grid pcbs (both at radioshack)
 
 
-* (1) `7805 (5V) Regulator <http://www.radioshack.com/product/index.jsp?productId=2062599>`_ ($1.59, radioshack)
+* (1) `7805 (5V) Regulator <http://www.radioshack.com/product/index.jsp?productId=2062599>`__ ($1.59, radioshack)
 
 
 * (1) PIC16F628A or a BasicStamp. The Basic Stamp is available at radio shack for an exorbitant price, but the PIC can be purchased for about $3 at most parts suppliers (look on octopart.com for prices). The programmer is not included in this estimate, but I built the programmer described in the WinPic manual for less than $20 (google it). I currently use a K128 USB Programmer.
@@ -67,7 +67,7 @@ These instructions assume enough knowledge to construct a circuit on a breadboar
 #. Assemble the circuit per the schematic. The schematic uses the PIC microcontroller, so it will have to be modified for a basic stamp.
 
 
-#. If you used the PIC, program the microcontroller with fps.hex in `this <http://cuznersoft.com/download/fps.zip>`_ file. I have also included the assembly listing for anyone who is interested
+#. If you used the PIC, program the microcontroller with fps.hex in `this <http://cuznersoft.com/download/fps.zip>`__ file. I have also included the assembly listing for anyone who is interested
 
 
 #. In the 16" length of PVC, drill two sets of holes directly across from each other 2" from either end. They should end up a foot apart.

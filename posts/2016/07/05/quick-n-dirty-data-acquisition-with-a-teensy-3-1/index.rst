@@ -11,7 +11,7 @@ I am working on a project that involves a Li-Ion battery charger. I've never bui
 
 After about 2 days of taking meter measurements every 6 hours or so to see what the voltage level had dropped to, I decided to try to automate this process. I had my trusty Teensy 3.1 lying around, so I thought that it should be pretty simple to turn it into a simple data logger, measuring the voltage at a very slow rate (maybe 1 measurement per 5 seconds). Thus was born the EZDAQ.
 
-**All code for this project is located in the repository at `https\://github.com/kcuzner/ezdaq <https://github.com/kcuzner/ezdaq>`_**
+**All code for this project is located in the repository at `https\://github.com/kcuzner/ezdaq <https://github.com/kcuzner/ezdaq>`__**
 
 Setting up the Teensy 3.1 ADC
 =============================
@@ -48,7 +48,7 @@ The ADC on the Teensy 3.1 (or the Kinetis MK20DX256) is capable of doing 16-bit 
    //Set clock speed for measurements (no division)
    ADC0_CFG1 = ADC_CFG1_MODE(0x1) | ADC_CFG1_ADICLK(0x3); //12 bit conversion, adc async clock, no divide
 
-Following the recommendations in the datasheet, I selected a clock that would bring the ADC clock speed down to <4MHz and turned on hardware averaging before starting the calibration. The calibration is initiated by setting a flag in ADC0_SC3 and when completed, the calibration results will be found in the several ADC0_CL\* registers. I'm not 100% certain how this calibration works, but I believe what it is doing is computing some values which will trim some value in the `SAR <https://en.wikipedia.org/wiki/Successive_approximation_ADC>`_ logic (probably something in the internal DAC) in order to shift the converted values into spec.
+Following the recommendations in the datasheet, I selected a clock that would bring the ADC clock speed down to <4MHz and turned on hardware averaging before starting the calibration. The calibration is initiated by setting a flag in ADC0_SC3 and when completed, the calibration results will be found in the several ADC0_CL\* registers. I'm not 100% certain how this calibration works, but I believe what it is doing is computing some values which will trim some value in the `SAR <https://en.wikipedia.org/wiki/Successive_approximation_ADC>`__ logic (probably something in the internal DAC) in order to shift the converted values into spec.
 
 One thing to note is that I did not end up using the 16-bit conversion capability. I was a little rushed and was put off by the fact that I could not get it to use the full 0-65535 dynamic range of a 16-bit result variable. It was more like 0-10000. This made figuring out my "volts-per-value" value a little difficult. However, the 12-bit mode gave me 0-4095 with no problems whatsoever. Perhaps I'll read a little further and figure out what is wrong with the way I was doing the 16-bit conversions, but for now 12 bits is more than sufficient. I'm just measuring some voltages.
 
@@ -57,7 +57,7 @@ Since I planned to measure the voltages coming off a Li-Ion battery, I needed to
 Quick and dirty USB device-side driver
 ======================================
 
-For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`_. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
+For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
 
 .. code-block:: {lang}
 

@@ -2,7 +2,7 @@
 Introduction
 ============
 
-A couple of weeks ago I saw a link on `hackaday <http://hackaday.com>`_ to an `article <http://www.seanet.com/~karllunt/bareteensy31.html>`_ by Karl Lunt about using the Teensy 3.1 without the Arduino IDE and building for the bare metal. I was very intrigued as the Arduino IDE was my only major beef with developing stuff for the Teensy 3.1 and I wanted to be able to do things without having to use the IDE. I read through the article and although it was geared towards windows, I decided to try to adapt it to my development style. There were a few things I wanted to do\:
+A couple of weeks ago I saw a link on `hackaday <http://hackaday.com>`__ to an `article <http://www.seanet.com/~karllunt/bareteensy31.html>`__ by Karl Lunt about using the Teensy 3.1 without the Arduino IDE and building for the bare metal. I was very intrigued as the Arduino IDE was my only major beef with developing stuff for the Teensy 3.1 and I wanted to be able to do things without having to use the IDE. I read through the article and although it was geared towards windows, I decided to try to adapt it to my development style. There were a few things I wanted to do\:
 * No additional code dependencies other than the teensyduino installation which I already had
 
 
@@ -26,12 +26,12 @@ I have very little experience writing more complex Makefiles. When I say "comple
 
 I'm writing this in the hope that those without mad Makefile skills, such as myself, can liberate themselves from the Arduino IDE when developing for an awesome platform like the Teensy 3.1.
 
-**All code for this example can be found here\: **`https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`_
+**All code for this example can be found here\: **`https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`__
 
 Prerequisites
 =============
 
-As my first order of business, I located the arm-none-eabi binaries for my linux distribution. These can also be found for Windows as noted in Karl Lunt's article. Random sidenote\: I found `this <http://kunen.org/uC/gnu_tool.html>`_ description of why arm-none-eabi is called arm-none-eabi. Very informative. Anyway, for those who run archlinux, the following packages are needed\:
+As my first order of business, I located the arm-none-eabi binaries for my linux distribution. These can also be found for Windows as noted in Karl Lunt's article. Random sidenote\: I found `this <http://kunen.org/uC/gnu_tool.html>`__ description of why arm-none-eabi is called arm-none-eabi. Very informative. Anyway, for those who run archlinux, the following packages are needed\:
 * arm-none-eabi-gcc (contains the compilers)
 
 
@@ -42,7 +42,7 @@ As my first order of business, I located the arm-none-eabi binaries for my linux
 
 
 
-Hopefully this gives a bit of a hint on what packages may need to be installed on other systems. For Windows, the compiler is `here <https://launchpad.net/gcc-arm-embedded/+download>`_ and make can be found `here <http://gnuwin32.sourceforge.net/packages/make.htm>`_ or by googling around. I haven't tested any of this on Windows and would advocate using Linux for this, but it shouldn't be hard to modify the Makefile for Windows.
+Hopefully this gives a bit of a hint on what packages may need to be installed on other systems. For Windows, the compiler is `here <https://launchpad.net/gcc-arm-embedded/+download>`__ and make can be found `here <http://gnuwin32.sourceforge.net/packages/make.htm>`__ or by googling around. I haven't tested any of this on Windows and would advocate using Linux for this, but it shouldn't be hard to modify the Makefile for Windows.
 
 My Flow
 =======
@@ -93,7 +93,7 @@ The next part is where we take that list of object files and use them as depende
 
 In our example, we use $(OBJ_FILES) as a dependency of "$(OUTPUTDIR)/$(PROJECT).elf" which is required as a dependency of "build". This tells make that when we run "make build", it needs to try to resolve the dependency of "bin/<project>.elf" which in turn needs to resolve "obj/file1.o", "obj/file2.o", and "obj/etc.o" (going from our example in the previous paragraph). This is where the next couple targets come in. A target will only be executed if it can find some rule to resolve all of the dependencies. We will use "obj/file1.o" as an example here. There are 2 targets with that name, actually\: "$(OBJDIR)/%.o\: $(SRCDIR)/%.c" and "$(OBJDIR)/%.o\: $(SRCDIR)/%.cpp". It would be good to note that the target names here the exact same even though the dependencies are different. Now, how does "$(OBJDIR)%.o" match "obj/file1.o"? A Makefile does something called "pattern matching" when the % sign is used. It says "match something that looks like $(OBJDIR)<some file>.o" which our "obj/file1.o" happens to match. The cool part is that once the target name is resolved using a %, the dependencies get to use % to substitute the exact same thing. Thus, our % here is "file1", so it follows that its dependency must be "$(SRCDIR)/file1.c". Now, our example used "file1.cpp", not "file1.c" and this is where defining multiple targets with the same names but different dependencies comes in. A target will only be executed if the dependencies can be resolved to either an actual file and/or another target. Our first target won't be a match since it says that the source file should be a C file. So, it goes to the next target that matches the name which has a dependency of "$(SRCDIR)/file1.cpp". This one matches, and so commands following that target are executed.
 
-When executing a target ("$(OBJDIR)/%.o\: $(SRCDIR)/%.cpp" in our example), there are some special variables which are available for use. These are described `here <https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html>`_, but I will discuss two important ones that I used\: $@ and $<. $@ is the name of the target (so, "obj/file.o" in our case) and $< is the name of the first dependency ("src/file.cpp" in our case). This lets us pass these arguments into the commands that we execute. Our Makefile will first create the obj directory by calling "mkdir -p $(dir $@)" which is translated into "mkdir -p obj" since $(dir $@) will give us "obj". Next, we actually compile the $< (which is translated to "src/file.cpp"), outputting it to $< which is translated to "obj/file.o".
+When executing a target ("$(OBJDIR)/%.o\: $(SRCDIR)/%.cpp" in our example), there are some special variables which are available for use. These are described `here <https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html>`__, but I will discuss two important ones that I used\: $@ and $<. $@ is the name of the target (so, "obj/file.o" in our case) and $< is the name of the first dependency ("src/file.cpp" in our case). This lets us pass these arguments into the commands that we execute. Our Makefile will first create the obj directory by calling "mkdir -p $(dir $@)" which is translated into "mkdir -p obj" since $(dir $@) will give us "obj". Next, we actually compile the $< (which is translated to "src/file.cpp"), outputting it to $< which is translated to "obj/file.o".
 
 Outputting everything to bin
 ----------------------------
@@ -167,7 +167,7 @@ Conclusion
 
 Armed with my new Makefile and a better understanding of how the Teensy 3.1 works from a software perspective, I managed to compile and upload my "blinky" program which just blinks the onboard LED (pin 13) on and off every 1/4 second. The overall program size was 3% of the total space, which is much more reasonable compared to the 10-20% it was taking when compiled using the Arduino IDE.
 
-Again, all files from this escapade can be found here\: `https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`_
+Again, all files from this escapade can be found here\: `https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`__
 
 .. rstblog-settings::
    :title: Teensy 3.1 Bare-Metal

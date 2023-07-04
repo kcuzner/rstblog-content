@@ -60,34 +60,34 @@ The more difficult part was attaching the matte board to the metal part of the c
 [/caption]
 
 All in all my specs are as follows\:
-* `ASRock Z68 Pro3-M Motherboard (microATX) <http://www.newegg.com/Product/Product.aspx?Item=N82E16813157252>`_
+* `ASRock Z68 Pro3-M Motherboard (microATX) <http://www.newegg.com/Product/Product.aspx?Item=N82E16813157252>`__
 
 
-* `Intel Core i5-2500K Processor running at the stock frequency <http://www.newegg.com/Product/Product.aspx?Item=N82E16819115072>`_
+* `Intel Core i5-2500K Processor running at the stock frequency <http://www.newegg.com/Product/Product.aspx?Item=N82E16819115072>`__
 
 
-* `8GB G.Skill Ripjaws DDR3 RAM <http://www.newegg.com/Product/Product.aspx?Item=N82E16820231426>`_
+* `8GB G.Skill Ripjaws DDR3 RAM <http://www.newegg.com/Product/Product.aspx?Item=N82E16820231426>`__
 
 
-* `1TB Western Digital Green HD <http://www.newegg.com/Product/Product.aspx?Item=N82E16822136939>`_ (using `wdantiparkd <http://www.sagaforce.com/~sound/wdantiparkd/>`_ to counter the head parking issues)
+* `1TB Western Digital Green HD <http://www.newegg.com/Product/Product.aspx?Item=N82E16822136939>`__ (using `wdantiparkd <http://www.sagaforce.com/~sound/wdantiparkd/>`__ to counter the head parking issues)
 
 
-* `Rosewill RNX-N300X Wireless b/g/n card <http://www.newegg.com/Product/Product.aspx?Item=N82E16833166051>`_
+* `Rosewill RNX-N300X Wireless b/g/n card <http://www.newegg.com/Product/Product.aspx?Item=N82E16833166051>`__
 
 
-* `Apex 500W Power Supply <http://www.newegg.com/Product/Product.aspx?Item=N82E16817154026>`_
+* `Apex 500W Power Supply <http://www.newegg.com/Product/Product.aspx?Item=N82E16817154026>`__
 
 
-* `Cheap DVD burner <http://www.newegg.com/Product/Product.aspx?Item=N82E16827106289>`_
+* `Cheap DVD burner <http://www.newegg.com/Product/Product.aspx?Item=N82E16827106289>`__
 
 
-* `Cheap Rosewill card reader <http://www.newegg.com/Product/Product.aspx?Item=N82E16820223109>`_
+* `Cheap Rosewill card reader <http://www.newegg.com/Product/Product.aspx?Item=N82E16820223109>`__
 
 
-* `Apex microATX case with a handle <http://www.newegg.com/Product/Product.aspx?Item=N82E16811154094>`_ (best feature!) and some LEDs
+* `Apex microATX case with a handle <http://www.newegg.com/Product/Product.aspx?Item=N82E16811154094>`__ (best feature!) and some LEDs
 
 
-* `Ubuntu 11.10 64-bit for an OS <http://www.ubuntu.com>`_
+* `Ubuntu 11.10 64-bit for an OS <http://www.ubuntu.com>`__
 
 
 

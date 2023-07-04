@@ -14,7 +14,7 @@ As my addition to avrdude, I created a new programmer type called "linuxspi" whi
 Usage
 =====
 
-So, down to the nitty gritty\: How can I use it? Well, at the moment it is in a github repository at `https\://github.com/kcuzner/avrdude <https://github.com/kcuzner/avrdude>`_. As with any project that uses the expansion header on the Raspberry Pi, there is a risk that a mistake could cause your Raspberry Pi to die (or let out the magic smoke, so to speak). I assume no responsibility for any damage that may occur as a result of following these directions or using my addition to avrdude. Just be careful when doing anything involving hooking stuff up to the expansion port and use common sense. Remember to measure twice and cut once. So, with that out of the way, I will proceed to outline here the basic steps for installation and usage.
+So, down to the nitty gritty\: How can I use it? Well, at the moment it is in a github repository at `https\://github.com/kcuzner/avrdude <https://github.com/kcuzner/avrdude>`__. As with any project that uses the expansion header on the Raspberry Pi, there is a risk that a mistake could cause your Raspberry Pi to die (or let out the magic smoke, so to speak). I assume no responsibility for any damage that may occur as a result of following these directions or using my addition to avrdude. Just be careful when doing anything involving hooking stuff up to the expansion port and use common sense. Remember to measure twice and cut once. So, with that out of the way, I will proceed to outline here the basic steps for installation and usage.
 
 Installation
 ------------

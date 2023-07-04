@@ -1,4 +1,4 @@
-As I was recently working on trying out the `Flask <http://flask.pocoo.org/>`_ web framework for Python, I ended up wanting to access my MySQL database. Recently at work I have been using entity framework and I have gotten quite used to having a good database abstraction that allows programmatic creation of SQL. While such frameworks exist in Python, I thought it would interesting to try writing one. This is one great example of getting carried away with a seemingly simple task.
+As I was recently working on trying out the `Flask <http://flask.pocoo.org/>`__ web framework for Python, I ended up wanting to access my MySQL database. Recently at work I have been using entity framework and I have gotten quite used to having a good database abstraction that allows programmatic creation of SQL. While such frameworks exist in Python, I thought it would interesting to try writing one. This is one great example of getting carried away with a seemingly simple task.
 
 I aimed for these things\:
 * Tables should be represented as objects which each instance of the object representing a row
@@ -19,7 +19,7 @@ I aimed for these things\:
 
 I also wanted to be able to do relations between tables with foreign keys, but I have decided to stop for now on that. I have a structure outlined, but it isn't necessary enough at this point since all I wanted was a database abstraction for my simple Flask project. I will probably implement it later.
 
-This can be found as a gist here\: `https\://gist.github.com/kcuzner/5246020 <https://gist.github.com/kcuzner/5246020>`_
+This can be found as a gist here\: `https\://gist.github.com/kcuzner/5246020 <https://gist.github.com/kcuzner/5246020>`__
 
 Example
 -------
@@ -627,7 +627,7 @@ The DbQuery objects are implemented as follows\:
            args += query_parent[1]
            return query, args
 
-Each of the SELECT, INSERT, UPDATE, and DELETE query types inherits from a base DbQuery which does execution and such. I decided to make the DbQuery object take a `PEP 249 <http://www.python.org/dev/peps/pep-0249/>`_-style cursor object and execute the query itself. My hope is that this will make this a little more portable since, to my knowledge, I didn't make the queries have any MySQL-specific constructions.
+Each of the SELECT, INSERT, UPDATE, and DELETE query types inherits from a base DbQuery which does execution and such. I decided to make the DbQuery object take a `PEP 249 <http://www.python.org/dev/peps/pep-0249/>`__-style cursor object and execute the query itself. My hope is that this will make this a little more portable since, to my knowledge, I didn't make the queries have any MySQL-specific constructions.
 
 The different query types each implement a variety of statements corresponding to different parts of an SQL query\: where(), limit(), orderby(), select(), from_table(), etc. These each take in either a DbQueryColumn (such as is the case with where(), orderby(), select(), etc) or a string to be appended to the query, such as is the case with limit(). I could easily have made limit take in two integers as well, but I was kind of rushing through because I wanted to see if this would even work. The query is built by creating the query object for the basic query type that is desired and then calling its member functions to add things on to the query.
 

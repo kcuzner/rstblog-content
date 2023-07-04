@@ -2,7 +2,7 @@ After much pain and work...(ok, I had a great time; let's be honest now)...I hav
 
 
 
-Pursuant to the V-USB licence, I am releasing my hardware schematics and the software (which can be found `here <http://cuznersoft.com/wordpress/?p=183>`_). However, it isn't because of the licence that I feel like releasing them...it is because it was quite fun to build and I would recommend it to anyone with a lot of time on their hands. So, to start off let us list the parts\:
+Pursuant to the V-USB licence, I am releasing my hardware schematics and the software (which can be found `here <http://cuznersoft.com/wordpress/?p=183>`__). However, it isn't because of the licence that I feel like releasing them...it is because it was quite fun to build and I would recommend it to anyone with a lot of time on their hands. So, to start off let us list the parts\:
 * 1 ATMega48A (Digi-key\: ATMEGA48A-PU-ND)
 
 
@@ -90,7 +90,7 @@ The parts designations are as follows\:
 * CONN-PWR\: The 4-pin connector for the diskette
 
 
-* CONN-USB\: The USB connector. You will have to figure out the wiring for this for your own computer. I used `this <http://www.frontx.com/cpx108_2.html>`_ site for mine. Don't forget to twist the DATA+ and DATA- wires if you aren't using a real USB cable (like me).
+* CONN-USB\: The USB connector. You will have to figure out the wiring for this for your own computer. I used `this <http://www.frontx.com/cpx108_2.html>`__ site for mine. Don't forget to twist the DATA+ and DATA- wires if you aren't using a real USB cable (like me).
 
 
 * C3\: Very important decoupling capacitor. Place this close to the microcontroller.
@@ -109,7 +109,7 @@ As I was building this I did run into a few issues which are easy to solve, but 
 
 
 
-Although I already have a link above, the software can be found here\: `Case LEDs Software <http://cuznersoft.com/wordpress/?p=183>`_
+Although I already have a link above, the software can be found here\: `Case LEDs Software <http://cuznersoft.com/wordpress/?p=183>`__
 
 So, here are pictures of the finished product\:
 

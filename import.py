@@ -541,7 +541,7 @@ class CodeTag(TagHandler):
             _log.warning(f'Can\'t find code-block language in "{cls}"')
         if lang in ("default",):
             lang = ""
-        decl = ".. code-block:: {lang}\n\n" if lang else "::\n\n"
+        decl = f".. code-block:: {lang}\n\n" if lang else "::\n\n"
         return (
             f"\n{decl}\n\n"
             + textwrap.indent(

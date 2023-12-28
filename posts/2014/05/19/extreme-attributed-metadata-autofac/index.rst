@@ -41,7 +41,7 @@ One of my most favorite features has been `Attributed Metadata <https://github.c
 
 For my example I will use a "extendible" letter formatting program that adds some text to the content of a "letter". I define the following interface\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -52,7 +52,7 @@ For my example I will use a "extendible" letter formatting program that adds som
 
 This interface is for something that can "format" a letter in some way. For starters, I will define two implementations\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -74,7 +74,7 @@ This interface is for something that can "format" a letter in some way. For star
 
 Now, here is a simple program that will use these formatters\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -119,7 +119,7 @@ Ok, so we have ran into a problem\: We have a list of formatters, but we don't k
 
 We define another class\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -138,7 +138,7 @@ Marking it with System.ComponetModel.Composition.MetadataAttributeAttribute (no,
 
 We mark the classes as follows\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -154,7 +154,7 @@ We mark the classes as follows\:
 
 And then we change the builder to take into account the metadata by asking it to register the Autofac.Extras.Attributed.AttributedMetadataModule. This will cause the Attributed Metadata extensions to scan all of the registered types (past, present, and future) for MetadataAttribute-marked attributes and use the public properties as metadata\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -168,7 +168,7 @@ And then we change the builder to take into account the metadata by asking it to
 
 Now, when we resolve the ILetterFormatter classes, we can either use Autofac.Features.Meta<TImplementation> or Autofac.Features.Meta<TImplementation, TMetadata>. I'm a personal fan of the "strong" metadata, or the latter. It causes the metadata dictionary to be "forced" into a class rather than just directly accessing the metadata dictionary. This removes any uncertainty about types and such. So, I will create a class that will hold the metadata when the implementations are resolved\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -181,7 +181,7 @@ It would worthwhile to note that the individual properties must have a value in 
 
 So, we now have the following inside our using statement that controls our scope in the main method\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -223,7 +223,7 @@ I decided to remedy this and after submitting an idea for autofac `via a pull re
 
 To get an idea of what this would look like, here is a metadata attribute which implements this interface\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -258,7 +258,7 @@ IMetadataProvider\: Making a set of objects
 
 Perhaps the simplest application of this new IMetadataProvider is having the metadata contain a list of objects. Building on our last example, we saw that the "personal" letter formatter just said "Dear Individual" every time. What if we could change that so that there was some way to pass in some "properties" or "options" provided by the caller of the formatting function? We can do this using an IMetadataProvider. We make the following changes\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 
@@ -352,7 +352,7 @@ Perhaps the simplest application of this new IMetadataProvider is having the met
 
 Ok, so this is just a little bit more complicated. There are two changes to pay attention to\: Firstly, the FormatLetter function now takes a list of FormatOptionValues. The second change is what enables the caller of FormatLetter to know which options to pass in. The LetterFormatterAttribute now scans the type in order to construct its metadata dictionary by looking for attributes that describe what options it needs. I feel like the usage of this is best illustrated by decorating our PersonalLetterFormatter for it to have some metadata describing the options that it requires\:
 
-.. code-block:: {lang}
+.. code-block:: c#
 
 
 

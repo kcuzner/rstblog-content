@@ -139,7 +139,7 @@ Each 16-bit word of PMA memory utilizes all four bytes of a 32-bit-aligned addre
 
 This also requires some special considerations when accessing memory. Since accesses can only happen by 32-bit word and only two bytes of that word are actually used, it is not suitable for use as general memory. If you want a nice byte buffer that your application can work with, you'll need to allocate that in general SRAM. When you're ready to send it over USB then it can be copied into the PMA with its weird access alignment rules. I ended up making the following methods to help with that (note\: USB_PMAADDR is defined to 0x40006000 elsewhere, which is the start of the PMA from the perspective of the main memory bus)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -217,7 +217,7 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -239,7 +239,7 @@ For the STM32L052\:
 
 This microcontroller's PMA is actually far simpler than the STM32F1's. It is arranged as 512 16-bit words (so its twice the size) and also does not require access on 32-bit boundaries. The methods I defined for the STM32L103 are now instead\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -369,7 +369,7 @@ I declared a segment called ".pma" which puts everything inside any sections sta
 
 Now, as for why I wanted to do this, take a look at this fun variable declaration\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -396,7 +396,7 @@ This creates a variable in the ".pma" section called "bt". Now, there are a few 
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -410,7 +410,7 @@ When accessing PMA variables, the address of anything that the program needs to 
 
 Another thing to note is that when the USB peripheral gets an address to something in the PMA, it does not need the 0x40006000 offset. In fact, from its perspective address 0x00000000 is the start of the PMA. This means that when we want to point the USB to the BDT (that's what the bt variable is), we have to do the following\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -480,7 +480,7 @@ The main point I want to hit on with this register is the Status fields. The USB
 
 This is where the PMA ties in. The USB Peripheral uses the Buffer Descriptor Table to look up the addresses of the buffers in the PMA. There are 8 entries in the BDT (one for each endpoint) and they have the following structure (assuming the Kind bit is set to 0...the Kind bit can enable double buffering, which is beyond the scope of this post)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -507,7 +507,7 @@ After an endpoint is initialized and the user requests a transfer on that endpoi
 
 The buffers used for transferring data in the PMA I dynamically allocate by using the symbol "_pma_end" which was defined by the linker script. When the USB device is reset, I move a "break" to point to the address of _pma_end. When the user application initializes an endpoint, I take the break and move it forward some bytes to reserve that space in the PMA for that endpoint's buffer. Here's the code\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -562,7 +562,7 @@ The _pma_end symbol was defined by the statement "_pma_end = .;" in the linker s
 
 Now, to tie it all together, here's what happens when we initialize an endpoint\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -617,7 +617,7 @@ To that end, I decided to use what I call the "hook" pattern because of how I na
 
 In my USB driver header file I declared the following\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -686,7 +686,7 @@ In my USB driver header file I declared the following\:
 
 And in my main USB C file I have the following\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -718,7 +718,7 @@ Most of this section is taken from the code in common/usb.c and common/usb.h
 
 Ok, so here's how I organized this API. My idea was to present an interface consisting entirely of byte buffers to the application program, keeping the knowledge of packetizing and the PMA isolated to within the driver. Facing the application side, here's how it looks (read the comments for notes about how the functions are used)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -918,7 +918,7 @@ I'm just going to go through the transmit sequence, since the receive works in a
 
 The supporting code for this is as follows\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 

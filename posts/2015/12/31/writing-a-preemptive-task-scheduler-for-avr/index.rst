@@ -153,7 +153,7 @@ The focus of a scheduler/dispatcher system for tasks is manipulating the stack p
 
 First, let's take a look at the structure which represents a task\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -176,7 +176,7 @@ Finally, we have the \*status_pointer. This is used by our functions which can u
 
 Ok, so for the basic task scheduling and dispatching functionality we are going to implement some functions (these are declared in a header)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -232,7 +232,7 @@ Implementation\: kos_init and kos_new_task
 
 Firstly, we have the kos_init and kos_new_task functions, which come with some baggage\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -298,7 +298,7 @@ Implementation\: kos_run and kos_schedule
 
 Next we have the kos_run function\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -397,7 +397,7 @@ As straightforward as that may seem, that isn't the intended behavior. Imagine i
 
 Because of the inconsistency and the fact that the ISR "priority" when viewed by the scheduler is determined by possibly random ISRs (making it non-deterministic), we need fix this. The solution I went with was to make two methods\: kos_enter_isr and kos_exit_isr. These should be called when an ISR begins and when an ISR ends to temporarily hold off calling the scheduler until the very end of the ISR. This has the effect of giving an ISR an apparently high priority since it will not switch to another task until it has completely finished. So, although the idle task may be running when the ISR occurs, while the ISR is running no context switches will occur until the very end. Here is some code\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -425,7 +425,7 @@ Implementation\: kos_dispatch
 
 The dispatcher is written basically entirely in inline assembly because it does the actual stack manipulation\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -594,7 +594,7 @@ As a demonstration, I'm going to implement a simple semaphore. I won't go into h
 
 Header contents\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -619,7 +619,7 @@ Header contents\:
 
 Source contents\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -697,7 +697,7 @@ Just so this makes sense, let's go through an example sequence of events\:
 
 Here's a program that does just this\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 

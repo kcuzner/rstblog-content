@@ -80,7 +80,7 @@ When the watch first boots, the bootloader is going to be the first thing that r
 
 First, there's a few #defines and global variables that it would be good to know about for some context\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -128,7 +128,7 @@ There are a few things that can be gathered from this\:
 
 The first thing that the bootloader does is ask the following question to determine if it should run the user application\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -148,7 +148,7 @@ The next thing to explain here is probably the purpose of this magic_code value.
 
 After the bootloader determines that it needs to run the user's program, it will execute the following\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -191,7 +191,7 @@ Self-programming via USB
 
 One main goal I had with this bootloader is that it should be driverless and cross-platform. To facilitate this, the bootloader enumerates as a USB Human Interface Device. Here is my report descriptor for the bootloader\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -266,7 +266,7 @@ A more detailed description of this protocol can be found at `https\://github.c
 
 I'll cover briefly the process for writing the flash on the STM32. On my particular model, flash pages are 128 bytes and writes are always done in 64-byte groups. This is fairly standard for NOR flash that is seen in microcontrollers. When self-programming, one of the main issues I ran into was that the processor is not allowed to access the flash memory while a flash write is occurring. This is a problem since the flash write process requires the program to poll registers and wait for events to finish. Since this code by default resides in the flash memory, that will cause the write to fail. The solution to this is fairly straightforward\: We have to ensure that the code that actually performs flash writes lives in RAM. Since RAM is executable on the STM32, this is just as simple as requesting the linker to locate the functions in RAM. Here's my code that does flash erases and writes\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -340,7 +340,7 @@ I'll cover briefly the process for writing the flash on the STM32. On my particu
 
 The other thing to discuss about self-programming is the way the STM32 protects itself against erroneous writes. It does this by "locking" and "unlocking" using writes of magic values to certain registers in the FLASH module. The idea is that the flash should only be unlocked for just the amount of time needed to actually program the flash and then locked again. This prevents program corruption due to factors like incorrect code, ESD causing the microcontroller to wig out, power loss, and other things that really can't be predicted. I do the following to actually execute writes to the flash (note how the following code uses the _RAM-located functions I noted earlier)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -409,7 +409,7 @@ Considerations for linking the application
 
 One big thing we haven't yet covered is how exactly the user application needs to be changed in order to be compatible with the bootloader. Due to how the bootloader is structured (it just lives in the first bit of flash) and how it is entered (any reset other than power-on will enter bootloader mode), the only real change needed to make a user program compatible is to relocate where the linker script places the user program in flash (leaving the first section of it blank). In my linker script for the LED watch, I changed the MEMORY directive to read as follows\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -424,7 +424,7 @@ The flash segment has been shorted from 64K to 56K and the ORIGIN has been moved
 
 When the user program wishes to enter bootloader mode, it just needs to issue a soft reset. The LED watch has a command for this that is issued over USB and just executes the following when it receives that command\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 

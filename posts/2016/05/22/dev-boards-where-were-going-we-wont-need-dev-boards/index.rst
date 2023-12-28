@@ -297,7 +297,7 @@ Ok, so we need to write a program for this microcontroller. We are going to simp
 
 Here is my super-simple main program that does all of the above\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 

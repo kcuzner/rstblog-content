@@ -24,7 +24,7 @@ I've never used the ADC before on the Teensy 3.1. I don't use the Teensy Cores H
 
 The ADC on the Teensy 3.1 (or the Kinetis MK20DX256) is capable of doing 16-bit conversions at 400-ish ksps. It is also quite complex and can do conversions in many different ways. It is one of the larger and more configurable peripherals on the device, probably rivaled only by the USB module. The module does not come pre-calibrated and requires a calibration cycle to be performed before its accuracy will match that specified in the datasheet. My initialization code is as follows\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -64,7 +64,7 @@ Quick and dirty USB device-side driver
 
 For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -112,7 +112,7 @@ Host software
 
 Since libusb is easy to use with Python, via PyUSB, I decided to write out the whole thing in Python. Originally I planned on some sort of fancy gui until I realized that it would far simpler just to output a CSV and use MATLAB or Excel to process the data. The software is simple enough that I can just put the entire thing here\:
 
-.. code-block:: {lang}
+.. code-block:: python
 
 
 

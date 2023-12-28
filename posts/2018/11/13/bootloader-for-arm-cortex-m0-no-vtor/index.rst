@@ -120,7 +120,7 @@ When an interrupt occurs, the NVIC will examine this table, read the handler add
 
 For any program meant to run on an ARM Cortex processor there'll be some assembly (or maybe C) that looks like this (this one was provided by ST's CMSIS implementation for the STM32F042)\:
 
-.. code-block:: {lang}
+.. code-block:: asm
 
 
 
@@ -156,7 +156,7 @@ For any program meant to run on an ARM Cortex processor there'll be some assembl
 
 Then in my linker script I have the "SECTIONS" portion start out like this\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -193,7 +193,7 @@ Then in my linker script I have the "SECTIONS" portion start out like this\:
 
 The assembly snippet creates the table for the NVIC (g_pfnVectors in this example) and assigns it to the ".isr_vector" section. The linker script then locates this section right at the beginning of the flash (the "KEEP(\*(.isr_vector))" right at the beginning after some variable declarations). When the program is compiled what I end up with it something that looks like this (this is an assembly dump of the beginning of one of my binaries)\:
 
-.. code-block:: {lang}
+.. code-block:: asm
 
 
 
@@ -316,7 +316,7 @@ So long as the user program doesn't go and mess with the VTOR, any interrupts th
 
 There is one step that the user program has to do, however. It needs to properly offset all of its addresses in the flash. As I mentioned in my previous post about bootloaders this is pretty easy to do in the linker script by just tricking it into thinking that the flash starts at the beginning of the user program partition (example on a 32K microcontroller)\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -332,7 +332,7 @@ There is one step that the user program has to do, however. It needs to properly
 
 The user program is now tricked into thinking that flash starts at 0x08002000 and is only 24K. We can see that this was successful if we take a look at the beginning of the disassembly of a compiled program\:
 
-.. code-block:: {lang}
+.. code-block:: asm
 
 
 
@@ -424,7 +424,7 @@ I implemented this with these linker script memory modifications\:
 
 **Bootloader linker script\:**
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -446,7 +446,7 @@ I implemented this with these linker script memory modifications\:
 
 **Device linker script\:**
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -469,7 +469,7 @@ I implemented this with these linker script memory modifications\:
 
 And this section addition in the bootloader linker script\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -483,7 +483,7 @@ And this section addition in the bootloader linker script\:
 
 Now I have some reserved memory that the user program won't touch. I use this area to store a psuedo-VTOR\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -539,7 +539,7 @@ Then, if the bootloader determines that the user program exists it overwrites bo
 
 Ok, so that solves the issue of "where do the user's interrupts live". The next issue is actually jumping to those. Turns out, that's not a hard problem to solve now. A quick change to the interrupt handlers makes short work of that\:
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -569,7 +569,7 @@ What this does is determine which interrupt number is executing, multiply that n
 
 The bootloader also gets a rather non-trivial change to its interrupt vector table\:
 
-.. code-block:: {lang}
+.. code-block:: asm
 
 
 
@@ -633,7 +633,7 @@ The bootloader also gets a rather non-trivial change to its interrupt vector tab
 
 All the interrupts point to this new Bootloader_IRQHandler except Reset. We now have another problem\: What about the interrupts for when we actually need to execute the bootloader program instead of the user program. Well, that's fairly simple now. We just move the g_pfnVectors table so that it is just like any other table\:
 
-.. code-block:: {lang}
+.. code-block:: asm
 
 
 
@@ -687,7 +687,7 @@ With my other bootloader which relied on the VTOR, the presence of the bootloade
 
 While I didn't overcome this issue completely and stack traces can be a little awkward if they are interrupted at just the right time, I did manage to massage gdb enough to make it somewhat usable\:
 
-.. code-block:: {lang}
+.. code-block:: sh
 
 
 

@@ -79,7 +79,7 @@ The webapp side of this whole project I decided to do in Python because it seeme
 
 I am 99% sure I picked the wrong way to do a video stream, but it seems to work for me. Here's the entirety of the Flask endpoint that produces a continuous video stream\:
 
-.. code-block:: {lang}
+.. code-block:: python
 
 
 

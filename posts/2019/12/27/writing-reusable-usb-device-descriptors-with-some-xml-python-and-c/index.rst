@@ -153,7 +153,7 @@ Into these comment blocks which can live anywhere in the source and are somewhat
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -384,7 +384,7 @@ For example, here is the "main.c" file of my `midi-fader device <https://github.
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -518,7 +518,7 @@ The C file that this generates is placed in the obj folder during compilation an
 
 
 
-.. code-block:: {lang}
+.. code-block:: sh
 
 
 
@@ -630,7 +630,7 @@ As the python script is run, it searches the source files for XML which describe
 
 
 
-.. code-block:: {lang}
+.. code-block:: xhtml
 
 
 
@@ -813,7 +813,7 @@ These are usually defined like this in the calling module\:
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -834,7 +834,7 @@ Application code can then interface to these hooks like so (example from my HID 
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -863,7 +863,7 @@ To remedy this, I created a "usb_app" layer which implements these **hook_** fun
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -943,7 +943,7 @@ Every module that has a USB descriptor and some interface can then declare an **
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -956,7 +956,7 @@ And then in my main.c, I link it (along with any other interfaces) into the rest
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 
@@ -980,7 +980,7 @@ Meanwhile, in my usb_hid.c I have defined **hid_interface** to look like this (a
 
 
 
-.. code-block:: {lang}
+.. code-block:: c
 
 
 

@@ -393,7 +393,7 @@ class ListTag(TagHandler):
             lines = rst.split("\n")
             prefix = self.prefix(i)
             lines[0] = prefix + lines[0]
-            rest = textwrap.indent("\n".join(lines[1:]), " " * len(prefix)).strip()
+            rest = textwrap.indent("\n".join(lines[1:]), " " * len(prefix))
             return lines[0] + "\n" + rest
 
         items = [
@@ -426,7 +426,7 @@ class SubscriptTag(TagHandler):
 
     def to_rst(self, *args, **kwargs):
         content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
-        return r"\ :sub:`{content}`\ "
+        return rf"\ :sub:`{content}`\ "
 
 
 @TagHandler.register_tag("blockquote")

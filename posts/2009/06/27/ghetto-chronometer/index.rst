@@ -70,11 +70,14 @@ These instructions assume enough knowledge to construct a circuit on a breadboar
 
 
 #. Heatshrink or tape each lead coming off of the emitters and detectors individually and then per device. This is so that no short circuits happen and so that the device is easier to insert and remove from the PVC.
-.. figure:: chronometer.png
+
+   .. figure:: chronometer.png
       :width: 614
       :align: right
 
       Chronometer Schematic
+
+
 
 #. Assemble the circuit per the schematic. The schematic uses the PIC microcontroller, so it will have to be modified for a basic stamp.
 

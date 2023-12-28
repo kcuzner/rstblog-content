@@ -232,7 +232,13 @@ Every USB device has a configuration descriptor. In reality, what I'm calling th
 
 
 * First interface descriptor (bDescriptorType = 4)
-* Zero or more endpoint descriptors (bDescriptorType = 5)
+
+
+  * Zero or more endpoint descriptors (bDescriptorType = 5)
+
+
+
+
 
 * Optionally more interface descriptors (bDescriptorType = 4)
 
@@ -253,23 +259,52 @@ The configuration descriptor of something that has an HID interface looks like s
 
 
 * Configuration value (bConfigurationValue)
-* Configuration index (iConfiguration)
+
+
+  * Configuration index (iConfiguration)
+
+
+
+
 
 * Attributes and power
 
 
 * First interface descriptor (bDescriptorType = 4, **bInterfaceClass = 0x3 (HID), bInterfaceSubclass = 0 (no boot), bInterfaceProtocol = 0**)
-* **HID Descriptor (bDescriptorType = 0x21)**
-  * **Report Descriptor (bDescriptorType = 0x22)**
+
+
+  * **HID Descriptor (bDescriptorType = 0x21)**
+
+
+    * **Report Descriptor (bDescriptorType = 0x22)**
+
+
+
+
 
   * \ :raw-html:`<del>`\ Zero or more endpoint descriptors (bDescriptorType = 5)\ :raw-html:`</del>`\ 
 
 
   * **Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, IN)**
-  * *Note that wMaxPacketSize will be restricted to 8 bytes on Low-speed devices, 64 bytes on Full-speed devices. This is due to it being an interrupt endpoint.*
+
+
+    * *Note that wMaxPacketSize will be restricted to 8 bytes on Low-speed devices, 64 bytes on Full-speed devices. This is due to it being an interrupt endpoint.*
+
+
+
+
 
   * **(Optional) Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, OUT)**
-  * *Same story as the IN endpoint with wMaxPacketSize.*
+
+
+    * *Same story as the IN endpoint with wMaxPacketSize.*
+
+
+
+
+
+
+
 
 * Optionally more interface descriptors (bDescriptorType = 4)
 
@@ -399,7 +434,9 @@ These helper macros are a little complex, and to be honest I based them of somet
 
 
 * The GET_HID_SHORT macro takes in 6 arguments before receiving variadic arguments. This is where some of the magic happens when this is combined with HID_SHORT\:
-* If 1 argument was passed to HID_SHORT, then GET_HID_SHORT is called with 6 arguments\: "GET_HID_SHORT(<argument>, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)". We don't use _1 through _5 and the NAME argument gets "HID_SHORT_ZERO".
+
+
+  * If 1 argument was passed to HID_SHORT, then GET_HID_SHORT is called with 6 arguments\: "GET_HID_SHORT(<argument>, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)". We don't use _1 through _5 and the NAME argument gets "HID_SHORT_ZERO".
 
 
   * If 2 arguments are passed to HID_SHORT, then GET_HID_SHORT is called with 7 arguments\: "GET_HID_SHORT(<argument 0>, <argument 1>, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_MANY, HID_SHORT_ZERO)". Again, _1 through _5 are discarded. However, this time the NAME argument gets "HID_SHORT_MANY" since the HID_SHORT_ZERO in argument position 7 is inside the variadic arguments for GET_HID_SHORT (and is therefore discarded).
@@ -407,11 +444,27 @@ These helper macros are a little complex, and to be honest I based them of somet
 
   * So on and so forth for up to 5 arguments.
 
+
+
+
+
 * HID_SHORT_ZERO takes in exactly one argument and ors it with 0. Basically it's just a No-Op.
-* Note that HID_SHORT calls the result of GET_HID_SHORT with __VA_ARGS__. When exactly one argument is passed, GET_HID_SHORT evaluates to "HID_SHORT_ZERO" and that macro is in turn called with the single argument.
+
+
+  * Note that HID_SHORT calls the result of GET_HID_SHORT with __VA_ARGS__. When exactly one argument is passed, GET_HID_SHORT evaluates to "HID_SHORT_ZERO" and that macro is in turn called with the single argument.
+
+
+
+
 
 * HID_SHORT_MANY takes in one "tag" argument and many following arguments. When HID_SHORT_MANY is called, it will take the first argument and OR it with the number of arguments in __VA_ARGS__, masking it off to the correct number of bits for an HID token.
-* In the case where more than 1 argument is passed to HID_SHORT, GET_HID_SHORT evaluates to "HID_SHORT_MANY" and that macro is in turn called with all of the arguments passed.
+
+
+  * In the case where more than 1 argument is passed to HID_SHORT, GET_HID_SHORT evaluates to "HID_SHORT_MANY" and that macro is in turn called with all of the arguments passed.
+
+
+
+
 
 
 Here's some examples of what happens when this is evaluated\:
@@ -473,7 +526,13 @@ Let's dig into this report descriptor a little\:
 
 
 * Before we start our Application collection, we set the USAGE to 0x01, or "Vendor 1". When the COLLECTION token follows, the HID descriptor parser will see that this collection of fields is meant to be used for "Vendor 1".
-* Note that in general, Usage 0x00 means "Undefined" on most pages, meaning that the usage has not been defined (not that 0x00 is undefined as a usage). When doing something with vendor defined usages, start at 1.
+
+
+  * Note that in general, Usage 0x00 means "Undefined" on most pages, meaning that the usage has not been defined (not that 0x00 is undefined as a usage). When doing something with vendor defined usages, start at 1.
+
+
+
+
 
 * After starting the collection, we have another USAGE token. It turns out that the USAGE token is a "Local Item". Within HID descriptors, there's a concept of scopes. Items can be "Main", "Global", or "Local". Main items are things like the INPUT token, the OUTPUT token, and COLLECTION tokens. Local items' scope ends at the next Main item. Since the previous USAGE token was followed by a COLLECTION, we have to add another USAGE token.
 
@@ -488,10 +547,16 @@ Let's dig into this report descriptor a little\:
 
 
 * The REPORT_COUNT and REPORT_SIZE tokens are Global Items and define two things\:
-* Count\: The number of fields that the next INPUT or OUTPUT token generates (that's right, you can define multiple fields with just one token).
+
+
+  * Count\: The number of fields that the next INPUT or OUTPUT token generates (that's right, you can define multiple fields with just one token).
 
 
   * Size\: The size in bits of each field. This can be any number, so you can have fields that have weird widths, like "3". **One caveat\: The total number of bits in a report *must* be divisible by eight.** Since reports are transferred by byte, this only makes sense. I know that at least with Windows, it will choke on your report descriptor if it has a number of bits not divisible by eight.
+
+
+
+
 
 * Note that I have no real separation between the INPUT and OUTPUT tokens. This is something interesting about report descriptors\: You are actually defining two reports at the same time. When you have an INPUT token, you add a field to the input report that you're defining. When you have an OUTPUT token, the same thing happens except it goes to the output report. This means that you can interleave INPUT and OUTPUT tokens if you feel like it. Or you can define all the fields the IN report and then all the fields in the OUT report. Whatever makes the most sense with your application. They will both result in the same two reports. If at the end of the report descriptor no OUTPUT tokens appeared, then your OUT report is empty and won't be expected. Same deal if your report descriptor has no INPUT tokens.
 
@@ -588,16 +653,34 @@ In my LED Watch project I wrote a USB API which takes care of packetizing for me
 
 
 #. Construct your report.
-#. If you use the REPORT_ID token, then make sure the first byte of your report contains the report ID. All the other fields are concatenated later (so an 8-byte report is actually 9-bytes).
+
+
+   #. If you use the REPORT_ID token, then make sure the first byte of your report contains the report ID. All the other fields are concatenated later (so an 8-byte report is actually 9-bytes).
 
 
    #. One way of organizing this might be to make a C struct that matches the layout of your report. Or you can use a straight-up byte array. Whichever makes the most sense for your application.
 
+
+
+
+
 #. Point your USB peripheral towards your report.
-#. This will vary by microcontroller. On the Kinetis K20 (Teensy 3.x series), this is accomplished by pointing the appropriate Buffer Descriptor Table entry towards the memory address of your report. On the STM32 this is accomplished by copying the report data into the Packet Memory Area at the address pointed to by the Buffer Descriptor Table.
+
+
+   #. This will vary by microcontroller. On the Kinetis K20 (Teensy 3.x series), this is accomplished by pointing the appropriate Buffer Descriptor Table entry towards the memory address of your report. On the STM32 this is accomplished by copying the report data into the Packet Memory Area at the address pointed to by the Buffer Descriptor Table.
+
+
+
+
 
 #. Tell your USB peripheral that the endpoint is Valid or Ready. When the host attempts to read the endpoint, the peripheral will send your report.
-#. On both the K20 and STM32 there are just some bits to flip in the endpoint register.
+
+
+   #. On both the K20 and STM32 there are just some bits to flip in the endpoint register.
+
+
+
+
 
 
 You'll probably want to set up some system for notifying the program that the report was sent. Note that most microcontroller USB peripherals should set an endpoint to NAK once a report has sent, so the host will not see another report to read until you explicitly tell your peripheral to send again.
@@ -615,7 +698,13 @@ This is the exact same story as IN reports, except this time you don't construct
 
 
 #. Set your USB endpoint to be "Valid" or "Ready". The host can now write to it.
-* Even though it is an interrupt endpoint, the host won't try to write unless it has some new data to send.
+
+
+   * Even though it is an interrupt endpoint, the host won't try to write unless it has some new data to send.
+
+
+
+
 
 #. Wait for the interrupt from your peripheral that signals that the report has been received.
 

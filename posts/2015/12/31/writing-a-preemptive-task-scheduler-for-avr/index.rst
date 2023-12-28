@@ -40,7 +40,9 @@ Table of Contents
 
 
 * `Implementation <implementation>`__
-* `kos_init and kos_new_task <initnewtask>`__
+
+
+  * `kos_init and kos_new_task <initnewtask>`__
 
 
   * `kos_run and kos_schedule <runschedule>`__
@@ -53,6 +55,10 @@ Table of Contents
 
 
   * `Results by code size <codesize>`__
+
+
+
+
 
 * `Example\: A semaphore <semaphore>`__
 

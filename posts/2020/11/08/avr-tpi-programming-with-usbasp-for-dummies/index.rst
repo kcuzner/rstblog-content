@@ -114,19 +114,31 @@ So, you need to program at 5V, but your circuit uses different voltages. Here ar
 
 
 * Think about having the microcontroller live on a separate power rail and use a switch (physical or solid state) to swap between the main board power and the ISP power.
-* Consider a solid state switch. These are quite cheap and small. Here's digikey's complete list\: `https\://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726 <https://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726>`__
+
+
+  * Consider a solid state switch. These are quite cheap and small. Here's digikey's complete list\: `https\://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726 <https://www.digikey.com/en/products/filter/pmic-power-distribution-switches-load-drivers/726>`__
 
 
   * Be sure to consider the pins going to the other devices on your board. When the microcontroller isn't in reset, it may drive 5V out to the other components. Either build in some logic at program startup so that if you know you're about to program the microcontroller you don't drive the pins (such as wiring the control pins for the switches into the microcontroller as well), or consider using a level translator or something.
 
+
+
+
+
 * I consider level translators a last resort. They take up space, power, and add (often unnecessary) cost. It's usually far simpler to use clever power supply sequencing or find 5V tolerant logic chips.
-* Consider that many buffer ICs (especially those from TI) have 5V-tolerant inputs and will output at their VCC, which may be lower than their input. They're not a dedicated level translator, but may work well enough.
+
+
+  * Consider that many buffer ICs (especially those from TI) have 5V-tolerant inputs and will output at their VCC, which may be lower than their input. They're not a dedicated level translator, but may work well enough.
 
 
   * Also consider using tri-state logic. Many tristate drivers can handle voltages on their output pin higher than their VCC. That's a mini level-translator too.
 
 
   * Don't just use current limiting resistors on your microcontroller outputs. Sure, it might work today, but you're dumping current through the ESD protection diodes of the chip you're driving and that's not usually a recommended case. Especially if it's a cheap chip from a cheap vendor (ST, the Shenzen Market, etc), they may have not extensively tested the chip against latch-up in those conditions.
+
+
+
+
 
 
 If you've got everything wired up properly and the voltage levels are correct, you can run avrdude and get the following beautiful greeting message\:

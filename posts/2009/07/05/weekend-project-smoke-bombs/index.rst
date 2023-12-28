@@ -8,7 +8,7 @@
 
 **I am not in any way responsible for injury or damage resulting from this blog entry. Do not assume that these instructions are either complete or correct. Don't be stupid either; if you can't handle fire safely then you surely can't handle this safely.**
 
-Lately I have been doing small weekend projects which are generally cheap and fun. This past weekend's project, in honor of the 4th, was making smoke bombs. I found out from a friend at work that there was a store in milwaukee which sold lab supplies, including KNO\ :sub:`{content}`\  (saltpeter). I have been wondering how to aquire that chemical since I first read the anarchist's cookbook a few years ago. It is the main ingredient in many pyrotechnical compounds including gun powder, flash powder, and smoke bombs. So, I went to this store (Laabs, Inc.) in Milwaukee, near 30th and Wisconsin and bought two pounds of this chemical @ $7.12/lb. I got carded before I could buy it, so it is an over 18 sort of substance. It looks kind of like the rouded kind of rock salt that you can buy for water softeners.
+Lately I have been doing small weekend projects which are generally cheap and fun. This past weekend's project, in honor of the 4th, was making smoke bombs. I found out from a friend at work that there was a store in milwaukee which sold lab supplies, including KNO\ :sub:`3`\  (saltpeter). I have been wondering how to aquire that chemical since I first read the anarchist's cookbook a few years ago. It is the main ingredient in many pyrotechnical compounds including gun powder, flash powder, and smoke bombs. So, I went to this store (Laabs, Inc.) in Milwaukee, near 30th and Wisconsin and bought two pounds of this chemical @ $7.12/lb. I got carded before I could buy it, so it is an over 18 sort of substance. It looks kind of like the rouded kind of rock salt that you can buy for water softeners.
 
 The next ingredient was easy to get\: brown sugar. I got the light brown kind, but apparently the dark brown kind works better. It cost me $1.89 at Pick'n'save (so far we are up to ~$18 on this project). Now that I have introduced the main ingredients, here is the illistrated tutorial\:
 
@@ -18,11 +18,12 @@ Materials
 
 
 
-* Saltpeter or KNO\ :sub:`{content}`\ . It doesn't matter which since they are the same thing.
+* Saltpeter or KNO\ :sub:`3`\ . It doesn't matter which since they are the same thing.
 
 
 * 
-.. figure:: sugar.jpg
+
+  .. figure:: sugar.jpg
      :width: 192
      :align: right
 
@@ -53,7 +54,8 @@ Materials
 
 
 * 
-.. figure:: jarpestle.jpg
+
+  .. figure:: jarpestle.jpg
      :width: 192
      :align: right
 
@@ -74,11 +76,12 @@ Instructions
 
 
 
-#. Weigh out the saltpeter and place it into the mortar. It is best to weigh it while it is inside the mortar so that it doesn't get all over the place from dumping into the mortar. Since this mixture is going to be 3 parts KNO\ :sub:`{content}`\  to 2 parts sugar, it is easiest to make this a number divisible by 3. In this tutorial I used 48g of saltpeter.
+#. Weigh out the saltpeter and place it into the mortar. It is best to weigh it while it is inside the mortar so that it doesn't get all over the place from dumping into the mortar. Since this mixture is going to be 3 parts KNO\ :sub:`3`\  to 2 parts sugar, it is easiest to make this a number divisible by 3. In this tutorial I used 48g of saltpeter.
 
 
 #. 
-.. figure:: measured.jpg
+
+   .. figure:: measured.jpg
       :width: 192
       :align: right
 
@@ -106,7 +109,8 @@ Instructions
 
 
 #. 
-.. figure:: packed.jpg
+
+   .. figure:: packed.jpg
       :width: 192
       :align: right
 

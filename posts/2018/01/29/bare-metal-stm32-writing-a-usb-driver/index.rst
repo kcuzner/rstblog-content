@@ -883,7 +883,9 @@ I'm just going to go through the transmit sequence, since the receive works in a
 
 
 #. Call a subroutine that queues up the next USB packet to send from the buffer
-#. Determine if transmission is finished. If so, return.
+
+
+   #. Determine if transmission is finished. If so, return.
 
 
    #. Allocate a packet buffer in the PMA if needed. The buffer will be endpointSize long, which is the packet size configured when the user set up the endpoint. This is usually 8 or 64 for low and full speed peripherals, respectively.
@@ -899,6 +901,10 @@ I'm just going to go through the transmit sequence, since the receive works in a
 
 
    #. In all cases, toggle the EPnR bits to make the transmit endpoint Valid so that a packet is sent.
+
+
+
+
 
 #. The user subroutine exits at this point.
 

@@ -50,7 +50,7 @@ PSX controllers communicate using a bus that has a clock, acknowledge, slave sel
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/popnmusic1.png
    :width: 512
 
- Pop 'n Music Controller Schematic
+
 
 After doing that, suddenly I got everything to work. It responded correctly to the computer when asked about its inputs and after some optimization, stopped skipping packets due to taking too much time processing button inputs. It worked! Soon after getting the controller to talk to the computer, I discovered an error in the website I mentioned earlier that detailed the protocol. It mentioned that during transmission of the data about the buttons that the control line was going to be left high. While its a minor difference, I thought I might as well mention `this site <http://store.curiousinventor.com/guides/PS2/>`__, which lists the commands correctly and was very helpful. As I mentioned before, one problem that was encoutered was that in order for the controller to be recognized as a pop-n-music controller by an actual playstation, the left, right, and down buttons must be pressed. However, it seems that the PSX->USB converter that we were using was unable to handle having those 3 pressed down at once. So, there needed to be a mode switch. The way for switching modes I came up with was to hold down both start and select at the same time for 3 seconds. After the delay, the modes would switch. The UI interaction for this is embodied in two LEDs. One LED is lit for when it is in PSX mode and the other when it is in emulator mode. When both buttons are pressed, both LEDs light up until the one for the previous mode shuts off. At first, I had the mode start out every time the controller was started in the same mode, no matter what the previous mode was before it was shut off. It soon became apparent that this wouldn't do, and so I looked in to using the EEPROM to store the flag value I was using to keep the state of the controller. Strangely, `it worked on the first try <https://github.com/kcuzner/pop-n-music-controller/commit/8cb99e07dee7fbaf482ded0405dbf21efbd647a5>`__, so the controller will stay in the same mode from the last time it was shut off. My only fear is that switching the mode too much could degrade the EEPROM. However, the datasheet says that it is good for 100,000 erase/write cycles, so I imagine it would be quite a while before this happens and other parts of the controller will probably fail first (like the switches).
 
@@ -65,47 +65,47 @@ I next began assembly. I went the route of perfboard with individual copper pads
    :width: 200
    :align: left
 
- Socket and PSX plug mouted
+
 
 .. image:: 0810131746.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131746.jpg
    :width: 200
 
- Wiring between PSX plug and socket
+
 
 .. image:: 0810131753.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131753.jpg
    :width: 200
    :align: left
 
- Adding some transistors...first try
+
 
 .. image:: 0810131809.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131809.jpg
    :width: 200
    :align: left
 
- Adding the transistors, try 2
+
 
 .. image:: 0810131954.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131954.jpg
    :width: 200
    :align: left
 
- Wiring almost done
+
 
 .. image:: 0811131258a.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0811131258.jpg
    :width: 480
    :align: left
 
- Inside of switch box
+
 
 .. image:: 0812132143.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0812132143.jpg
    :width: 480
 
- The controller in action
+
 
 Conclusion
 ==========

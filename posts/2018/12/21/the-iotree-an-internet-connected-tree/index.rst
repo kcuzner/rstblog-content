@@ -18,7 +18,7 @@ For this Christmas I decided to do something fun with my Christmas tree\: Hook i
    :width: 1125
    :align: right
 
- The IoTree
+
 
 The IoTree is an interface that allows anyone to control the pattern of lights shown on the small Christmas tree on my workbench. It consists of the following components\:
 

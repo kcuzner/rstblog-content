@@ -11,7 +11,7 @@ As my addition to avrdude, I created a new programmer type called "linuxspi" whi
    :target: http://kevincuzner.com/wp-content/uploads/2013/05/photo2-sm.jpg
    :width: 512
 
- Raspberry Pi Programming an AVR
+
 
 Usage
 =====

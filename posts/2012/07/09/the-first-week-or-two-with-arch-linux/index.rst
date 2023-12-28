@@ -40,7 +40,7 @@ Here is my desktop as it stands\:
    :width: 1024
    :align: center
 
- Arch Linux with Gnome 3
+
 
 .. rstblog-settings::
    :title: The first week or two with Arch Linux

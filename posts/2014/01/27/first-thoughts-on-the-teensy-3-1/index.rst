@@ -9,7 +9,7 @@ The most interesting part to me, by far, is the processor to be used. It is goin
    :width: 328
    :align: right
 
- Teensy 3.1
+
 
 This board contains a Freescale ARM Cortex-M4 microcontroller along with a smaller non-user-programmable microcontroller for assistance in the USB bootloading process (the exact details of that interaction are mostly unknown to me at the moment). I have never used an ARM microcontroller before and never a microcontroller with as many peripherals as this one has. The datasheet is 1200 pages long and is not really even being very verbose in my opinion. It could easily be 3000 pages if they included the level of detail usually included in AVR and PIC datasheets (code examples, etc). The processor runs at 96Mhz as well, making it the most powerful embedded computer I have used aside from my Raspberry Pi.
 

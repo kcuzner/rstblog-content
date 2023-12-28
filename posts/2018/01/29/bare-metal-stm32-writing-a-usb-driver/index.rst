@@ -5,7 +5,7 @@ A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1
    :width: 320
    :align: right
 
- LED Wristwatch with USB
+
 
 One of my recent (or not so recent) projects was an `LED Wristwatch <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ which utilized an STM32L052. This microcontroller is optimized for low power, but contains a USB peripheral which I used for talking to the wristwatch from my PC, both for setting the time and for reflashing the firmware. This was one of my first hobby projects where I designed something without any prior breadboarding (beyond the battery charger circuit). The USB and such was all rather "cross your fingers and hope it works" and it just so happened to work without a problem.
 

@@ -7,7 +7,7 @@ The server I have runs on a port which is considered a dedicated port for WebSoc
    :width: 300
    :align: center
 
- Super-basic flowchart
+
 
 Each service has its own `thread <http://docs.python.org/library/threading.html#thread-objects>`__ and inherits from a base class which is a thread plus a queue for accepting new clients. The clients are a `socket <http://docs.python.org/library/socket.html#socket-objects>`__ object returned by socket.accept which are wrapped in a class that allows for communication to the socket via queues. The actual communication to sockets is managed by a separate thread that handles all the encoding and decoding to websocket frames. Since adding a client doesn't produce much overhead, this structure potentially could be expanded very easily to handle many many clients.
 

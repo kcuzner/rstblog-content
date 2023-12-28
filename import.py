@@ -772,9 +772,16 @@ class WordpressToRst(HTMLParser):
 
     def handle_data(self, data):
         self._last_data = data
-        for m in re.finditer(r"\[/?(\w+)[^\]]*\]", data):
+        for m in re.finditer(r"\[(/?)(\w+)[^\]]*\]", data):
             # Remove all bbcode-style things
-            if m.group(1) == "caption":
+            if m.group(2) == "caption":
+                if m.group(1) == "/":
+                    # Some captions are between any inner elements and the end
+                    # tag. However, at this point we've already processed things and I
+                    # can only find one instance of this happening, so we just throw everything
+                    # away up until and including the closing tag.
+                    pos = data.find(m.group(0))
+                    data = data[pos:]
                 data = data.replace(m.group(0), "")
         if len(self.stack):
             self.stack[-1].append(TextBody(data, self.getpos()))

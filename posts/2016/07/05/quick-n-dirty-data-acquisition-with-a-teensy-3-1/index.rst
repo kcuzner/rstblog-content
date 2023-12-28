@@ -10,7 +10,7 @@ I am working on a project that involves a Li-Ion battery charger. I've never bui
    :width: 640
    :align: center
 
- Battery charger breadboard
+
 
 After about 2 days of taking meter measurements every 6 hours or so to see what the voltage level had dropped to, I decided to try to automate this process. I had my trusty Teensy 3.1 lying around, so I thought that it should be pretty simple to turn it into a simple data logger, measuring the voltage at a very slow rate (maybe 1 measurement per 5 seconds). Thus was born the EZDAQ.
 
@@ -228,7 +228,7 @@ Conclusion
    :width: 640
    :align: center
 
- Battery Charger with EZDAQ Attached (don't mind the O-Scope probes...those are for another test)
+
 
 After hooking everything up and getting everything to run, it was fairly simple for me to take some two-channel measurements\:
 

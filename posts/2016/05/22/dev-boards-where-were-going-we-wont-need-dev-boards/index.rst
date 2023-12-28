@@ -13,7 +13,7 @@ Introduction
    :width: 320
    :align: right
 
- STM32F103C8 Tray from eBay
+
 
 About two years ago I started working with the Teensy 3.1 (which uses a Freescale Kinetis ARM-Cortex microcontroller) and I was super impressed with the ARM processor, both for its power and relative simplicity (it is not simple...its just relatively simple for the amount of power you get for the cost IMO). Almost all my projects before that point had consisted of AVRs and PICs (I'm in the AVR camp now), but now ARM-based microcontrollers had become serious contenders for something that I could go to instead. I soon began working on a small development board project also involving some Freescale Kinetis microcontrollers since those are what I have become the most familiar with. Sadly, I have had little success since I have been trying to make a programmer myself (the official one is a minimum of $200). During the course of this project I came across a LOT of STM32 stuff and it seemed that it was actually quite easy to set up. Lots of the projects used the STM32 Discovery and similar dev boards, which are a great tools and provide an easy introduction to ARM microcontrollers. However, my interest is more towards doing very bare metal development. Like soldering the chip to a board and hooking it up to a programmer. Who needs any of that dev board stuff? For some reason I just find doing embedded development without a development board absolutely fascinating. Some people might interpret doing things this way as a form of masochism. Perhaps I should start seeing a doctor...
 
@@ -132,7 +132,7 @@ Step 2\: Figure out where to solder and do it
    :width: 241
    :align: right
 
- STM32F103C8 Pins of interest
+
 
 After getting the datasheet we need to solder the microcontroller down to the breakout board so that we can start working with it on a standard breadboard. If you prefer to go build your own PCB and all that (I usually do actually) then do that instead of this. However, you will still need to know which pins to hook up.
 
@@ -156,7 +156,7 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
    :width: 480
    :align: center
 
- STM32F103C8 Breakout
+
 
 **Very important\: **You may notice that I have some little tiny capacitors (0.1uF) soldered between the power pins (the one on the top is the most visible in the picture). **You need to mount your capacitors between each pair of VDD/VSS pins (including AVDD/AVSS)**. How you do this is completely up to you, but it must be done and ***they should be rather close to the microcontroller itself***. If you don't it is entirely possible that when the microcontroller first turns on and powers up (specifically at the first falling edge of the internal clock cycle), the inductance created by the flying power wires we have will create a voltage spike that will either cause a malfunction or damage. I've broken microcontrollers by forgetting the decoupling caps and I'm not eager to do it again.
 
@@ -169,7 +169,7 @@ Step 3\: Connect the breadboard and programmer
    :width: 320
    :align: right
 
- Cheap STLinkV2 Clone
+
 
 Don't do this with the programmer plugged in.
 
@@ -217,7 +217,7 @@ Here is my breadboard setup\:
    :width: 480
    :align: center
 
- STM32F103C8 Breadboard Setup
+
 
 Step 4\: Download the STM32F1xx C headers
 =========================================
@@ -539,7 +539,7 @@ After doing that I saw the following awesomeness\:
    :width: 480
    :align: center
 
- STM32F103C8 with LED turned on
+
 
 Wooo!!! The LED blinks! At this point, you have successfully flashed an ARM Cortex-M3 microcontroller with little more than a cheap programmer from eBay, a breakout board, and a few stray wires. Feel happy about yourself.
 

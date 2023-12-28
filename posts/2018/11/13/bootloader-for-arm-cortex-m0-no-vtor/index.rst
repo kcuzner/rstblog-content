@@ -42,39 +42,65 @@ What is the VTOR?
 
 Near the heart of the ARM Cortex is the NVIC, or Nested Vector Interrupt Controller. This is used for prioritizing peripheral interrupts (I2C byte received, USB transaction complete, etc) and core signals (hard fault, system timer tick, etc) while managing the code which is executed in response. The NVIC works by using a lookup table at a specific location to determine what code to execute. As an example, the interrupt table for the STM32F042 looks something like this\:
 
-+-----------------------+----------------------------------------+
-| Address               | Description                            |
-+=======================+========================================+
-| 0x00000000            | Address of initial stack offset in RAM |
-+-----------------------+----------------------------------------+
-| 0x00000004            | Reset handler address                  |
-+-----------------------+----------------------------------------+
-| 0x00000008            | NMI handler address                    |
-+-----------------------+----------------------------------------+
-| 0x0000000C            | HardFault handler address              |
-+-----------------------+----------------------------------------+
-| 0x00000010-0x00000028 | Reserved (other Cortex-M processors    |
-|                       | have more items here)                  |
-+-----------------------+----------------------------------------+
-| 0x0000002C            | SVCall handler address                 |
-+-----------------------+----------------------------------------+
-| 0x00000030-0x00000034 | Reserved (same as other reserved       |
-|                       | fields)                                |
-+-----------------------+----------------------------------------+
-| 0x00000038            | PendSV handler address                 |
-+-----------------------+----------------------------------------+
-| 0x0000003C            | System tick handler address            |
-+-----------------------+----------------------------------------+
-| 0x00000040            | STM32 WWDG handler address             |
-+-----------------------+----------------------------------------+
-| 0x00000044            | STM32 PVD_VDDIO2 handler address       |
-+-----------------------+----------------------------------------+
-| 0x00000048            | STM32 RTC handler address              |
-+-----------------------+----------------------------------------+
-| 0x0000004C            | STM32 FLASH handler address            |
-+-----------------------+----------------------------------------+
-| ...etc...             |
-+-----------------------+----------------------------------------+
+.. list-table
+   :widths: auto
+   :header-rows: 1
+   * - Address
+
+     - Description
+   * - 0x00000000
+
+     - Address of initial stack offset in RAM
+
+   * - 0x00000004
+
+     - Reset handler address
+
+   * - 0x00000008
+
+     - NMI handler address
+
+   * - 0x0000000C
+
+     - HardFault handler address
+
+   * - 0x00000010-0x00000028
+
+     - Reserved (other Cortex-M processors have more items here)
+
+   * - 0x0000002C
+
+     - SVCall handler address
+
+   * - 0x00000030-0x00000034
+
+     - Reserved (same as other reserved fields)
+
+   * - 0x00000038
+
+     - PendSV handler address
+
+   * - 0x0000003C
+
+     - System tick handler address
+
+   * - 0x00000040
+
+     - STM32 WWDG handler address
+
+   * - 0x00000044
+
+     - STM32 PVD_VDDIO2 handler address
+
+   * - 0x00000048
+
+     - STM32 RTC handler address
+
+   * - 0x0000004C
+
+     - STM32 FLASH handler address
+
+   * - ...etc...
 
 
 
@@ -237,15 +263,19 @@ So, what is the VTOR? In some ARM Cortex architectures (I know at least the ARM 
 
 One thing you may have noticed at this point is that my assembly dump earlier had everything living relative to address 0x08000000. However, I said that that the VTOR's reset value was 0x00000000. So, how does the STM32's ARM core know where to find the table? All STM32's I've seen so far implement a "boot remapping" feature which uses the physical "BOOT0" pin to map the flash (which starts at 0x08000000) onto the memory space starting at 0x00000000 like so (may vary slightly by STM32)\:
 
-+-------+------------------------------------------------------------------------------------------------+
-| BOOT0 | Result                                                                                         |
-| pin   |                                                                                                |
-+=======+================================================================================================+
-| 0     | 0x08000000 (Main Flash Memory) mapped onto 0x00000000                                          |
-+-------+------------------------------------------------------------------------------------------------+
-| 1     | System Memory (which is a ROM usually containing some bootloader supplied by ST) is mapped     |
-|       | onto 0x00000000                                                                                |
-+-------+------------------------------------------------------------------------------------------------+
+.. list-table
+   :widths: auto
+   :header-rows: 1
+   * - BOOT0 pin
+
+     - Result
+   * - 0
+
+     - 0x08000000 (Main Flash Memory) mapped onto 0x00000000
+
+   * - 1
+
+     - System Memory (which is a ROM usually containing some bootloader supplied by ST) is mapped onto 0x00000000
 
 
 

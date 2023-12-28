@@ -602,25 +602,11 @@ class ColumnTag(TagHandler):
     def _content(self):
         return "\n\n".join([c.to_rst() for c in self.content])
 
-    def __len__(self):
-        return len(self._content)
-
-    @property
-    def min_width(self):
-        # The minimum width of a column is the length of the longest word, plus
-        # 3 for the column separator and terminating spaces.
-        words = self._content.split()
-        return max([len(w) + 3 for w in words]) if len(words) else 0
-
-    def wrapped(self, width):
-        content = "\n\n".join([c.to_rst() for c in self.content])
-        return "\n\n".join(
-            ["\n".join(textwrap.wrap(p, width=width)) for p in content.split("\n\n")]
-        )
-
-    def cell(self, width):
-        wrapped = self.wrapped(width - 3)
-        return "\n".join(["| " + l.ljust(width - 2) for l in wrapped.splitlines()])
+    def cell(self, leader):
+        lines = self._content.splitlines()
+        lines[0] = leader + lines[0]
+        rest = textwrap.indent("\n".join(lines[1:]), " " * len(leader))
+        return lines[0] + "\n" + rest
 
     def to_rst(self, *args, **kwargs):
         raise NotImplementedError(
@@ -656,12 +642,13 @@ class RowTag(TagHandler):
     def rows(self):
         return [self]
 
-    def render(self, widths):
-        cells = [c.cell(w).splitlines() for c, w in zip(self.columns, widths)]
-        height = max([len(c) for c in cells])
-        for c, w in zip(cells, widths):
-            c.extend(["| " + " " * (w - 2) for _ in range(height - len(c))])
-        return "\n".join(["".join(t) + "|" for t in zip(*cells)]) + "\n"
+    def render(self, column_count):
+        # NOTE: This doesn't support colspans or rowspans
+        def leader(index):
+            return "   * - " if index == 0 else "     - "
+
+        cells = [c.cell(leader(i)) for i, c in enumerate(self.columns)]
+        return "\n".join(cells)
 
     def to_rst(self, *args, **kwargs):
         raise NotImplementedError(
@@ -714,42 +701,30 @@ class TableTag(TagHandler):
             return
 
     def to_rst(self, *args, **kwargs):
+        # This generates tables in the "list-table" style. Originally I had
+        # implemented this to use "grid tables", but this was extremely
+        # complicated and required all manner of manual tweaking. List tables
+        # are much more ergnomic to parse/tweak and look (mostly) just as good.
         all_rows = list(chain.from_iterable([r.rows for r in self.rows]))
         if not len(all_rows):
             return ""
+        # Determine how many columns this table has so we can ensure we declare
+        # slots for all of them in the list.
         column_count = max([len(r.columns) for r in all_rows])
         if not column_count:
             return ""
-        # first entry is width, 2nd is min width
-        # NOTE: Rows return an empty cell if a column is requested that isn't
-        # present on the row
-        column_widths = [
+        # Separate all header rows from data rows. I just stuff them at the top.
+        headers = [r.render(column_count) for r in all_rows if r.is_header]
+        data = [r.render(column_count) for r in all_rows if not r.is_header]
+        decl = "\n".join(
             (
-                max([len(r.column(i)) for r in all_rows]),
-                max([r.column(i).min_width for r in all_rows]),
+                ".. list-table",
+                "   :widths: auto",
+                f"   :header-rows: {len(headers)}",
+                "",
             )
-            for i in range(column_count)
-        ]
-        # Nominally, we'll allow a width of 20 (arbitrary) per column to compute the full
-        # table width, capping the width to 120 (arbitrary) characters. The columns will
-        # then be scaled according to their relative proportions, though they will not be made
-        # smaller than the column's minimum width.
-        total_width = sum([w for w, _ in column_widths])
-        width_fractions = [w / total_width for w, _ in column_widths]
-        width = w if (w := 20 * column_count) < 120 else 120
-        widths = [
-            max(min_width, int(w * f))
-            for f, (w, min_width) in zip(width_fractions, column_widths)
-        ]
-        separator_hdr = "".join(["+" + "=" * (w - 1) for w in widths]) + "+" + "\n"
-        separator = "".join(["+" + "-" * (w - 1) for w in widths]) + "+" + "\n"
-        return (
-            separator
-            + separator.join([r.render(widths) for r in all_rows if r.is_header])
-            + separator_hdr
-            + separator.join([r.render(widths) for r in all_rows if not r.is_header])
-            + separator
         )
+        return decl + "\n".join(headers) + "\n".join(data)
 
 
 @TagHandler.register_tag("object")

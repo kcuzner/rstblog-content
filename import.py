@@ -5,6 +5,54 @@ Imports and updates pages and posts from an RSS export file produced by
 wordpress
 """
 
+# Theory of operation:
+#
+# This importer does two basic things with the XML:
+# 1. Interpret post and page content into ReST
+# 2. Note attachments (images) and download them
+#
+# For #1, the functionality is centered around the TagHandler class in
+# combination with the ordpressToRst HTMLParser. As HTML is parsed, the
+# WordpressToRst will request handlers from the TagHandler for each HTML tag
+# encoutered, noting nesting and other things like "malformed" closing tags. It
+# gathers these handler instances into a "content" list which is used to
+# generate the final output ReST for the HTML content.
+#
+# Simple tags such bold, italics, etc are very straightforwardly processed
+# into their ReST equivalents. Non-trivial handling exists for links, iamges
+# tables, and code blocks.
+#
+# Posts/Pages are generally processed into folders matching the original
+# wordpress URL structure, creating an "index.rst" for each page or post that
+# lives in the path.
+#
+# For #2, as TagHandlers are created, cross references between elements and
+# attachments are noted. Attachments are downloaded into the destination folder
+# (living alongside the index.rst) and the URLs in the corresponding TagHandler
+# are updated to either be relative URLs or set to a value indicating that the
+# attachment couldn't be downloaded (causing the corresponding output ReST
+# block to be omitted).
+#
+# The order of operations generally for each path consists of 3 steps:
+# 1. Load the HTML into a new WordpressToRst instance, parsing the HTML into
+#    a list of TagHandlers.
+# 2. Process any attachments that have appeared, including updating the URLs
+#    in corresponding TagHandlers
+# 3. Processing the gathered content into restructured text using the to_rst
+#    method of each TagHandler.
+#
+# With that in mind, you'll usually find that attachments must be processed in
+# the __init__ of a TagHandler subclass and that the to_rst method takes a
+# variety of arguments to handle cases such as nesting tags where additional
+# context is needed when the element was initially created. All ReST generation
+# is deferred until the to_rst method is called in order to allow updating of
+# the parsed content tree.
+#
+# There are a LOT of little quirks stemming from how wordpress expresses HTML
+# within its RSS XML (and generally internally to its database). It's critical
+# to manually evaluate the output of this script for correctness and tweak as
+# necessary (trying not to break things as you tweak).
+
 from abc import ABC, abstractmethod
 import argparse
 from collections import deque

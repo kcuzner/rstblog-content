@@ -6,7 +6,7 @@
 
 
 
-**I am not in any way responsible for injury or damage resulting from this blog entry. Do not assume that these instructions are either complete or correct. Don't be stupid either; if you can't handle fire safely then you surely can't handle this safely.**
+**I am not in any way responsible for injury or damage resulting from this blog entry. Do not assume that these instructions are either complete or correct. Don't be stupid either; if you can't handle fire safely then you surely can't handle this safely.** 
 
 Lately I have been doing small weekend projects which are generally cheap and fun. This past weekend's project, in honor of the 4th, was making smoke bombs. I found out from a friend at work that there was a store in milwaukee which sold lab supplies, including KNO\ :sub:`3`\  (saltpeter). I have been wondering how to aquire that chemical since I first read the anarchist's cookbook a few years ago. It is the main ingredient in many pyrotechnical compounds including gun powder, flash powder, and smoke bombs. So, I went to this store (Laabs, Inc.) in Milwaukee, near 30th and Wisconsin and bought two pounds of this chemical @ $7.12/lb. I got carded before I could buy it, so it is an over 18 sort of substance. It looks kind of like the rouded kind of rock salt that you can buy for water softeners.
 

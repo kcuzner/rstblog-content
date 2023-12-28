@@ -87,7 +87,7 @@ This should be easy to find information on, but it really isn't for some reason.
 * Connect TPICLK to the ISP connector's CLK
 
 
-* Ensure the AVR is running at 5V. **This is important.** See later for some tips and tricks I have for getting around this restriction if the rest of your circuit is 3.3V only.
+* Ensure the AVR is running at 5V. **This is important.**  See later for some tips and tricks I have for getting around this restriction if the rest of your circuit is 3.3V only.
 
 
 
@@ -163,7 +163,7 @@ Why you might pick a TPI-only AVR
 
 While I was researching using TPI with my usbasp, I came across a post where someone said something along the lines of "why waste your money on a 6-pin microncontroller? Just use <insert older AVR here>". Despite the obvious downside of needing to use a new programming interface, I think there is one niche where these cannot be beat\:
 
-The TPI-only AVRs are BY FAR the cheapest "name brand" microcontrollers you can buy. Between these and the PIC10 family, there is nothing cheaper until you start looking at some chinese suppliers (there's a $0.03-in-single-quantity microcontroller that has become somewhat popular). I chose the ATTiny20 for my project because **it was even cheaper than a couple discrete single gate ICs**. I needed to do some OR-ing logic which I would have normally accomplished with discrete parts. Each of those in single quantity is like $0.25 and I would have needed at least 4 or 5. The ATTiny20 I picked was **$0.53**. It was cheaper to use a microcontroller than discrete logic gates! What a world we live in.
+The TPI-only AVRs are BY FAR the cheapest "name brand" microcontrollers you can buy. Between these and the PIC10 family, there is nothing cheaper until you start looking at some chinese suppliers (there's a $0.03-in-single-quantity microcontroller that has become somewhat popular). I chose the ATTiny20 for my project because **it was even cheaper than a couple discrete single gate ICs** . I needed to do some OR-ing logic which I would have normally accomplished with discrete parts. Each of those in single quantity is like $0.25 and I would have needed at least 4 or 5. The ATTiny20 I picked was **$0.53** . It was cheaper to use a microcontroller than discrete logic gates! What a world we live in.
 
 The older ISP AVRs (especially ATMega8 and friends) are losing relevance in the market when faced with pressure from the ARM Cortex-M based microcontrollers. They not only have better peripherals generally, but they also require both less power and have better tooling (compiler, standard programming tools, etc) than the equivalent AVRs. I would never pick an ATMega328 for a new product unless I had to use an existing binary or something. Even in my personal projects, I strongly prefer ARM Cortex-M microcontrollers because they're easier to program and debug without requiring expensive single-vendor hardware.
 

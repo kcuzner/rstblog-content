@@ -1,8 +1,8 @@
 So, as usual after I completed my `LED case mod <http://cuznersoft.com/wordpress/?p=126>`__ I asked myself, how can I could make it even cooler? Thus was born the idea for Case LEDs v. 2.0.
 
-**The Idea\:** Wire up some LEDs so they are controlled by the computer to vary their intensity or something based on the CPU usage.
+**The Idea\:**  Wire up some LEDs so they are controlled by the computer to vary their intensity or something based on the CPU usage.
 
-**The Implementation\:** Using RGB LEDs, some small MOSFETs, and a microcontroller make a USB controlled light generator that takes as input a number representing CPU usage.
+**The Implementation\:**  Using RGB LEDs, some small MOSFETs, and a microcontroller make a USB controlled light generator that takes as input a number representing CPU usage.
 
 In the 3 weeks since I put the white LEDs in my case I have been working on this thing in my spare time (mostly weekends...homework has just been swamping me during the week) and this past weekend I finally got it to connect through the USB using the `V-USB <http://www.obdev.at/products/vusb/index.html>`__ library and so I have made a lot of progress. At the moment it is perfectly capable of displaying CPU usage by way of color (it is really cool to watch), but I still want to add a few features before I release the source code (and I also need to test it to make sure it doesn't crash after 2 days or have some horrible memory leak in the host software or something...).
 

@@ -2,7 +2,7 @@ After some frustrating times involving Ubuntu 12.04, hibernation, suspending, an
 
 Arch Linux is interesting for me since its the first time I have not been using an operating system with the "version" paradigm. Since its a rolling release it is prone to more problems, but it also gives the advantage of always being up to date. Since my computer's hardware is relatively new (it has been superseded by Ivy Bridge, but even so its driver support still seems to be being built), I felt that I had more to gain from doing a rolling release where new updates and such would come out (think kernel 3.0 to 3-2...Sandy Bridge processors suddenly got much better power management) almost immediately. So, without further adieu, here are my plusses and minuses (note that this will end up comparing Ubuntu to Arch alot since that's all I know at the moment)\:
 
-**Plusses\:**
+**Plusses\:** 
 
 
 * It was actually very easy to install. Since I have had problems with net installs, I did a core install and then updated it. I practiced several times beforehand on virtual machines, including using existing partitions and such. Although the initial downloads took some time (the lack of curl in the core install was kind of upsetting since I couldn't use rankmirrors to get better speeds), after that it was pretty fast. Thanks to considerable documentation and a few practice runs, getting an X enviroment set up using Gnome 3 (and gdm...I like the graphical logins) didn't take long at all. It took a bit of coaxing (read\: google + arch wiki) to get things such as networkmanager running and such, but with time I had it all figured out and I managed to get the whole system running more or less stably within a day.
@@ -18,7 +18,7 @@ Arch Linux is interesting for me since its the first time I have not been using 
 
 
 
-**Minuses\:**
+**Minuses\:** 
 
 
 * The rolling release model breaks things occasionally. Recently, the linux-firmware package was updated and this caused my wireless card to stop working since it could no longer find the drivers. I wasn't sure why, but I have just downgraded the package and blacklisted it for upgrades. Hopefully that doesn't kill me later (it probably will), but if it does by then I hope to have figured out what is wrong.

@@ -1,7 +1,7 @@
 In my most recent project I selected an ARM Cortex-M0 microcontroller (the STM32F042). I soon realized that there is a key architectural piece missing from the Cortex-M0 which the M0+ does not have\: The vector table offset register (VTOR).
 
 I want to talk about how I overcame the lack of a VTOR to write a USB bootloader which supports a semi-safe fallback mode.
-**The source for this post can be found here (look in the "bootloader" folder)\:**
+**The source for this post can be found here (look in the "bootloader" folder)\:** 
 
 
 `https\://github.com/kcuzner/midi-fader/tree/master/firmware <https://github.com/kcuzner/midi-fader/tree/master/firmware>`__
@@ -11,7 +11,7 @@ I want to talk about how I overcame the lack of a VTOR to write a USB bootloader
 .. rstblog-break::
 
 
-**Table of contents\:**
+**Table of contents\:** 
 
 
 * `What is the VTOR? <what-is-vtor>`__
@@ -422,7 +422,7 @@ I implemented this with these linker script memory modifications\:
 
 
 
-**Bootloader linker script\:**
+**Bootloader linker script\:** 
 
 .. code-block:: c
 
@@ -444,7 +444,7 @@ I implemented this with these linker script memory modifications\:
 
 
 
-**Device linker script\:**
+**Device linker script\:** 
 
 .. code-block:: c
 

@@ -29,7 +29,7 @@ I have very little experience writing more complex Makefiles. When I say "comple
 
 I'm writing this in the hope that those without mad Makefile skills, such as myself, can liberate themselves from the Arduino IDE when developing for an awesome platform like the Teensy 3.1.
 
-**All code for this example can be found here\: **`https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`__
+**All code for this example can be found here\:** `https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`__
 
 Prerequisites
 =============

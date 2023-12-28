@@ -6,11 +6,11 @@ Traditionally I have used the work of others, mainly the `V-USB <http://www.obde
 
 Over the thanksgiving break I started cobbling together some software with the intent of writing a driver for the USB module in the Teensy myself. I started originally with `my bare metal stuff <http://kevincuzner.com/2014/04/28/teensy-3-1-bare-metal/>`__, but I ended up going with something closer to `Karl Lunt's solution <http://www.seanet.com/~karllunt/bareteensy31.html>`__. I configured code\:\:blocks to use the arm-none-eabi compiler that I had installed and created a code blocks project for my code and used that to build it (with a post-compile event translating the generated elf file into a hex file).
 
-**This is a work in progress and the git repository will be updated as things progress since it's not a dedicated demonstration of the USB driver.**
+**This is a work in progress and the git repository will be updated as things progress since it's not a dedicated demonstration of the USB driver.** 
 
 The github repository here will be eventually turned in to a really really rudimentary 500-800ksps oscilloscope.
 
-**The code\:** `https\://github.com/kcuzner/teensy-oscilloscope <https://github.com/kcuzner/teensy-oscilloscope>`__
+**The code\:**  `https\://github.com/kcuzner/teensy-oscilloscope <https://github.com/kcuzner/teensy-oscilloscope>`__
 
 The code for this post was taken from the following commit\:
 

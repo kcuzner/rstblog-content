@@ -404,8 +404,11 @@ class BoldTag(TagHandler):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
-        content = "".join([c.to_rst(*args, **kwargs) for c in self.content])
-        return f"**{content}**"
+        # NOTE: ReST requires there to be no trailing whitespace. Just in case,
+        # we insert one space after these. Shouldn't result in too many
+        # problems, I rarely use this in a word.
+        content = "".join([c.to_rst(*args, **kwargs) for c in self.content]).strip()
+        return f"**{content}** "
 
 
 @TagHandler.register_tag("li")

@@ -4,7 +4,7 @@ After serving a two year mission for my church, I have returned! While on my mis
 
 On the mission, my two most interesting things I built were a small coilgun (also called a gauss gun) and some large headphones for a deaf lady. I had the most fun with the coilgun since it required the most effort on my part to create. It is housed in the case of a broken airsoft gun and is powered by a camera flash charger and two camera flash capacitors.
 
-**The Coilgun**
+**The Coilgun** 
 
 .. figure:: HPIM1787.jpg
    :width: 300
@@ -36,7 +36,7 @@ It shoots nails or anything else magnetic cut to a specific length so they are j
 
 There is a 1000V diode in reverse across the coil to prevent damage to the SCR and also a 1MΩ resistor across the capacitors so that they don't retain charge for years and shock some unsuspecting person wondering what is inside this strange looking gun. I have had great fun with this project and someday I hope to build a much larger multi-stage one. Of course, lack of funds will keep that one out of reach for a little while at least, but it is something to work towards.
 
-**The Headphones**
+**The Headphones** 
 
 .. figure:: HPIM1738.jpg
    :width: 300

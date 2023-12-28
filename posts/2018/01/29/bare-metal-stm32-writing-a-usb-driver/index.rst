@@ -13,7 +13,7 @@ In this post I'm going to only cover a small portion of what I learned from the 
 
 
 
-**Example code for this post can be found here\:**
+**Example code for this post can be found here\:** 
 
 
 `**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
@@ -87,10 +87,10 @@ ST makes these easy to find on their website. For the USB peripheral, there's a 
 * A separate clock is used for the USB Peripheral, independent of the main processor and bus clock. On the STM32L052, one of the really cool things about this is that it is able to use the internal oscillator to generate a proper 48MHz USB clock by locking to the Start of Frame handshake from the host. This allows crystal-less USB operation! Very cool.
 
 
-* The STM32 has a dedicated separate SRAM that is shared by dual-porting between the main memory bus and the USB peripheral through some arbitration logic, which I'll refer to as the **Arbiter**. This contrasts with the K20 peripheral which required that a portion of the microcontroller's general SRAM be allocated by the program for the peripheral to use and flag bits be used to inform the peripheral of who "owns" some portion of the memory. I'm not sure which way I like better, as they have their pros and cons. This area of memory in the STM32 is called the **Packet Memory Area** or **PMA**. This memory is used to copy packets to and from the host. I'm going to talk about this at length later, since it has some special considerations.
+* The STM32 has a dedicated separate SRAM that is shared by dual-porting between the main memory bus and the USB peripheral through some arbitration logic, which I'll refer to as the **Arbiter** . This contrasts with the K20 peripheral which required that a portion of the microcontroller's general SRAM be allocated by the program for the peripheral to use and flag bits be used to inform the peripheral of who "owns" some portion of the memory. I'm not sure which way I like better, as they have their pros and cons. This area of memory in the STM32 is called the **Packet Memory Area**  or **PMA** . This memory is used to copy packets to and from the host. I'm going to talk about this at length later, since it has some special considerations.
 
 
-* A table located in the PMA (location in the PMA is at the user's discretion) points to all the other buffers in the PMA which are actually used for transferring data. This is called the "**Buffer Descriptor Table**" (**BDT**) and functions in a very similar way to the BDT on the K20.
+* A table located in the PMA (location in the PMA is at the user's discretion) points to all the other buffers in the PMA which are actually used for transferring data. This is called the "**Buffer Descriptor Table** " (**BDT** ) and functions in a very similar way to the BDT on the K20.
 
 
 * There is a single interrupt for handling all events associated with the USB peripheral. Same as the K20.
@@ -209,10 +209,10 @@ This also requires some special considerations when accessing memory. Since acce
    }
 
 
-The main thing to get out of these is that the usb_pma_copy functions treat the buffer as a bunch of 16-bit values and perform all accesses 32-bit aligned. My implementation **is naive and highly insecure.** Buffers are subject to some restrictions that will cause interesting behavior if they aren't followed\:
+The main thing to get out of these is that the usb_pma_copy functions treat the buffer as a bunch of 16-bit values and perform all accesses 32-bit aligned. My implementation **is naive and highly insecure.**  Buffers are subject to some restrictions that will cause interesting behavior if they aren't followed\:
 
 
-* **Naive\: **Buffers in general SRAM must be aligned on a 16-bit boundary. Since I copy everything by half-word by casting the void\* pointers into uint16_t\*, the compiler will optimize that and assume that void \*dest or void \*src are indeed half-word aligned. If they aren't halfword aligned, a hardfault will result since the load/store half-word instruction (LDRH, STRH) will fail. Because I didn't want to have to cast everything to a uint16_t\* or abuse the union keyword, I had to create the following and put it before every declaration of a buffer in general SRAM\:
+* **Naive\:** Buffers in general SRAM must be aligned on a 16-bit boundary. Since I copy everything by half-word by casting the void\* pointers into uint16_t\*, the compiler will optimize that and assume that void \*dest or void \*src are indeed half-word aligned. If they aren't halfword aligned, a hardfault will result since the load/store half-word instruction (LDRH, STRH) will fail. Because I didn't want to have to cast everything to a uint16_t\* or abuse the union keyword, I had to create the following and put it before every declaration of a buffer in general SRAM\:
 
 
 
@@ -226,7 +226,7 @@ The main thing to get out of these is that the usb_pma_copy functions treat the 
 
 
 
-* **Insecure\:** The copy functions will actually copy an extra byte to or from general SRAM if the buffer length is odd. This is very insecure, but the hole should only be visible from the application side since I'm required to allocate things on 16-bit boundaries inside the PMA, even if the buffer length is odd (so the USB peripheral couldn't copy in or out of the adjacent buffer if an odd number of bytes were transferred). In fact, the USB peripheral will respect odd/excessive lengths and stop writing/reading if it reaches the end of a buffer in the PMA. So, the reach of this insecurity should be fairly small beyond copying an extra byte to where it doesn't belong.
+* **Insecure\:**  The copy functions will actually copy an extra byte to or from general SRAM if the buffer length is odd. This is very insecure, but the hole should only be visible from the application side since I'm required to allocate things on 16-bit boundaries inside the PMA, even if the buffer length is odd (so the USB peripheral couldn't copy in or out of the adjacent buffer if an odd number of bytes were transferred). In fact, the USB peripheral will respect odd/excessive lengths and stop writing/reading if it reaches the end of a buffer in the PMA. So, the reach of this insecurity should be fairly small beyond copying an extra byte to where it doesn't belong.
 
 
 

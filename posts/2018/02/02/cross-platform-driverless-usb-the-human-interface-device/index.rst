@@ -1,7 +1,7 @@
 During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
 
 What I would like to do in this post is a step-by-step tutorial for modifying a USB device to enumerate as a human interface device. I'll start with an overview of HID, then move on to modifying the USB descriptors and setting up your device endpoints so that it sends reports, followed by a few notes on writing host software for Windows and Linux that communicates to devices using raw reports. With a little bit of work, you should be able to replace many things done exclusively with libusb with a cross-platform system that requires no drivers.
-**Example code for this post can be found here\:**
+**Example code for this post can be found here\:** 
 
 
 `**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__
@@ -109,13 +109,13 @@ One of the key features, and a major motivation behind writing HID devices, is t
 This is possible by the use of "Report Descriptors". These serve as a way for the device to self-describe the format of the reports it is going to send back. A joystick from manufacturer A might send four analog values followed by 16 button values, but a joystick from manufacturer B may instead send 16 button values followed by only two analog values. The OS driver makes sense of the report formatting by reading the report descriptors returned by the device when it enumerates. Report descriptors are represented as a series of tokens which are parsed one after another to build up the description of the report. Tokens that may appear include\:
 
 
-* **Begin/End Collection Tokens.** All items described by the report are placed inside collections. These collections can be nested.
+* **Begin/End Collection Tokens.**  All items described by the report are placed inside collections. These collections can be nested.
 
 
-* **Description tokens for the next report field.** These include the number of bits the field consumes, the meaning of the field (called a "Usage"), and how many copies of the field there are going to be. In addition, the report itself can be described here including an "ID" that can be used to distinguish multiple reports.
+* **Description tokens for the next report field.**  These include the number of bits the field consumes, the meaning of the field (called a "Usage"), and how many copies of the field there are going to be. In addition, the report itself can be described here including an "ID" that can be used to distinguish multiple reports.
 
 
-* **Tokens denoting the type and position of the field. **After a field is described, it is "emitted" by using an IN or OUT token. An IN token tells the OS the field will appear in an IN report and an OUT token tells the OS that the field will appear in an OUT report.
+* **Tokens denoting the type and position of the field.** After a field is described, it is "emitted" by using an IN or OUT token. An IN token tells the OS the field will appear in an IN report and an OUT token tells the OS that the field will appear in an OUT report.
 
 
 
@@ -252,7 +252,7 @@ The configuration descriptor of something that has an HID interface looks like s
 * The configuration descriptor itself (Descriptor with bDescriptorType = 2)
 
 
-* Total length of everything to follow (**wTotalLength**)
+* Total length of everything to follow (**wTotalLength** )
 
 
 * Number of interfaces (bNumInterfaces)
@@ -270,13 +270,13 @@ The configuration descriptor of something that has an HID interface looks like s
 * Attributes and power
 
 
-* First interface descriptor (bDescriptorType = 4, **bInterfaceClass = 0x3 (HID), bInterfaceSubclass = 0 (no boot), bInterfaceProtocol = 0**)
+* First interface descriptor (bDescriptorType = 4, **bInterfaceClass = 0x3 (HID), bInterfaceSubclass = 0 (no boot), bInterfaceProtocol = 0** )
 
 
-  * **HID Descriptor (bDescriptorType = 0x21)**
+  * **HID Descriptor (bDescriptorType = 0x21)** 
 
 
-    * **Report Descriptor (bDescriptorType = 0x22)**
+    * **Report Descriptor (bDescriptorType = 0x22)** 
 
 
 
@@ -285,7 +285,7 @@ The configuration descriptor of something that has an HID interface looks like s
   * \ :raw-html:`<del>`\ Zero or more endpoint descriptors (bDescriptorType = 5)\ :raw-html:`</del>`\ 
 
 
-  * **Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, IN)**
+  * **Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, IN)** 
 
 
     * *Note that wMaxPacketSize will be restricted to 8 bytes on Low-speed devices, 64 bytes on Full-speed devices. This is due to it being an interrupt endpoint.*
@@ -294,7 +294,7 @@ The configuration descriptor of something that has an HID interface looks like s
 
 
 
-  * **(Optional) Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, OUT)**
+  * **(Optional) Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, OUT)** 
 
 
     * *Same story as the IN endpoint with wMaxPacketSize.*
@@ -310,7 +310,7 @@ The configuration descriptor of something that has an HID interface looks like s
 
 
 
-In addition, the device descriptor must change so that **bDeviceClass = 0** to signal that the device's class is defined by its interfaces.
+In addition, the device descriptor must change so that **bDeviceClass = 0**  to signal that the device's class is defined by its interfaces.
 
 If you want to implement multiple separate HID devices in the same device (making a composite HID device), it is as simple as adding more interfaces. The only restriction is that the endpoint addresses need to be unique so that the host can talk to a specific HID implementation. This is one way to build things like mouse/keyboard combo devices.
 
@@ -384,22 +384,22 @@ The HID class describes a new class-specific setup request which can be used to 
 The most difficult part about writing report descriptors is that they are not easy to debug. On Windows, the device manager will simply say "Device failed to start". On Linux, a similar error appears in the system log. You'll get no help figure out what went wrong. Here are my tips to writing report descriptors\:
 
 
-* **Start off small, then grow. **Write a minimal report descriptor and extend it from there, one token at a time. This way you can know which token has caused you to have problems.
+* **Start off small, then grow.** Write a minimal report descriptor and extend it from there, one token at a time. This way you can know which token has caused you to have problems.
 
 
-* **Double check that you have declared a Usage Page.** On Windows, it will complain if no Usage Page has been set and will not parse your descriptor.
+* **Double check that you have declared a Usage Page.**  On Windows, it will complain if no Usage Page has been set and will not parse your descriptor.
 
 
-* **Double check that you declare a Usage before each field token.** On Windows (and possibly Linux, but I can't remember), it won't parse your descriptor.
+* **Double check that you declare a Usage before each field token.**  On Windows (and possibly Linux, but I can't remember), it won't parse your descriptor.
 
 
-* **Indent your descriptor as you write it.** It's really like an XML document with nesting and all. It is very easy to lose track of where you are in the nesting.
+* **Indent your descriptor as you write it.**  It's really like an XML document with nesting and all. It is very easy to lose track of where you are in the nesting.
 
 
-* **Write some helper macros to translate HID tokens into bytes.** There are several flags that have to be set for the start of every token and it is far easier if you make the compiler do this for you.
+* **Write some helper macros to translate HID tokens into bytes.**  There are several flags that have to be set for the start of every token and it is far easier if you make the compiler do this for you.
 
 
-* **Remember that IN is *towards* the host and OUT is *away* from the host.** In USB, IN and OUT are host-centric. When you defined an INPUT field, it goes in your IN descriptor and represents a field your device sends to the host. When you define an OUTPUT field, it goes in your OUT descriptor and represents a field that the host can send back to the device.
+* **Remember that IN is *towards* the host and OUT is *away* from the host.**  In USB, IN and OUT are host-centric. When you defined an INPUT field, it goes in your IN descriptor and represents a field your device sends to the host. When you define an OUTPUT field, it goes in your OUT descriptor and represents a field that the host can send back to the device.
 
 
 
@@ -537,10 +537,10 @@ Let's dig into this report descriptor a little\:
 * After starting the collection, we have another USAGE token. It turns out that the USAGE token is a "Local Item". Within HID descriptors, there's a concept of scopes. Items can be "Main", "Global", or "Local". Main items are things like the INPUT token, the OUTPUT token, and COLLECTION tokens. Local items' scope ends at the next Main item. Since the previous USAGE token was followed by a COLLECTION, we have to add another USAGE token.
 
 
-* The LOGICAL_MINIMUM token is a "Global Item". This means that the value it sets will apply to all fields until we see another LOGICAL_MINIMUM. The meaning of this token is to set the minimum value that could be seen in the fields that follow. **Important\: The value of this token is signed!**
+* The LOGICAL_MINIMUM token is a "Global Item". This means that the value it sets will apply to all fields until we see another LOGICAL_MINIMUM. The meaning of this token is to set the minimum value that could be seen in the fields that follow. **Important\: The value of this token is signed!** 
 
 
-* The LOGICAL_MAXIMUM token is also a "Global Item" and sets the maximum value that could be seen in the fields that follow. Since we are sending raw bytes, the maximum value for this is 255. However, since **the value of this token is signed**, we have to represent it with 0x00FF rather than just 0xFF. If we left it at 0xFF, then it would actually be -127, which is less than the LOGICAL_MINIMUM (previously set to zero). Some OS's may choke on the report descriptor in this case.
+* The LOGICAL_MAXIMUM token is also a "Global Item" and sets the maximum value that could be seen in the fields that follow. Since we are sending raw bytes, the maximum value for this is 255. However, since **the value of this token is signed** , we have to represent it with 0x00FF rather than just 0xFF. If we left it at 0xFF, then it would actually be -127, which is less than the LOGICAL_MINIMUM (previously set to zero). Some OS's may choke on the report descriptor in this case.
 
 
 * INPUT and OUTPUT tokens have a "Relative" or "Absolute" flag. Think of Absolute as sliding an audio fader and the field returning a value between 0% and 100%, depending on the position of the fader. Relative, on the other hand, is more like a rotary encoder. If it didn't move, the value is 0. If it turned one direction, the value could be 5 (or any value >0). If it turned the other direction, the value could be -10 (or any value <0).
@@ -552,7 +552,7 @@ Let's dig into this report descriptor a little\:
   * Count\: The number of fields that the next INPUT or OUTPUT token generates (that's right, you can define multiple fields with just one token).
 
 
-  * Size\: The size in bits of each field. This can be any number, so you can have fields that have weird widths, like "3". **One caveat\: The total number of bits in a report *must* be divisible by eight.** Since reports are transferred by byte, this only makes sense. I know that at least with Windows, it will choke on your report descriptor if it has a number of bits not divisible by eight.
+  * Size\: The size in bits of each field. This can be any number, so you can have fields that have weird widths, like "3". **One caveat\: The total number of bits in a report *must* be divisible by eight.**  Since reports are transferred by byte, this only makes sense. I know that at least with Windows, it will choke on your report descriptor if it has a number of bits not divisible by eight.
 
 
 
@@ -634,7 +634,7 @@ Some more interesting things that this example brings up\:
 
 
 
-**Note that in the HID Usage Tables document, there are more examples in Appendix A!**
+**Note that in the HID Usage Tables document, there are more examples in Appendix A!** 
 
 
  
@@ -756,19 +756,19 @@ The enumeration of human interface devices and communication with them happens u
 I don't actually recommend using the library itself. Rather, I would recommend reading through it and seeing how it does things and implementing that in your application directly. Sadly, although I have written an application in C# that talked pretty well to HID devices I do not have the source code available. Instead, I can give some tips\:
 
 
-* **Don't be afraid of using P/Invoke.** At a bare minimum, you're going to have to to enumerate the HID devices in the system this way.
+* **Don't be afraid of using P/Invoke.**  At a bare minimum, you're going to have to to enumerate the HID devices in the system this way.
 
 
-* **Don't forget to enable Overlapped I/O.** Although USB is a half-duplex communication medium for HID, the OS will expose it as full duplex. You can read and write concurrently to the file. When I did this I had a Read always pending to wait for the next IN report and occasionally sent Writes to update the device.
+* **Don't forget to enable Overlapped I/O.**  Although USB is a half-duplex communication medium for HID, the OS will expose it as full duplex. You can read and write concurrently to the file. When I did this I had a Read always pending to wait for the next IN report and occasionally sent Writes to update the device.
 
 
-* **Although HID devices can be used with FileStream **(since you can get a SafeFileHandle out of CreateFile, which is used for opening the HID)**, don't do it. Use ReadFile and WriteFile instead through P/Invoke.** The temptation will be there since FileStream has a constructor that takes a SafeFileHandle, but you really shouldn't. The reason is that the FileStream is *not full-duplex*! Deep down inside, if a read is pending on the FileStream, all writes will block. Vice-versa if a write is pending. This means that if you start an asynchronous read on a FileStream to wait for the next HID IN Report, but you want to send an OUT report, that OUT report won't actually be sent until after the next IN report is received! The worst part is that the asynchronous write will actually complete, even though the operation is blocked and won't actually occur until later!! This makes for what looks like "lag" when writing to the device. The reason for this is explained in the comments in Microsoft's source code, but suffice to say that they could not find a good solution that spanned all possible use cases and so asynchronous reads/writes are made to be sequential rather than concurrent. I think the network stream overcomes this because it is more specific than a file stream.
+* **Although HID devices can be used with FileStream** (since you can get a SafeFileHandle out of CreateFile, which is used for opening the HID)**, don't do it. Use ReadFile and WriteFile instead through P/Invoke.**  The temptation will be there since FileStream has a constructor that takes a SafeFileHandle, but you really shouldn't. The reason is that the FileStream is *not full-duplex*! Deep down inside, if a read is pending on the FileStream, all writes will block. Vice-versa if a write is pending. This means that if you start an asynchronous read on a FileStream to wait for the next HID IN Report, but you want to send an OUT report, that OUT report won't actually be sent until after the next IN report is received! The worst part is that the asynchronous write will actually complete, even though the operation is blocked and won't actually occur until later!! This makes for what looks like "lag" when writing to the device. The reason for this is explained in the comments in Microsoft's source code, but suffice to say that they could not find a good solution that spanned all possible use cases and so asynchronous reads/writes are made to be sequential rather than concurrent. I think the network stream overcomes this because it is more specific than a file stream.
 
 
-* **Don't forget to pin your buffers when doing overlapped async I/O.** You need to make sure the garbage collector doesn't come by and decide to move your buffer to another address while the ReadFile or WriteFile is doing its thing. When you use those functions in overlapped I/O mode, they will return immediately rather than blocking and therefore the garbage collector could have an opportunity to strike.
+* **Don't forget to pin your buffers when doing overlapped async I/O.**  You need to make sure the garbage collector doesn't come by and decide to move your buffer to another address while the ReadFile or WriteFile is doing its thing. When you use those functions in overlapped I/O mode, they will return immediately rather than blocking and therefore the garbage collector could have an opportunity to strike.
 
 
-* **I recommend using Marshal.AllocHGlobal and Marshal.FreeHGlobal instead of GCHandle.Alloc(object, GCHandleType.Pinned) for pinning your buffers.** I found that for the small buffer sizes involved in HID communication, its easier to use Marshall.AllocHGlobal to allocate one buffer in unmanaged memory (which the GC won't touch) and then copy to and from a buffer in managed memory (just a byte[]). The other option is to allocate your byte[] in managed memory and then use a GCHandle to pin it. I found that to be more difficult to manage since there are a LOT of corner cases that need to be handled. For the AllocHGlobal, the only corner case is that you forget to free it and that's easily fixed by wrapping the AllocHGlobal/FreeHGlobal calls inside the constructor and finalizer of an object, using the object to keep track of the allocated section of unmanaged memory. You can even implement IDisposable if you want deterministic control of the lifetime of the pointer.
+* **I recommend using Marshal.AllocHGlobal and Marshal.FreeHGlobal instead of GCHandle.Alloc(object, GCHandleType.Pinned) for pinning your buffers.**  I found that for the small buffer sizes involved in HID communication, its easier to use Marshall.AllocHGlobal to allocate one buffer in unmanaged memory (which the GC won't touch) and then copy to and from a buffer in managed memory (just a byte[]). The other option is to allocate your byte[] in managed memory and then use a GCHandle to pin it. I found that to be more difficult to manage since there are a LOT of corner cases that need to be handled. For the AllocHGlobal, the only corner case is that you forget to free it and that's easily fixed by wrapping the AllocHGlobal/FreeHGlobal calls inside the constructor and finalizer of an object, using the object to keep track of the allocated section of unmanaged memory. You can even implement IDisposable if you want deterministic control of the lifetime of the pointer.
 
 
 

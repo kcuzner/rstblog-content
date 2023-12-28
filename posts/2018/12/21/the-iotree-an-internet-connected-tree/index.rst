@@ -1,11 +1,11 @@
 For this Christmas I decided to do something fun with my Christmas tree\: Hook it up to the internet.
-**Visit the IoTree here (available through the 1st week of January 2019)\:**
+**Visit the IoTree here (available through the 1st week of January 2019)\:** 
 
 
 `http\://kevincuzner.com/iotree <http://kevincuzner.com/iotree>`__
 
 
-**The complete source can be found here\:**
+**The complete source can be found here\:** 
 
 
 `http\://github.com/kcuzner/iotree <http://github.com/kcuzner/iotree>`__

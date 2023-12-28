@@ -13,7 +13,7 @@ The main object of this bootloader is to facilitate reprogramming of the device 
 Each of these ways has their pros and cons. Option 1 allows for the user program to use all available flash (aside from the blob size and bootstrapping code). It also might not require a relocatable interrupt vector table (something that some ARM Cortex microcontrollers lack). However, it also means that there is no recovery without using JTAG or SWD to reflash the microcontroller if you somehow mess up the switchover into the bootloader. Option 2 allows for a fairly fail-safe bootloader. The bootloader is always there, even if the user program is not working right. So long as the device provides a hardware method for entering bootloader mode, the device can always be recovered. However, Option 2 is difficult to update (you have to flash it with a special program that overwrites the bootloader), wastes unused space in the bootloader-reserved section, and also requires some features that not all microcontrollers have.
 
 Because the STM32L052 has a large amount of flash (64K) and implements the vector-table-offset register (allowing the interrupt vector table to be relocated), I decided to go with Option 2.
-**Example code for this post can be found here\:**
+**Example code for this post can be found here\:** 
 
 
 `**https\://github.com/kcuzner/led-watch** <https://github.com/kcuzner/led-watch>`__

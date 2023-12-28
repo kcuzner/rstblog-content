@@ -44,7 +44,7 @@ I make the following assumptions\:
 
 
 All code, makefiles, and configuration stuff can be found in the project repository on github.
-**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
+**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__** 
 
 
 
@@ -56,7 +56,7 @@ Materials
 You will require the following materials\:
 
 
-* A computer running Linux. **If you run Windows only, please don't be dissuaded. **I'm just lazy and don't want to test this for Windows. It may require some finagling. Manufacturer support is actually better for Windows since they provide some interesting configuration and programming software that is Windows only...but who needs that stuff anyway?
+* A computer running Linux. **If you run Windows only, please don't be dissuaded.** I'm just lazy and don't want to test this for Windows. It may require some finagling. Manufacturer support is actually better for Windows since they provide some interesting configuration and programming software that is Windows only...but who needs that stuff anyway?
 
 
 * A STLinkv2 Clone from eBay. `Here's <http://www.ebay.com/itm/Mini-ST-Link-V2-stlink-Emulator-Downloader-STM8-STM32-With-Metal-Shell-/271699556039?hash=item3f428e36c7:g:968AAOSw0vBUhHLX>`__ one very similar to the one I bought. ~$3
@@ -119,7 +119,7 @@ Above we decided to use the STM32F103C8 ARM Cortex-M3 microcontroller in a TQFP-
 
 All this for ~$1.20/part no less! Of course, its like $6 on digikey, but for my purposes having an eBay-sourced part is just fine.
 
-Ok, so when messing with any microcontroller we need to look at its datasheet to know where to plug stuff in. **For almost all ARM Microcontrollers there will be no less than 2 datasheet-like documents you will need\: The part datasheet and the family reference manual**. The datasheet contains information such as the specific pinouts and electrical characteristics and the family reference manual contains the detailed information on how the microcontroller works (core and peripherals). These are both extremely important and will be indispensable for doing anything at all with one of these microcontrollers bare metal.
+Ok, so when messing with any microcontroller we need to look at its datasheet to know where to plug stuff in. **For almost all ARM Microcontrollers there will be no less than 2 datasheet-like documents you will need\: The part datasheet and the family reference manual** . The datasheet contains information such as the specific pinouts and electrical characteristics and the family reference manual contains the detailed information on how the microcontroller works (core and peripherals). These are both extremely important and will be indispensable for doing anything at all with one of these microcontrollers bare metal.
 
 Find the STM32F103C8 datasheet and family reference manual here (datasheet is at the top of the page, reference manual is at the bottom)\: `http\://www.st.com/en/microcontrollers/stm32f103c8.html <http://www.st.com/en/microcontrollers/stm32f103c8.html>`__. They are also found in the "ref" folder of the repository.
 
@@ -139,13 +139,13 @@ After getting the datasheet we need to solder the microcontroller down to the br
 On the pin diagram posted here you will find the highlighted pins of interest for hooking this thing up. We need the following pins at a minimum\:
 
 
-* **Shown in Red/Blue\:** All power pins, VDD, VSS, AVDD, and AVSS. There are four pairs\: 3 for the VDD/VSS and one AVDD/AVSS. The AVDD/AVSS pair is specifically used to power the analog/mixed signal circuitry and is separate to give us the opportunity to perform some additional filtering on those lines and remove supply noise induced by all the switching going on inside the microcontroller; an opportunity I won't take for now.
+* **Shown in Red/Blue\:**  All power pins, VDD, VSS, AVDD, and AVSS. There are four pairs\: 3 for the VDD/VSS and one AVDD/AVSS. The AVDD/AVSS pair is specifically used to power the analog/mixed signal circuitry and is separate to give us the opportunity to perform some additional filtering on those lines and remove supply noise induced by all the switching going on inside the microcontroller; an opportunity I won't take for now.
 
 
-* **Shown in Yellow/Green\:** The SWD (Serial Wire Debug) pins. These are used to connect to the STLinkV2 programmer that you purchased earlier. These can be used for so much more than just programming (debugging complete with breakpoints, for a start), but for now we will just use it to talk to the flash on the microcontroller.
+* **Shown in Yellow/Green\:**  The SWD (Serial Wire Debug) pins. These are used to connect to the STLinkV2 programmer that you purchased earlier. These can be used for so much more than just programming (debugging complete with breakpoints, for a start), but for now we will just use it to talk to the flash on the microcontroller.
 
 
-* **Shown in Cyan\:** Two fun GPIOs to blink our LEDs with. I chose PB0 and PB1. You could choose others if you would like, but just make sure that they are actually GPIOs and not something unexpected.
+* **Shown in Cyan\:**  Two fun GPIOs to blink our LEDs with. I chose PB0 and PB1. You could choose others if you would like, but just make sure that they are actually GPIOs and not something unexpected.
 
 
 
@@ -158,7 +158,7 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
 
 
 
-**Very important\: **You may notice that I have some little tiny capacitors (0.1uF) soldered between the power pins (the one on the top is the most visible in the picture). **You need to mount your capacitors between each pair of VDD/VSS pins (including AVDD/AVSS)**. How you do this is completely up to you, but it must be done and ***they should be rather close to the microcontroller itself***. If you don't it is entirely possible that when the microcontroller first turns on and powers up (specifically at the first falling edge of the internal clock cycle), the inductance created by the flying power wires we have will create a voltage spike that will either cause a malfunction or damage. I've broken microcontrollers by forgetting the decoupling caps and I'm not eager to do it again.
+**Very important\:** You may notice that I have some little tiny capacitors (0.1uF) soldered between the power pins (the one on the top is the most visible in the picture). **You need to mount your capacitors between each pair of VDD/VSS pins (including AVDD/AVSS)** . How you do this is completely up to you, but it must be done and ***they should be rather close to the microcontroller itself*** . If you don't it is entirely possible that when the microcontroller first turns on and powers up (specifically at the first falling edge of the internal clock cycle), the inductance created by the flying power wires we have will create a voltage spike that will either cause a malfunction or damage. I've broken microcontrollers by forgetting the decoupling caps and I'm not eager to do it again.
 
 Step 3\: Connect the breadboard and programmer
 ==============================================
@@ -173,19 +173,19 @@ Step 3\: Connect the breadboard and programmer
 
 Don't do this with the programmer plugged in.
 
-On the right you will see my STLinkV2 clone which I will use for this project. Barely visible is the pinout. We will need the following pins connected from the programmer onto our breadboard. These come off the header on the non-USB end of the programmer. **Pinouts may vary. Double check your programmer!**
+On the right you will see my STLinkV2 clone which I will use for this project. Barely visible is the pinout. We will need the following pins connected from the programmer onto our breadboard. These come off the header on the non-USB end of the programmer. **Pinouts may vary. Double check your programmer!** 
 
 
-* **3.3V\:** We will be using the programmer to actually power the microcontroller since that is the simplest option. I believe this pin is Pin 7 on my header.
+* **3.3V\:**  We will be using the programmer to actually power the microcontroller since that is the simplest option. I believe this pin is Pin 7 on my header.
 
 
-* **GND\:** Obviously we need the ground. On mine this was Pin 4.
+* **GND\:**  Obviously we need the ground. On mine this was Pin 4.
 
 
-* **SWDIO\:** This is the data for the SWD bus. Mine has this at Pin 2.
+* **SWDIO\:**  This is the data for the SWD bus. Mine has this at Pin 2.
 
 
-* **SWCLK\:** This is the clock for the SWD bus. Mine has this at Pin 6.
+* **SWCLK\:**  This is the clock for the SWD bus. Mine has this at Pin 6.
 
 
 
@@ -223,14 +223,14 @@ Step 4\: Download the STM32F1xx C headers
 =========================================
 
 
-**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__**
+**Project Repository\: `https\://github.com/kcuzner/stm32f103c8-blink <https://github.com/kcuzner/stm32f103c8-blink>`__** 
 
 
 Since we are going to write a program, we need the headers. These are part of the STM32CubeF1 library found `here <http://www.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32cube-embedded-software/stm32cubef1.html>`__.
 
 Visit the page and download the STM32CubeF1 zip file. It will ask for an email address. If you really don't want to give them your email address, the necessary headers can be found in the project github repository.
 
-**Alternately, just clone the repository.**** You'll miss all the fun of poking around the zip file, but sometimes doing less work is better.**
+**Alternately, just clone the repository.** **You'll miss all the fun of poking around the zip file, but sometimes doing less work is better.** 
 
 The STM32CubeF1 zip file contains several components which are designed to help people get started quickly when programming STM32s. This is one thing that ST definitely does better than Freescale. It was so difficult to find the headers for the Kinetis microcontrollers that almost gave up at that point. Anyway, inside the zip file we are only interested in the following\:
 
@@ -244,14 +244,14 @@ The STM32CubeF1 zip file contains several components which are designed to help 
 * Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c. This contains the common system startup routines referenced by the assembly file above.
 
 
-* Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld. This is the linker script for the next model up of the microcontroller we have (we just have to change the "128K" to a "64K" near the beginning of the file in the MEMORY section (line 43 in my file) and we are good to go). This is used to tell the linker where to put all the parts of the program inside the microcontroller's flash and RAM. **Mine had a "0" on every blank line. If you see this in yours, delete those "0"s. They will cause errors.**
+* Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld. This is the linker script for the next model up of the microcontroller we have (we just have to change the "128K" to a "64K" near the beginning of the file in the MEMORY section (line 43 in my file) and we are good to go). This is used to tell the linker where to put all the parts of the program inside the microcontroller's flash and RAM. **Mine had a "0" on every blank line. If you see this in yours, delete those "0"s. They will cause errors.** 
 
 
 * The contents of Drivers/CMSIS/Include. These are the core header files for the ARM Cortex-M3 and the definitions contained therein are used in all the other header files we reference.
 
 
 
-I copied all the files referenced above to various places in my project structure so they could be compiled into the final program. **Please visit the repository for the exact locations and such.** My objective with this tutorial isn't really to talk too much about project structure, and so I think that's best left as an exercise for the reader.
+I copied all the files referenced above to various places in my project structure so they could be compiled into the final program. **Please visit the repository for the exact locations and such.**  My objective with this tutorial isn't really to talk too much about project structure, and so I think that's best left as an exercise for the reader.
 
 Step 5\: Install the required software
 ======================================

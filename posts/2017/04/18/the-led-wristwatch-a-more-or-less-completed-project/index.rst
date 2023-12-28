@@ -15,7 +15,7 @@ In this post I'm going to go over my general design, some things I was happy wit
 
 
 
-**The complete design files can be found here\:**
+**The complete design files can be found here\:** 
 
 
 `https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`__

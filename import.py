@@ -279,13 +279,15 @@ class ImgTag(TagHandler):
 
     @src.setter
     def src(self, value):
-        _, _, path, _, _, _ = urllib.parse.urlparse(value)
-        self._last_src = path
-        self._src = path
+        if value is not None:
+            _, _, path, _, _, _ = urllib.parse.urlparse(value)
+            self._src = path
+        else:
+            self._src = None
 
     def to_rst(self, *args, target=None, parent_caption={}, **kwargs):
         if self.src is None:
-            # Silently drop empty images
+            # Silently drop empty images that couldn't be downloaded
             return ""
         caption = self._from_bb_caption("caption", parent_caption)
         width = self._from_bb_caption("width", parent_caption)
@@ -909,6 +911,9 @@ class AttachmentRegistry:
                     f"Downloaded attachment {attachment.guid} to {output_dir / name}"
                 )
                 a.src = name
+            else:
+                _log.debug(f"Clearing src for {a.src}, attachment not found")
+                a.src = None
 
     def find(self, link):
         # First attempt to find the attachment by the link naturally

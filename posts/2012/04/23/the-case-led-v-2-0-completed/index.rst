@@ -123,30 +123,9 @@ Although I already have a link above, the software can be found here\: `Case LED
 
 So, here are pictures of the finished product\:
 
-.. figure:: /wp-content/uploads/2012/04/HPIM1973-e1335235943256-225x300.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1973-e1335235943256.jpg
-   :width: 225
-   :align: left
-
-   LEDs shining magenta
 
 
 
-.. figure:: /wp-content/uploads/2012/04/HPIM1972-e1335235909822-225x300.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1972-e1335235909822.jpg
-   :width: 225
-   :align: left
-
-   LEDs shining orange
-
-
-
-.. figure:: /wp-content/uploads/2012/04/HPIM1971-e1335235790482-225x300.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1971-e1335235790482.jpg
-   :width: 225
-   :align: left
-
-   LEDs shining green
 
 
 

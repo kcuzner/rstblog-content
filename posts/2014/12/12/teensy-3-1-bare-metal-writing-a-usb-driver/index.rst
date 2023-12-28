@@ -2,11 +2,6 @@ One of the things that has intrigued me for the past couple years is making embe
 
 Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`__ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
 
-.. image:: /teensy/teensy31.png
-   :target: http://www.pjrc.com/teensy/teensy31.html
-   :width: 328
-   :align: right
-
 
 
 Over the thanksgiving break I started cobbling together some software with the intent of writing a driver for the USB module in the Teensy myself. I started originally with `my bare metal stuff <http://kevincuzner.com/2014/04/28/teensy-3-1-bare-metal/>`__, but I ended up going with something closer to `Karl Lunt's solution <http://www.seanet.com/~karllunt/bareteensy31.html>`__. I configured code\:\:blocks to use the arm-none-eabi compiler that I had installed and created a code blocks project for my code and used that to build it (with a post-compile event translating the generated elf file into a hex file).

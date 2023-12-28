@@ -1,67 +1,18 @@
 Well, here it is. The moment I have been anticipating for a good while\: The boards came in and I assembled them. I made a few videos and took a few pictures. I won't post the videos yet since I am still going through them and making sure that I don't go and make a fool of myself.
 
-.. figure:: /images/clock_pcb/hpim0857.jpg
-   :target: http://www.cuznersoft.com/images/clock_pcb/hpim0857.jpg
-   :width: 640
-   :align: center
-
-   The boards unadultered
 
 
 
-.. figure:: /images/clock_pcb/HPIM0864.JPG
-   :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0864.JPG
-   :width: 640
-   :align: center
-
-   After soldering the MOSFETs and the column sink
 
 
 
-.. figure:: /images/clock_pcb/HPIM0868.JPG
-   :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0868.JPG
-   :width: 640
-   :align: center
-
-   After soldering a few more column sinks
 
 
 
-.. figure:: /images/clock_pcb/HPIM0869.JPG
-   :target: http://www.cuznersoft.com/image/clock_pcb/HPIM0869.JPG
-   :width: 640
-   :align: center
-
-   All the ICs soldered on the backside (and on the front, but you can't see that)
-
-
-
-.. figure:: /images/clock_pcb/HPIM0871.JPG
-   :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0871.JPG
-   :width: 640
-   :align: center
-
-   After soldering the diodes and resistors
-
-
-
-.. figure:: /images/clock_pcb/HPIM0873.JPG
-   :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0873.JPG
-   :width: 640
-   :align: center
-
-   The completed back of the display board
 
 
 
 After getting that far, I believe my camera died. Anyways, I assembled the breakout board and completed all the parts of the display. I did not solder down all the display modules to the pcb because I am going to be fiddling around with the resistors on the column sinks and I didn't want to have to desolder a display before being able to do anything else. The next day, I started testing\:
-
-.. figure:: /images/clock_pcb/HPIM0872.JPG
-   :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0872.JPG
-   :width: 640
-   :align: center
-
-   The breadboard setup
 
 
 

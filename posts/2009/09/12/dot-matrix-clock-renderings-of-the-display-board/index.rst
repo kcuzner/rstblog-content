@@ -1,42 +1,12 @@
 I finished modeling the entire board in blender today, so here are a few different views of the clock\:
 
-.. figure:: /images/clock_front_bezel.jpg
-   :width: 800
-   :align: center
-
-   Front with plastic/plexiglass cover
 
 
 
-.. figure:: /images/clock_front_nobezel.jpg
-   :width: 800
-   :align: center
-
-   Front without the plastic/plexiglass cover
 
 
 
-.. figure:: /images/clock_back.jpg
-   :width: 800
-   :align: center
 
-   Back of the board (sorry the board->board connector is blacked out..the lighting sucks)
-
-
-
-.. figure:: /images/clock_front_nocase.jpg
-   :width: 800
-   :align: center
-
-   Front of the board without the case of display modules
-
-
-
-.. figure:: /images/clock_back_nocase.jpg
-   :width: 800
-   :align: center
-
-   Back of the board without a case
 
 
 

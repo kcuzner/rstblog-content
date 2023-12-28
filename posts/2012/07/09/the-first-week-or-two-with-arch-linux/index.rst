@@ -35,11 +35,6 @@ Overall, this experience with Arch has allowed me to become much more familiar w
 
 Here is my desktop as it stands\:
 
-.. image:: /wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931-1024x640.png
-   :target: http://kevincuzner.com/wp-content/uploads/2012/07/Screenshot-from-2012-07-09-085931.png
-   :width: 1024
-   :align: center
-
 
 
 .. rstblog-settings::

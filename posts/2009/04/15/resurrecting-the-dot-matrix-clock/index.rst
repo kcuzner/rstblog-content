@@ -18,9 +18,13 @@ The PCB layout as it stands now (and as it will probably look in the next revisi
 
  
 
-[caption id="attachment_26" align="alignright" width="717" caption="Layout as it stands now"].. image:: dotmatrix_8x8_prelim.png
+.. figure:: dotmatrix_8x8_prelim.png
+   :width: 717
+   :align: right
 
-[/caption]
+   Layout as it stands now
+
+
 
  
 

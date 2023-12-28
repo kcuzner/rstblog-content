@@ -1,24 +1,44 @@
 I finished modeling the entire board in blender today, so here are a few different views of the clock\:
 
-[caption id="" align="aligncenter" width="800" caption="Front with plastic/plexiglass cover"].. image:: /images/clock_front_bezel.jpg
+.. figure:: /images/clock_front_bezel.jpg
+   :width: 800
+   :align: center
 
-[/caption]
+   Front with plastic/plexiglass cover
 
-[caption id="" align="aligncenter" width="800" caption="Front without the plastic/plexiglass cover"].. image:: /images/clock_front_nobezel.jpg
 
-[/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Back of the board (sorry the board->board connector is blacked out..the lighting sucks)"].. image:: /images/clock_back.jpg
+.. figure:: /images/clock_front_nobezel.jpg
+   :width: 800
+   :align: center
 
-[/caption]
+   Front without the plastic/plexiglass cover
 
-[caption id="" align="aligncenter" width="800" caption="Front of the board without the case of display modules"].. image:: /images/clock_front_nocase.jpg
 
-[/caption]
 
-[caption id="" align="aligncenter" width="800" caption="Back of the board without a case"].. image:: /images/clock_back_nocase.jpg
+.. figure:: /images/clock_back.jpg
+   :width: 800
+   :align: center
 
-[/caption]
+   Back of the board (sorry the board->board connector is blacked out..the lighting sucks)
+
+
+
+.. figure:: /images/clock_front_nocase.jpg
+   :width: 800
+   :align: center
+
+   Front of the board without the case of display modules
+
+
+
+.. figure:: /images/clock_back_nocase.jpg
+   :width: 800
+   :align: center
+
+   Back of the board without a case
+
+
 
 I created these images in blender by exporting images of the various pcb layers from eagle, compositing them in gimp into front and back images, and uv-ing then onto the board. All the components were done by looking at their datasheets of course.
 

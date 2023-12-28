@@ -1,18 +1,30 @@
-[caption id="attachment_127" align="alignleft" width="150" caption="The computer"].. image:: HPIM1939.jpg
+.. figure:: HPIM1939.jpg
+   :width: 150
+   :align: left
 
-[/caption]
+   The computer
+
+
 
 In November I purchased the parts for a new computer since mine was getting very old (I got it in 2006 and even then it wasn't exactly top of the line). I put it together and it has been performing admirably for a couple months now. I was researching graphics cards and it occurred to me that I would have to move my hard drive up a slot to fit a large graphics card in my case.
 
-[caption id="attachment_130" align="alignright" width="240" caption="After moving stuff around inside"].. image:: HPIM1944.jpg
+.. figure:: HPIM1944.jpg
+   :width: 240
+   :align: right
 
-[/caption]
+   After moving stuff around inside
+
+
 
 So, I opened the case and started moving stuff around. I also decided to re-organize the cables so that they wouldn't be dangling precariously above the CPU fan by stuffing them behind the HDD cage. During that process I took some strain off the SATA cables (they are kind of stiff and I think they were putting undue stress on the sockets on the motherboard, so I moved them around so that they wouldn't be so convoluted). After finishing all this it occurred to me that my case would look sweet if I were to add some LEDs to it. I then set out to install some LEDs.
 
-[caption id="attachment_131" align="alignleft" width="216" caption="The grille and power connector"].. image:: HPIM1945.jpg
+.. figure:: HPIM1945.jpg
+   :width: 216
+   :align: left
 
-[/caption]
+   The grille and power connector
+
+
 
 In the front of the case there is a plastic piece that covers the metal body of the case and also holds the power button, reset button, and HDD light. This case has a grille on it to allow air to pass through into the front fan (if I had one installed).
 
@@ -40,9 +52,13 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 
-[caption id="attachment_132" align="alignright" width="150" caption="The spider wires"].. image:: HPIM1946.jpg
+.. figure:: HPIM1946.jpg
+   :width: 150
+   :align: right
 
-[/caption]
+   The spider wires
+
+
 
 
 
@@ -51,15 +67,23 @@ I started out by soldering the header to some wires to take the 5V and GND line 
 
 
 
-[caption id="attachment_135" align="alignleft" width="240" caption="Matte board and aimed LEDs"].. image:: HPIM1950.jpg
+.. figure:: HPIM1950.jpg
+   :width: 240
+   :align: left
 
-[/caption]
+   Matte board and aimed LEDs
+
+
 
 The more difficult part was attaching the matte board to the metal part of the case and then aiming the LEDs. The matte board was necessary because without it the LEDs reflected a little too well off the metal of the case and they could be clearly seen through the grille. I cut the matte board into two pieces large enough to cover the metal on either side of the grille and used tape to hold it in place. One hitch came up with the wires going to the front of the case\: the hole for the wires was right beneath one of the grilles and was not easily covered by the cardstock. I ended up just basically laying the cardstock over the hole and wires and moving them around so as to not be visible through the grille. The next bit of matte board I used was to create a shroud of sorts around the HDD and power lights since the LEDs were bright enough that they shined through the bezels for those lights as well. I then spent a while aiming the lights until I was satisfied and then I put the computer back together so I could enjoy my new lights.
 
-[caption id="attachment_136" align="alignright" width="225" caption="The Final Effect"].. image:: /wp-content/uploads/2012/02/HPIM1953-e1330212718601-225x300.jpg
+.. figure:: /wp-content/uploads/2012/02/HPIM1953-e1330212718601-225x300.jpg
+   :width: 225
+   :align: right
 
-[/caption]
+   The Final Effect
+
+
 
 All in all my specs are as follows\:
 

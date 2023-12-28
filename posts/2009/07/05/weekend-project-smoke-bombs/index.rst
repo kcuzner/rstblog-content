@@ -1,6 +1,10 @@
-[caption id="attachment_69" align="alignright" width="192" caption="Saltpeter or KNO3"].. image:: saltpeter.jpg
+.. figure:: saltpeter.jpg
+   :width: 192
+   :align: right
 
-[/caption]
+   Saltpeter or KNO3
+
+
 
 **I am not in any way responsible for injury or damage resulting from this blog entry. Do not assume that these instructions are either complete or correct. Don't be stupid either; if you can't handle fire safely then you surely can't handle this safely.**
 
@@ -18,13 +22,21 @@ Materials
 
 
 * 
-[caption id="attachment_71" align="alignright" width="192" caption="Sugar"].. image:: sugar.jpg
+.. figure:: sugar.jpg
+     :width: 192
+     :align: right
 
-  [/caption]
+     Sugar
 
-  [caption id="attachment_70" align="alignright" width="192" caption="Postal Scale"].. image:: scale.jpg
 
-  [/caption]
+
+  .. figure:: scale.jpg
+     :width: 192
+     :align: right
+
+     Postal Scale
+
+
 
   Brown sugar. Dark brown is best, but white and light brown will also work just not as well.
 
@@ -41,9 +53,13 @@ Materials
 
 
 * 
-[caption id="attachment_65" align="alignright" width="192" caption="Makeshift morter & pestle"].. image:: jarpestle.jpg
+.. figure:: jarpestle.jpg
+     :width: 192
+     :align: right
 
-  [/caption]
+     Makeshift morter & pestle
+
+
 
   Something to put it on. This has to be able to withstand rather high temperatures and it will be stained black. I originally used 4 layers of aluminum foil on our driveway until I realized that a single smoke bomb was melting straight through the 4 layers down to the driveway. I used a flowerpot for the video at the end (it did crack). Sand also works since you can just bury it when you are done.
 
@@ -62,13 +78,21 @@ Instructions
 
 
 #. 
-[caption id="attachment_66" align="alignright" width="192" caption="All the measured ingredients"].. image:: measured.jpg
+.. figure:: measured.jpg
+      :width: 192
+      :align: right
 
-   [/caption]
+      All the measured ingredients
 
-   [caption id="attachment_67" align="alignright" width="192" caption="Mixing the sugar and saltpeter"].. image:: mixing.jpg
 
-   [/caption]
+
+   .. figure:: mixing.jpg
+      :width: 192
+      :align: right
+
+      Mixing the sugar and saltpeter
+
+
 
    On a paper towel, weigh out the sugar. With 48g of saltpeter I had to weigh out 24g of sugar.
 
@@ -82,9 +106,13 @@ Instructions
 
 
 #. 
-[caption id="attachment_68" align="alignright" width="192" caption="Packed into a paper towel"].. image:: packed.jpg
+.. figure:: packed.jpg
+      :width: 192
+      :align: right
 
-   [/caption]
+      Packed into a paper towel
+
+
 
    Place the packet onto a surface to light it on and put a bit of rubbing alcohol over it. It helps to make a "fuse" out of another paper towel, soak that in alcohol, and lay it across. Make sure not to get the mixture too wet since it isn't nearly as potent when it is wet.
 
@@ -97,13 +125,21 @@ Video and Pictures
 ==================
 
 
-[caption id="attachment_64" align="aligncenter" width="640" caption="Before lighting it"].. image:: before.jpg
+.. figure:: before.jpg
+   :width: 640
+   :align: center
 
-[/caption]
+   Before lighting it
 
-[caption id="attachment_63" align="aligncenter" width="640" caption="After lighting it"].. image:: after.jpg
 
-[/caption]
+
+.. figure:: after.jpg
+   :width: 640
+   :align: center
+
+   After lighting it
+
+
 
 
 

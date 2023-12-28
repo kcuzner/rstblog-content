@@ -48,11 +48,14 @@ As for the board gerbers, I am going to keep them to myself. I spent nearly a ye
 
 Now for the schematic. Here you go\:
 
-[caption id="attachment_89" align="aligncenter" width="800" caption="Dot Matrix Display Schematic v. 3.5"]
-.. image:: DotMatrix_v3_5.png
+.. figure:: DotMatrix_v3_5.png
    :target: http://kevincuzner.com/wp-content/uploads/2009/09/DotMatrix_v3_5.png
+   :width: 800
+   :align: center
 
-[/caption]
+   Dot Matrix Display Schematic v. 3.5
+
+
 
 Now, before someone goes on yelling about how much the BSS138 sucks as a MOSFET I guess I should say that I have replaced it with a much better one that can actually source the current I need it to. The BSS138 has a couple ohms of Rds\ :sub:`{content}`\ , so I replaced it with a MOSFET that has around 0.25Ω Rds\ :sub:`{content}`\ . Enjoy.
 

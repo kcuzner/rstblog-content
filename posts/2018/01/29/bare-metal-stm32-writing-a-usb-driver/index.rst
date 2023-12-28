@@ -1,10 +1,11 @@
 A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__ about writing a bare metal USB driver for the Teensy 3.1, which uses Freescale Kinetis K20 microcontroller. Over the past couple years I've switched over to instead using the STM32 series of microcontrollers since they are cheaper to program the "right" way (the dirt-cheap STLink v2 enables that). I almost always prefer to use the microcontroller IC by itself, rather than building around a development kit since I find that to be much more interesting.
 
-[caption id="attachment_565" align="alignright" width="320"]
 .. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
+   :width: 320
+   :align: right
 
- LED Wristwatch with USB[/caption]
+ LED Wristwatch with USB
 
 One of my recent (or not so recent) projects was an `LED Wristwatch <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ which utilized an STM32L052. This microcontroller is optimized for low power, but contains a USB peripheral which I used for talking to the wristwatch from my PC, both for setting the time and for reflashing the firmware. This was one of my first hobby projects where I designed something without any prior breadboarding (beyond the battery charger circuit). The USB and such was all rather "cross your fingers and hope it works" and it just so happened to work without a problem.
 

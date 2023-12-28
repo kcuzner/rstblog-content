@@ -1,48 +1,69 @@
 Well, here it is. The moment I have been anticipating for a good while\: The boards came in and I assembled them. I made a few videos and took a few pictures. I won't post the videos yet since I am still going through them and making sure that I don't go and make a fool of myself.
 
-[caption id="" align="aligncenter" width="640" caption="The boards unadultered"]
-.. image:: /images/clock_pcb/hpim0857.jpg
+.. figure:: /images/clock_pcb/hpim0857.jpg
    :target: http://www.cuznersoft.com/images/clock_pcb/hpim0857.jpg
+   :width: 640
+   :align: center
 
-[/caption]
+   The boards unadultered
 
-[caption id="" align="aligncenter" width="640" caption="After soldering the MOSFETs and the column sink"]
-.. image:: /images/clock_pcb/HPIM0864.JPG
+
+
+.. figure:: /images/clock_pcb/HPIM0864.JPG
    :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0864.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   After soldering the MOSFETs and the column sink
 
-[caption id="" align="aligncenter" width="640" caption="After soldering a few more column sinks"]
-.. image:: /images/clock_pcb/HPIM0868.JPG
+
+
+.. figure:: /images/clock_pcb/HPIM0868.JPG
    :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0868.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   After soldering a few more column sinks
 
-[caption id="" align="aligncenter" width="640" caption="All the ICs soldered on the backside (and on the front, but you can't see that)"]
-.. image:: /images/clock_pcb/HPIM0869.JPG
+
+
+.. figure:: /images/clock_pcb/HPIM0869.JPG
    :target: http://www.cuznersoft.com/image/clock_pcb/HPIM0869.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   All the ICs soldered on the backside (and on the front, but you can't see that)
 
-[caption id="" align="aligncenter" width="640" caption="After soldering the diodes and resistors"]
-.. image:: /images/clock_pcb/HPIM0871.JPG
+
+
+.. figure:: /images/clock_pcb/HPIM0871.JPG
    :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0871.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   After soldering the diodes and resistors
 
-[caption id="" align="aligncenter" width="640" caption="The completed back of the display board"]
-.. image:: /images/clock_pcb/HPIM0873.JPG
+
+
+.. figure:: /images/clock_pcb/HPIM0873.JPG
    :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0873.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   The completed back of the display board
+
+
 
 After getting that far, I believe my camera died. Anyways, I assembled the breakout board and completed all the parts of the display. I did not solder down all the display modules to the pcb because I am going to be fiddling around with the resistors on the column sinks and I didn't want to have to desolder a display before being able to do anything else. The next day, I started testing\:
 
-[caption id="" align="aligncenter" width="640" caption="The breadboard setup"]
-.. image:: /images/clock_pcb/HPIM0872.JPG
+.. figure:: /images/clock_pcb/HPIM0872.JPG
    :target: http://www.cuznersoft.com/images/clock_pcb/HPIM0872.JPG
+   :width: 640
+   :align: center
 
-[/caption]
+   The breadboard setup
+
+
 
 As for testing and stuff, it mostly works. I made a few errors in both the hardware and the software, but I at least got the LEDs to turn on (I have not, however, gotten them to turn off properly...). My original program which should have been immediately portable to the hardware did not work so well and I ended up writing the entire display portion of the program in assembler\: Apparently doing a variable bit shift on a 32 bit number takes up a very...long...time when compiled in C for the PIC18F. The main issue with the original program was that when I expanded the display size to 40x16 it suddenly had no refresh rate to speak of. This was mainly a product of the way I had organized memory. I had stuck the entire display into an array of long ints so that access to individual pixels could be done almost entirely by index. Sadly, when the size of the display was multiplied by 10 the computation of the bitmask began to take too long and made it impossible to properly refresh the rows. The assembly program I made to replace this organizes memory in the same fashion that I believe VGA cards organize the memory\: Everything in one big long array which has no end-of-row designation and just wraps around when it is displayed. This ended up being much faster and hopefully it will work for the finished product.
 

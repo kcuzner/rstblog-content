@@ -2,11 +2,12 @@ For the past few weeks I have been experimenting a bit with HTML5 WebSockets. I 
 
 The server I have runs on a port which is considered a dedicated port for WebSocket-based services. The server is written in `python <http://www.python.org/>`__ and defines a few base classes for implementing a service. The basic structure is as follows\:
 
-[caption id="attachment_189" align="aligncenter" width="300"]
 .. image:: WebSocketServer_diagram.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/05/WebSocketServer_diagram.png
+   :width: 300
+   :align: center
 
- Super-basic flowchart[/caption]
+ Super-basic flowchart
 
 Each service has its own `thread <http://docs.python.org/library/threading.html#thread-objects>`__ and inherits from a base class which is a thread plus a queue for accepting new clients. The clients are a `socket <http://docs.python.org/library/socket.html#socket-objects>`__ object returned by socket.accept which are wrapped in a class that allows for communication to the socket via queues. The actual communication to sockets is managed by a separate thread that handles all the encoding and decoding to websocket frames. Since adding a client doesn't produce much overhead, this structure potentially could be expanded very easily to handle many many clients.
 

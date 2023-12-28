@@ -165,7 +165,7 @@ class TagHandler(ABC):
             )
         return handler(*args, **kwargs)
 
-    def __init__(self, tag, attrs, pos):
+    def __init__(self, tag, attrs, pos, *args, **kwargs):
         self.tag = tag
         self.attrs = dict(attrs)
         self.line = pos[0]
@@ -197,6 +197,7 @@ class LinkTag(TagHandler):
         super().__init__(*args, **kwargs)
         self.href = self.attrs.get("href", None)
         self.name = self.attrs.get("name", None)
+        self.caption = kwargs.get("caption", {})
         self.content = []
 
     def append(self, tag):
@@ -242,8 +243,9 @@ class LinkTag(TagHandler):
                     raise ValueError("Mixed images and text in links are not supporteD")
                 if len(images) > 1:
                     raise ValueError("Multiple images cannot be in a link")
-                image = images[0].to_rst(*args, **kwargs).strip()
-                return f"\n{image}\n   :target: {ref}\n\n"
+                return images[0].to_rst(
+                    *args, target=ref, parent_caption=self.caption, **kwargs
+                )
             content = "".join([c.to_rst(*args, **kwargs) for c in text]).strip()
             if not content:
                 # Links without content are silently dropped
@@ -256,7 +258,20 @@ class ImgTag(TagHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.src = self.attrs.get("src")
+        self.caption = kwargs.get("caption", {})
         self.add_attachment(self)
+
+    def _from_bb_caption(self, attr, parent_caption):
+        if (v := self.caption.get(attr, None)) is not None:
+            return v
+        if (v := parent_caption.get(attr, None)) is not None:
+            return v
+        if (v := self.attrs.get(attr, None)) is not None:
+            # While strictly this isn't from the bbcode caption, some
+            # attributes appear in either the bbcode or in the contained
+            # elements attribute.
+            return v
+        return None
 
     @property
     def src(self):
@@ -268,11 +283,25 @@ class ImgTag(TagHandler):
         self._last_src = path
         self._src = path
 
-    def to_rst(self, *args, **kwargs):
+    def to_rst(self, *args, target=None, parent_caption={}, **kwargs):
         if self.src is None:
             # Silently drop empty images
             return ""
-        return f".. image:: {self.src}\n\n"
+        caption = self._from_bb_caption("caption", parent_caption)
+        width = self._from_bb_caption("width", parent_caption)
+        align_raw = self._from_bb_caption("align", parent_caption) or ""
+        align = next((a for a in ["left", "center", "right"] if a in align_raw), None)
+        directive = "figure" if caption else "image"
+        lines = [f".. {directive}:: {self.src}"]
+        if target:
+            lines.append(f"   :target: {target}")
+        if width:
+            lines.append(f"   :width: {width}")
+        if align:
+            lines.append(f"   :align: {align}")
+        if caption:
+            lines.extend(["", f"   {caption}"])
+        return "\n".join(lines) + "\n\n"
 
 
 @TagHandler.register_tag("h1")
@@ -696,17 +725,35 @@ class DropMeTag(TagHandler):
 class WordpressToRst(HTMLParser):
     def __init__(self):
         super().__init__()
+        self._last_data = ""
         self.stack = deque()
         self.content = []
 
+    def _tag_kwargs(self, tag, attrs):
+        kwargs = {}
+        if m := re.search(r"\[caption\s([^\]]+)\]\s*$", self._last_data):
+            kwargs["caption"] = dict(
+                [
+                    (kv.group(1), kv.group(2))
+                    for kv in re.finditer(r'(\w+)="([^"]+)"', m.group(1))
+                ]
+            )
+        return kwargs
+
     def handle_starttag(self, tag, attrs):
-        self.stack.append(TagHandler.from_tag(tag, attrs, self.getpos()))
+        kwargs = self._tag_kwargs(tag, attrs)
+        self.stack.append(TagHandler.from_tag(tag, attrs, self.getpos(), **kwargs))
 
     def handle_startendtag(self, tag, attrs):
+        kwargs = self._tag_kwargs(tag, attrs)
         if len(self.stack):
-            self.stack[-1].append(TagHandler.from_tag(tag, attrs, self.getpos()))
+            self.stack[-1].append(
+                TagHandler.from_tag(tag, attrs, self.getpos(), **kwargs)
+            )
         else:
-            self.content.append(TagHandler.from_tag(tag, attrs, self.getpos()))
+            self.content.append(
+                TagHandler.from_tag(tag, attrs, self.getpos(), **kwargs)
+            )
 
     def handle_endtag(self, tag):
         while True:
@@ -724,6 +771,11 @@ class WordpressToRst(HTMLParser):
                 raise ValueError(f"Unable to locate tag {tag} in the stack")
 
     def handle_data(self, data):
+        self._last_data = data
+        for m in re.finditer(r"\[/?(\w+)[^\]]*\]", data):
+            # Remove all bbcode-style things
+            if m.group(1) == "caption":
+                data = data.replace(m.group(0), "")
         if len(self.stack):
             self.stack[-1].append(TextBody(data, self.getpos()))
         else:

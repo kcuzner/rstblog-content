@@ -50,11 +50,14 @@ Pursuant to the V-USB licence, I am releasing my hardware schematics and the sof
 
 The schematic is as follows\:
 
-[caption id="attachment_170" align="aligncenter" width="300" caption="Schematic (click to open full size)"]
-.. image:: schematic.png
+.. figure:: schematic.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/schematic.png
+   :width: 300
+   :align: center
 
-[/caption]
+   Schematic (click to open full size)
+
+
 
 The parts designations are as follows\:
 
@@ -120,41 +123,59 @@ Although I already have a link above, the software can be found here\: `Case LED
 
 So, here are pictures of the finished product\:
 
-[caption id="attachment_173" align="alignleft" width="225" caption="LEDs shining magenta"]
-.. image:: /wp-content/uploads/2012/04/HPIM1973-e1335235943256-225x300.jpg
+.. figure:: /wp-content/uploads/2012/04/HPIM1973-e1335235943256-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1973-e1335235943256.jpg
+   :width: 225
+   :align: left
 
-[/caption]
+   LEDs shining magenta
 
-[caption id="attachment_172" align="alignleft" width="225" caption="LEDs shining orange"]
-.. image:: /wp-content/uploads/2012/04/HPIM1972-e1335235909822-225x300.jpg
+
+
+.. figure:: /wp-content/uploads/2012/04/HPIM1972-e1335235909822-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1972-e1335235909822.jpg
+   :width: 225
+   :align: left
 
-[/caption]
+   LEDs shining orange
 
-[caption id="attachment_171" align="alignleft" width="225" caption="LEDs shining green"]
-.. image:: /wp-content/uploads/2012/04/HPIM1971-e1335235790482-225x300.jpg
+
+
+.. figure:: /wp-content/uploads/2012/04/HPIM1971-e1335235790482-225x300.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1971-e1335235790482.jpg
+   :width: 225
+   :align: left
 
-[/caption]
+   LEDs shining green
 
-[caption id="attachment_176" align="alignleft" width="300" caption="With its guts hanging out"]
-.. image:: HPIM1968.jpg
+
+
+.. figure:: HPIM1968.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968.jpg
+   :width: 300
+   :align: left
 
-[/caption]
+   With its guts hanging out
 
-[caption id="attachment_175" align="alignleft" width="300" caption="The mounting viewed from the outside"]
-.. image:: HPIM1966.jpg
+
+
+.. figure:: HPIM1966.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966.jpg
+   :width: 300
+   :align: left
 
-[/caption]
+   The mounting viewed from the outside
 
-[caption id="attachment_174" align="alignleft" width="300" caption="Mounted onto the front fan grille"]
-.. image:: HPIM1967.jpg
+
+
+.. figure:: HPIM1967.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1967.jpg
+   :width: 300
+   :align: left
 
-[/caption]
+   Mounted onto the front fan grille
+
+
 
 .. rstblog-settings::
    :title: The Case LED v. 2.0: Completed

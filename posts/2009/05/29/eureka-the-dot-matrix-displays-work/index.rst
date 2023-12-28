@@ -1,6 +1,10 @@
-[caption id="attachment_48" align="alignright" width="462" caption="Running one display block with pixel 0,0 turned off"].. image:: sdc10183.jpg
+.. figure:: sdc10183.jpg
+   :width: 462
+   :align: right
 
-[/caption]
+   Running one display block with pixel 0,0 turned off
+
+
 
 I have finally managed to get a dot matrix display running full bore without resorting to outrageous voltages such as 18V on 5V logic. I have been working towards this moment for probably 2 or 3 years now.
 

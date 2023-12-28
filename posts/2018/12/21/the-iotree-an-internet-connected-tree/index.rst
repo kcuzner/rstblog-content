@@ -13,11 +13,12 @@ For this Christmas I decided to do something fun with my Christmas tree\: Hook i
 
 
 
-[caption id="attachment_649" align="alignright" width="1125"]
 .. image:: Christmas-Tree-in-Action-Cropped.png
    :target: http://kevincuzner.com/wp-content/uploads/2018/12/Christmas-Tree-in-Action-Cropped.png
+   :width: 1125
+   :align: right
 
- The IoTree[/caption]
+ The IoTree
 
 The IoTree is an interface that allows anyone to control the pattern of lights shown on the small Christmas tree on my workbench. It consists of the following components\:
 

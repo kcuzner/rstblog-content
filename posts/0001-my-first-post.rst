@@ -9,6 +9,6 @@ I really like testing stuff. This is an attempt at making a restructured text bl
 
 .. rstblog-settings::
    :title: Testing Stuff
-   :url: /testing-stuff
+   :url: testing-stuff
    :date: 2 July 2021
 

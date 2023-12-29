@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: MMO Asteroids in Node.js...but for real.
+   :date: 2013/02/10
+   :url: /2013/02/10/mmo-asteroids-in-node-js-but-for-real
+
 Many people saw this `april fools joke <http://seb.ly/2012/04/node-js-experiment-mmo-asteroids/>`__ where the author said that he had created an asteroids MMO using Node.js. In reality, it was completely client side and was a bunch of bots. However, I did find the whole thing rather intriguing and decided to see what I could do with Node.js along this line. Last week I started on the project and this weekend I made enough progress that I can publish v0.0.1. It leaves several things to be desired, including a better game background so that one can tell when the view is shifting and user tracking so that you accumulate your scores over time. It does work and from what I can see its not horribly bad performance. While it certainly won't be able to handle thousands of clients, I expect that it should be able to handle somewhere between 50-100 before it starts dying. At the moment, its quite limited by the memory on my server and the client side scripting gives the impression of "stuttering" with the dead reckoning system used to make the animations smooth. The stuttering is caused by the linear and angular damping that I have running on the server side not being factored into the projected location on the client side.
 
 For physics I am using `Box2Dweb <http://code.google.com/p/box2dweb/>`__ in a Node.js module which may be overkill, but its the simplest Javascript physics engine I could find since I didn't feel like writing my own. The server keeps track of all of the entities in the game and each client requests a "view" of an area of the room. The client is informed which player is them, but other than that it just sees all players and entities in the same list. The actual rendering function draws the entities onto the canvas dependent upon the type of the object.
@@ -5,8 +10,3 @@ For physics I am using `Box2Dweb <http://code.google.com/p/box2dweb/>`__ in a N
 I have made the source available on github here\: `https\://github.com/kcuzner/mmo-asteroids <https://github.com/kcuzner/mmo-asteroids>`__
 
 The MMO itself can be viewed here\: `http\://kevincuzner.com\:8080/ <http://kevincuzner.com:8080/>`__. Note that at times it may be down since I am messing with my firewall right now and I might accidentally close the port. Just leave me a note in the comments and I'll try to get it working.
-
-.. rstblog-settings::
-   :title: MMO Asteroids in Node.js...but for real.
-   :date: 2013/02/10
-   :url: /2013/02/10/mmo-asteroids-in-node-js-but-for-real

@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Simulink clone...now in C++
+   :date: 2012/10/21
+   :url: /2012/10/21/simulink-clone-now-in-c
+
 I took the plunge and decided to re-implement what I had in Python using C++. I had to change up my structure a bit, but I made the switch because of the following reasons\:
 
 
@@ -24,8 +29,3 @@ By far the coolest part of all this is the Plugins. After discovering that ALL c
 I will be posting later a bit about Qt plugins since that is what I have spent the most time on. Google was definitely my friend on that one. Most people it seems just use Qt Plugins for extending Qt itself rather than doing the "low level" extending the application stuff.
 
 In terms of development time, C++ is quite a bit slower for me than Python. However, my potential to write good code is much higher since I am much more familiar with C++ coding conventions and I am more able to clean code while being confident nothing is being broken since in Python, there are no compile-time errors to tell you that you switched the arguments to a function.
-
-.. rstblog-settings::
-   :title: Simulink clone...now in C++
-   :date: 2012/10/21
-   :url: /2012/10/21/simulink-clone-now-in-c

@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Revision two
+   :date: 2009/04/18
+   :url: /2009/04/18/revision-two
+
 After looking at my design of a few days back I decided it definately needed another revision. For one thing, I switced out the serial->parallel chips to a more common chip that I can get off of digikey (497-5746-1-ND) for $3.30 apiece which isn't too bad (it's not the best though...but it will save on shipping). I also got rid of most of that empty space that I was not using and managed to compress the entire thing so that it is as small as it can get unless I drastically change my design.
 
  
@@ -31,8 +36,3 @@ Fabrication
 
 
 I am now thinking of how to get this board fabricated. I have found one company, olimex, who will do it for around $40 per board (no minimum quantity) which is really quite cheap. The also allow panelizing and will cut your boards for you if you want, so I might wait until I have the entire clock finished before sending it off for fabbing. The only problem so far is that my board is .3" too wide for their smaller double sided panel. The upgrade is over $100 and adds about 6" on every side to the space which I don't need unless I decided to make two clocks and panelize all the parts into one board. Hopefully it isn't too hard to get these fabricated since I kind of need them to be fabricated before I can do serious testing on my software.
-
-.. rstblog-settings::
-   :title: Revision two
-   :date: 2009/04/18
-   :url: /2009/04/18/revision-two

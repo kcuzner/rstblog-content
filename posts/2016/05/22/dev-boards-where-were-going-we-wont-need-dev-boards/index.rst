@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Dev boards? Where we're going we won't need dev boards...
+   :date: 2016/05/22
+   :url: /2016/05/22/dev-boards-where-were-going-we-wont-need-dev-boards
+
 
 A complete tutorial for using an STM32 without a dev board
 ==========================================================
@@ -550,8 +555,3 @@ Conclusion
 For me, this marks the end of one journey and the beginning of another. I can now feel free to experiment with ARM microcontrollers without having to worry about ruining a nice shiny development board. I can buy a obscenely powerful $1 STM32 microcontroller from eBay and put it into any project I want. If I were to try to do that with AVRs, I would be stuck with the ultra-low-end 8-pin ATTiny13A since that's about it for ~$1 AVR eBay offerings (don't worry...I've got plenty of ATMega328PB's...though they weren't $1). I sincerely hope that you found this tutorial useful and that it might serve as a springboard for doing your own dev board-free ARM development.
 
 If you have any questions or comments (or want to let me know about any errors I may have made), let me know in the comments section here. I will try my best to help you out, although I can't always find the time to address every issue.
-
-.. rstblog-settings::
-   :title: Dev boards? Where we're going we won't need dev boards...
-   :date: 2016/05/22
-   :url: /2016/05/22/dev-boards-where-were-going-we-wont-need-dev-boards

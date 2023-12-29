@@ -154,6 +154,7 @@ class TextBody:
         self.line = pos[0]
         self.offset = pos[1]
         self._attachments = []
+        self._declarations = []
 
     @property
     def attachments(self):
@@ -161,6 +162,14 @@ class TextBody:
 
     def add_attachment(self, attachment):
         self._attachments.append(attachment)
+
+    @property
+    def declarations(self):
+        yield from self._declarations
+
+
+    def add_declaration(self, declaration):
+        self._declarations.append(declaration)
 
     def to_rst(self, *args, escape=":`*", **kwargs):
         text = self.text
@@ -182,6 +191,10 @@ class PostBreak:
 
     @property
     def attachments(self):
+        return []
+
+    @property
+    def declarations(self):
         return []
 
     def to_rst(self, *args, **kwargs):
@@ -219,16 +232,40 @@ class TagHandler(ABC):
         self.line = pos[0]
         self.offset = pos[1]
         self._attachments = []
+        self._declarations = []
 
     @property
     def attachments(self):
+        """
+        Attachments that this item or any of its inner items reference
+        """
         yield from self._attachments
         content = getattr(self, "content", [])
         for c in content:
             yield from c.attachments
 
     def add_attachment(self, attachment):
+        """
+        Adds an attachments to this item
+        """
         self._attachments.append(attachment)
+
+    @property
+    def declarations(self):
+        """
+        Declarations that this tag or any of its inner items require in the
+        page
+        """
+        yield from self._declarations
+        content = getattr(self, "content", [])
+        for c in content:
+            yield from c.declarations
+
+    def add_declaration(self, declaration):
+        """
+        Adds a declaration that will appear once on the page
+        """
+        self._declarations.append(declaration)
 
     @abstractmethod
     def to_rst(self, *args, **kwargs):
@@ -575,15 +612,16 @@ class StrikethroughTag(TagHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.content = []
+        self.add_declaration(".. role:: strike\n   :class: strike\n\n")
 
     def append(self, tag):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
         return (
-            r"\ :raw-html:`<del>`\ "
+            r"\ :strike:`"
             + "".join([c.to_rst(*args, **kwargs) for c in self.content])
-            + r"\ :raw-html:`</del>`\ "
+            + "`\ "
         )
 
 
@@ -825,6 +863,14 @@ class WordpressToRst(HTMLParser):
         for c in self.content:
             yield from c.attachments
 
+    @property
+    def declarations(self):
+        decls = set()
+        for c in self.content:
+            for d in c.declarations:
+                decls.add(d)
+        return decls
+
     def close(self):
         super().close()
         if len(self.stack):
@@ -873,11 +919,13 @@ class Content(Item):
         content = WordpressToRst()
         content.feed(self.content_raw)
         attachments.process(content.attachments, output_dir)
+        decls = "".join(content.declarations)
         rst = content.close()
         with open(index_path, "w") as f:
-            f.write(rst)
-            f.write("\n\n")
+            f.write(decls)
             f.write(self.rstblog_directive)
+            f.write("\n\n")
+            f.write(rst)
 
 
 @Item.register_post_type("post")

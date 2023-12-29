@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: KnockoutJS and Memory Usage
+   :date: 2012/07/13
+   :url: /2012/07/13/knockoutjs-and-memory-usage
+
 Recently at work I have been using `KnockoutJS <http://www.knockoutjs.com>`__ for structuring my Javascript. To be honest, it is probably the best thing since jQuery in my opinion in terms of cutting down quantity of code that one must write for an interface. The only problem is, however, that it is really really easy to make a page use a ridiculous amount of memory. After thinking and thinking and trying different things I have realized the proper way to do things with more complex pages.
 
 The KnockoutJS documentation is really great, but it is more geared towards the simple stuff/basics so that you can get started quickly and doesn't talk much about more complex stuff which leads to comments like the answer `here <http://stackoverflow.com/questions/5112899/knockout-js-vs-backbone-js-vs>`__ saying that it isn't so good for complex user interfaces. When things get more complex, like interfacing it with existing applications with different frameworks or handling very very large quantities of data, it doesn't really say much and kind of leaves one to figure it out on their own. I have one particular project that I was working on which had the capability to display several thousand items in a graph/tree format while calculating multiple inheritance and parentage on several values stored in each item object. In chrome I witnessed this page use 800Mb easily. Firefox it was about the same. Internet explorer got to 1.5Gb before I shut if off. Why was it using so much memory? Here is an example that wouldn't use a ton of memory, but it would illustrate the error I made\:
@@ -195,9 +200,3 @@ In summary, to reduce KnockoutJS memory usage consider the following\:
 * Consider pagination or something. If you don't need 1000 objects displayed at the same time, don't display 1000 objects at the same time. There is a server there to store the information for a reason.
 
 
-
-
-.. rstblog-settings::
-   :title: KnockoutJS and Memory Usage
-   :date: 2012/07/13
-   :url: /2012/07/13/knockoutjs-and-memory-usage

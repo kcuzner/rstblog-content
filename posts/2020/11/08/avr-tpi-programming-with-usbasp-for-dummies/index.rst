@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: AVR  TPI Programming With usbasp For Dummies
+   :date: 2020/11/08
+   :url: /2020/11/08/avr-tpi-programming-with-usbasp-for-dummies
+
 There is an odd famine of information about this particular subject available in text form. If you google "usbasp tpi" and things like it, you'll find posts on the avr forums filled with incorrect information and schematics. This post is an attempt to remedy this.
 
 I intend to show exactly the following, no more and no less\:
@@ -172,8 +177,3 @@ Conclusion
 
 
 The intention in this post was to communicate how to program TPI-based AVRs without too much hassle using the usbasp. If I've got a detail missing, something wrong, or this post helped you out, feel free to drop a comment!
-
-.. rstblog-settings::
-   :title: AVR  TPI Programming With usbasp For Dummies
-   :date: 2020/11/08
-   :url: /2020/11/08/avr-tpi-programming-with-usbasp-for-dummies

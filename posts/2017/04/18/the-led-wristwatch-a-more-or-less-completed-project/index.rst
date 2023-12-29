@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: The LED Wristwatch: A (more or less) completed project!
+   :date: 2017/04/18
+   :url: /2017/04/18/the-led-wristwatch-a-more-or-less-completed-project
+
 About 2009 I saw an article written by Dr. Paul Pounds in which he detailed a pocketwatch he had designed that fit inside a standard pocketwatch case and used LEDs as the dial. While the article has since disappeared, the `youtube video <https://www.youtube.com/watch?v=lex53AY7Fmo>`__ remains. The wayback machine has a `cached version <https://web.archive.org/web/20160322025932/http://www.eng.yale.edu/pep5/pocket_watch.html>`__ of the page. Anyway, the idea has kind of stuck with me for a while and so a year or so ago I decided that I wanted to build a wristwatch inspired by that idea.
 
 Although the project started out as an AVR project, I decided after my escapades with the STM32 in August that I really wanted to make it an STM32 project, so around November I started making a new design that used the STM32L052C8 ARM Cortex-M0+ ultra-low power USB microcontroller. The basic concept of the design is to mock up an analog watch face using a ring of LEDs for the hours, minutes, and seconds. I found three full rings to be expecting a bit much if I wanted to keep this small, so I ended up using two rings\: One for the hours and another for combined minutes and seconds (the second hand is recognized by the fact that it is "moving" perceptibly).
@@ -118,8 +123,3 @@ This project was especially satisfying to me because I managed to actually bring
 In summary, I was happy that even with my errors the watch worked fairly well. There were zero problems programming the microcontroller and parts that I was reluctant about (I'm talking about you, DFN packages) soldered well and worked just fine. I still need to improve my diligence in part selection, however, as the whole blue LED fiasco could have been avoided by just reading a datasheet thoroughly.
 
 Oh, and the parts cost? ~$50. Not bad, though it makes a very impractical timepiece as it's fragile and not water or splash resistant in the slightest.
-
-.. rstblog-settings::
-   :title: The LED Wristwatch: A (more or less) completed project!
-   :date: 2017/04/18
-   :url: /2017/04/18/the-led-wristwatch-a-more-or-less-completed-project

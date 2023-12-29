@@ -1,3 +1,11 @@
+.. role:: strike
+   :class: strike
+
+.. rstblog-settings::
+   :title: Cross-platform driverless USB: The Human Interface Device
+   :date: 2018/02/02
+   :url: /2018/02/02/cross-platform-driverless-usb-the-human-interface-device
+
 During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
 
 What I would like to do in this post is a step-by-step tutorial for modifying a USB device to enumerate as a human interface device. I'll start with an overview of HID, then move on to modifying the USB descriptors and setting up your device endpoints so that it sends reports, followed by a few notes on writing host software for Windows and Linux that communicates to devices using raw reports. With a little bit of work, you should be able to replace many things done exclusively with libusb with a cross-platform system that requires no drivers.
@@ -282,7 +290,7 @@ The configuration descriptor of something that has an HID interface looks like s
 
 
 
-  * \ :raw-html:`<del>`\ Zero or more endpoint descriptors (bDescriptorType = 5)\ :raw-html:`</del>`\ 
+  * \ :strike:`Zero or more endpoint descriptors (bDescriptorType = 5)`\ 
 
 
   * **Endpoint descriptor (bDescriptorType = 5, interrupt endpoint, IN)** 
@@ -782,8 +790,3 @@ Conclusion
 At this point, I hope that I've armed you with enough information that you can implement a human interface device with any microcontroller that you have a working USB implementation for. We've gone through modifying the configuration descriptor, writing a report descriptor, sending and receiving reports, and briefly touched on writing host software to talk to the HID devices.
 
 As always, if you have any suggestions, ideas, or questions feel free to comment below.
-
-.. rstblog-settings::
-   :title: Cross-platform driverless USB: The Human Interface Device
-   :date: 2018/02/02
-   :url: /2018/02/02/cross-platform-driverless-usb-the-human-interface-device

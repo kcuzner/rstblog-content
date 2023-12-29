@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Teensy 3.1 Bare-Metal
+   :date: 2014/04/28
+   :url: /2014/04/28/teensy-3-1-bare-metal
+
 
 Introduction
 ============
@@ -179,8 +184,3 @@ Conclusion
 Armed with my new Makefile and a better understanding of how the Teensy 3.1 works from a software perspective, I managed to compile and upload my "blinky" program which just blinks the onboard LED (pin 13) on and off every 1/4 second. The overall program size was 3% of the total space, which is much more reasonable compared to the 10-20% it was taking when compiled using the Arduino IDE.
 
 Again, all files from this escapade can be found here\: `https\://github.com/kcuzner/teensy31-blinky-bare-metal <https://github.com/kcuzner/teensy31-blinky-bare-metal>`__
-
-.. rstblog-settings::
-   :title: Teensy 3.1 Bare-Metal
-   :date: 2014/04/28
-   :url: /2014/04/28/teensy-3-1-bare-metal

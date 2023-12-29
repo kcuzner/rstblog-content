@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Multiprocessing with the WebSocketServer
+   :date: 2012/06/20
+   :url: /2012/06/20/multiprocessing-with-the-websocketserver
+
 After spending way to much time thinking about exactly how to do it, I have got multiprocessing working with the WebSocketServer.
 
 I have learned some interesting things about multiprocessing with Python\:
@@ -38,8 +43,3 @@ So now, the plan to proceed is as follows\:
 
 
 As always, the source is available at `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`__
-
-.. rstblog-settings::
-   :title: Multiprocessing with the WebSocketServer
-   :date: 2012/06/20
-   :url: /2012/06/20/multiprocessing-with-the-websocketserver

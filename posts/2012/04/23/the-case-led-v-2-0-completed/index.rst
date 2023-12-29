@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: The Case LED v. 2.0: Completed
+   :date: 2012/04/23
+   :url: /2012/04/23/the-case-led-v-2-0-completed
+
 After much pain and work...(ok, I had a great time; let's be honest now)...I have finished the case LEDs!
 
 
@@ -154,9 +159,3 @@ So, here are pictures of the finished product\:
 
    Mounted onto the front fan grille
 
-
-
-.. rstblog-settings::
-   :title: The Case LED v. 2.0: Completed
-   :date: 2012/04/23
-   :url: /2012/04/23/the-case-led-v-2-0-completed

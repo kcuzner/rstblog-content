@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: First thoughts on the Teensy 3.1
+   :date: 2014/01/27
+   :url: /2014/01/27/first-thoughts-on-the-teensy-3-1
+
 Wow it has been a while; I have not written since August.
 
 I entered a contest of sorts this past week which involves building an autonomous turret which uses an ultrasonic sensor to locate a target within 10 feet and fire at it with a tiny dart gun. The entire assembly is to be mounted on servos. This is something my University is doing as an extra-curricular for engineers and so when a friend of mine asked if I wanted to join forces with him and conquer, I readily agreed.
@@ -42,8 +47,3 @@ Conclusion
 
 
 Although the Teensy is for a specific contest project right now, at the price of $19.80 for the amount of power that it gives, I believe I will buy one for myself to mess around with. I am looking forward to getting more familiar with this processor and although I resent the IDE I have to work with at the moment, I hope that I will be able to move along to better compilation options that will let me move away from the arduino IDE.
-
-.. rstblog-settings::
-   :title: First thoughts on the Teensy 3.1
-   :date: 2014/01/27
-   :url: /2014/01/27/first-thoughts-on-the-teensy-3-1

@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Not so temporary...
+   :date: 2009/02/13
+   :url: /2009/02/13/not-so-temporary
+
 Well I have decided to place my actual website on this server. My home server has failed due to router issues and I will probably be redesigning the entire website in the near future anyway since it uses outdated layout techniques. This server is basically the smith-marsden.org website that I work on for my dad's side of the family. I plan on downloading the contents of my server to here over the weekend so that I can try to clean things up a bit and hopefully get this site back on the map.
 
 I will probably post progress on the new smith-marsden site here since that is currently my main development challenge.
@@ -26,9 +31,3 @@ Additional features of the new smith-marsden site\:
 * More to come as I think of them and make them...
 
 
-
-
-.. rstblog-settings::
-   :title: Not so temporary...
-   :date: 2009/02/13
-   :url: /2009/02/13/not-so-temporary

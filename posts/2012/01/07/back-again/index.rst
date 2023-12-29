@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Back again
+   :date: 2012/01/07
+   :url: /2012/01/07/back-again
+
  
 
 After serving a two year mission for my church, I have returned! While on my mission I didn't have much chance to work on my various projects, but I sure thought a lot and wrote down a lot. I also managed to build some pretty interesting things (OK...maybe not that interesting).
@@ -59,8 +64,3 @@ In one of the apartments I lived in I was with some other missionaries who serve
 The basic design was to use a hamster ball cut in half with coat wire bridging the two speakers. Socks sewed onto cardboard with a cotton filling would be used for the ear pads. An old belt would serve as a size adjuster. The headphones actually turned out pretty nice and were very loud and had pretty good sound quality considering that they were made out of a really cheap iPod speaker set. The only problem was that when they were turned up high the quality would drop dramatically due to clipping/overloading/whatever you call that noise a stereo makes when its turned up to loud. She had to use them at that volume and while she was able to hear the music she asked 'what is that strange noise on top of the music?' and so they ended up being returned and the missionary who built the case bought the cost of the electronics from me and he used the headphones after that.
 
 I have also had many ideas relating to future projects which I will post here when I am ready. Within my first few weeks back I constructed a new computer which should help me out and I hope for it to last at least 5-7 years. I will be posting about that soon as well.
-
-.. rstblog-settings::
-   :title: Back again
-   :date: 2012/01/07
-   :url: /2012/01/07/back-again

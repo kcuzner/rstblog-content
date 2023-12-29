@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Making a WebSocket server
+   :date: 2012/06/17
+   :url: /2012/06/17/making-a-websocket-server
+
 For the past few weeks I have been experimenting a bit with HTML5 WebSockets. I don't normally focus only on software when building something, but this has been an interesting project and has allowed me to learn a lot more about the nitty gritty of sockets and such. I have created a github repository for it (it's my first time using git and I'm loving it) which is here\: `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`__
 
 The server I have runs on a port which is considered a dedicated port for WebSocket-based services. The server is written in `python <http://www.python.org/>`__ and defines a few base classes for implementing a service. The basic structure is as follows\:
@@ -22,8 +27,3 @@ A few things I plan on adding to the server eventually are\:
 
 
 Currently, the repository includes a demo chatroom service for which I should have the client side application done soon and uploaded. Currently it supports multiple chatrooms and multiple users, but there is no authentication really and there are a few features I would like to add (such as being able to see who is in the chatroom).
-
-.. rstblog-settings::
-   :title: Making a WebSocket server
-   :date: 2012/06/17
-   :url: /2012/06/17/making-a-websocket-server

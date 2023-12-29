@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Weekend Project: Smoke Bombs
+   :date: 2009/07/05
+   :url: /2009/07/05/weekend-project-smoke-bombs
+
 .. figure:: saltpeter.jpg
    :width: 192
    :align: right
@@ -145,9 +150,3 @@ Video and Pictures
 
 
 
-
-
-.. rstblog-settings::
-   :title: Weekend Project: Smoke Bombs
-   :date: 2009/07/05
-   :url: /2009/07/05/weekend-project-smoke-bombs

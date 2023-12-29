@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Lessons in game design...in a car!
+   :date: 2013/05/03
+   :url: /2013/05/03/lessons-in-game-design-in-a-car
+
 For the greater part of this week I have been trapped in a car driving across the United States for my sister's wedding. Of course, I had my trusty netbook with me and so I decided to do some programming. After discovering that I had unwittingly installed tons of documentation in my /usr/share/doc folder (don't you love those computer explorations that actually reveal something?), I started building yet another rendition of Tetris in Python. I did several things differently this time and the code is actually readable and I feel like some structure things I learned/discovered/re-discovered should be shared here.
 
 Game State Management
@@ -105,8 +110,3 @@ Conclusion
 
 
 I eventually will put up this Tetris implementation as a gist or repository on github (probably just a gist unless it gets huge...which it could). So far I have learned a great deal about game design and structure, so this should get interesting as I explore other things like networking and such.
-
-.. rstblog-settings::
-   :title: Lessons in game design...in a car!
-   :date: 2013/05/03
-   :url: /2013/05/03/lessons-in-game-design-in-a-car

@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Simulation in C++ finally works
+   :date: 2012/12/27
+   :url: /2012/12/27/simulation-in-c-finally-works
+
 After redoing this project several times, I have finally managed to get it working in C++. I gave up for the moment on the GUI since I figured it would be best to get the back end model working first before tackling the GUI. The biggest change I made from my previous paradigm is that I decided to split this into several Qt projects. The model is held in a project called Engine and doesn't actually depend on Qt. Instead I decided to use Boost so that if I one day decide to ditch Qt I won't have to throw out my model.
 
 In designing the model I had two principal design concerns\: Everything has to implement interfaces and everything has to be interchangeable. By defining everything as an interface (classes with a virtual destructor and all pure virtual methods returning types easily resolved without any additional code) this allows for additional expansion later at the hands of myself or somebody else who decides on a better implementation of any component of the engine. It also allows the Qt plugin system to be able to handle references to any of the types in the engine so that a future plugin interface can use them.
@@ -11,8 +16,3 @@ A gist of how a simple simulation can be set up and run\:
 [gist id="4391549" file="simulate_basic_test.cpp"]
 
 The next thing on the docket before I start off on creating all of the system blocks (basically, trying to clone the functionality of the blocks listed for Simulink) and making the GUI is to create a set of interfaces for describing the model in files. This is so that I can create an interface to a generic loader allowing for multiple file formats to be loaded (XML, JSON, BSON, something binary, etc) for describing simulations.
-
-.. rstblog-settings::
-   :title: Simulation in C++ finally works
-   :date: 2012/12/27
-   :url: /2012/12/27/simulation-in-c-finally-works

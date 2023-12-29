@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Teensy 3.1 bare metal: Writing a USB driver
+   :date: 2014/12/12
+   :url: /2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver
+
 One of the things that has intrigued me for the past couple years is making embedded USB devices. It's an industry standard bus that just about any piece of computing hardware can connect with yet is complex enough that doing it yourself is a bit of a chore.
 
 Traditionally I have used the work of others, mainly the `V-USB <http://www.obdev.at/products/vusb/index.html>`__ driver for AVR, to get my devices connected. Lately I have been messing around more with the ARM processor on a Teensy 3.1 which has an integrated USB module. The last microcontrollers I used that had these were the PIC18F4550s that I used in my dot matrix project. Even with those, I used microchip's library and drivers.
@@ -673,8 +678,3 @@ I can only hope that this discussion has been helpful. I spent a long time readi
 The code I have included above isn't always complete, so I would definitely recommend actually reading the code in the repository referenced at the beginning of this article.
 
 If there are any mistakes in the above, please let me know in the comments or shoot me an email.
-
-.. rstblog-settings::
-   :title: Teensy 3.1 bare metal: Writing a USB driver
-   :date: 2014/12/12
-   :url: /2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver

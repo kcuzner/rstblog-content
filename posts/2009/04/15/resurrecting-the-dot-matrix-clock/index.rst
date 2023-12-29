@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Resurrecting the Dot Matrix Clock
+   :date: 2009/04/15
+   :url: /2009/04/15/resurrecting-the-dot-matrix-clock
+
 Man, I have been working on this project since probably 2006.  This is by far my longest lived project with about 4 different breadboarded prototypes, 2 or 3 different control schemes, 2 differnt types of displays, and 3 different microcontrollers designed for. I think I have settled on a final design and I do have to say that this clock is more like a computer than an actual clock.
 
 Background
@@ -145,8 +150,3 @@ Conclusion
 As always, do not take my ideas without asking me first or crediting me somehow. Feel free to use this as a resource for your own projects, but if I see an exact duplicate of my clock out there somewhere that I didn't know about previously it could be bad. The point of this clock is to be unique, so if you end up making a clock based off of information you found here then try to make it unique enough so that it could be distinguished from mine easily.
 
 I am not sure how often I will be able to actually work on this clock, but I will post updates when I reach milestones and such.
-
-.. rstblog-settings::
-   :title: Resurrecting the Dot Matrix Clock
-   :date: 2009/04/15
-   :url: /2009/04/15/resurrecting-the-dot-matrix-clock

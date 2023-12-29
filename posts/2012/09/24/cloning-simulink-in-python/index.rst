@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Cloning Simulink...in Python
+   :date: 2012/09/24
+   :url: /2012/09/24/cloning-simulink-in-python
+
 For a while now I have been working on a bench supply. As part of this I have been trying to get a PID controller to work. At first it was simple, but after asking my Dad about it (he does power electronics), he suggested that I use a cascaded PID loop for controlling the voltage and current using the voltage alone. I have sort of a bench model going, but I don't really want to start construction until I have everything finalized since blowing things up and making mistakes is kind of expensive for my meager college student budget. Tweaking that without a working bench model that I am willing to blow up is kind of hard, so I started trying to figure out how to simulate it. Being partial to simulink (I've used it before with some nice pre-built blocks), I wanted to be able to lay it out graphically like control system diagrams usually show and I also wanted to be able to view plots over time. So thus was born my latest project\: SimuPy.
 
 Python seemed like an ideal language for this since I wanted it to look nice, be extensible, and be almost universally cross platform. I am relying heavily on the Qt library because it runs on almost anything and it has the ability to use slots and signals on pretty much any object as well. I guess another option would have been Java, but seeing as I don't like Java that much, Python was what I went with. In addition, I am weighing a couple other options\:
@@ -19,8 +24,3 @@ Simulations are to be stored in an XML format which is going to be more or less 
 As for the GUI, I plan on using Qt since it seems the most cross-platform (sorry GTK...Windows needs too much help to load you and PyDev in eclipse doesn't like the whole introspection thing). I plan on releasing the project under the Apache License (but don't yet quote me on that or hold me to it...I may choose a different license later once I get more of a feel for how the project would be used). Either way, I plan on publishing the source code on github since it looks like nothing like this really exists in a simple form. Sure, there are clones of Simulink to work with Octave and things like that, but it doesn't look like there are few, if any, stand-alone applications that do this (except perhaps a paid program called `logic.ly <http://logic.ly/>`__, but this should be able to duplicate the functionality of that program as well). I guess it is kind of a niche market since the only people who do this kind of thing usually can afford Simulink and Matlab.
 
 For the record, I do have access to Simulink and Matlab through the University I am attending, but where would the fun be in that?
-
-.. rstblog-settings::
-   :title: Cloning Simulink...in Python
-   :date: 2012/09/24
-   :url: /2012/09/24/cloning-simulink-in-python

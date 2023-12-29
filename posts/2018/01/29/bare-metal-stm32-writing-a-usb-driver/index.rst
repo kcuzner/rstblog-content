@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Bare metal STM32: Writing a USB driver
+   :date: 2018/01/29
+   :url: /2018/01/29/bare-metal-stm32-writing-a-usb-driver
+
 A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__ about writing a bare metal USB driver for the Teensy 3.1, which uses Freescale Kinetis K20 microcontroller. Over the past couple years I've switched over to instead using the STM32 series of microcontrollers since they are cheaper to program the "right" way (the dirt-cheap STLink v2 enables that). I almost always prefer to use the microcontroller IC by itself, rather than building around a development kit since I find that to be much more interesting.
 
 .. image:: IMG_20170415_194157.jpg
@@ -1143,8 +1148,3 @@ Conclusion
 Wow that was long. TLDR of people who look at this will be rampant and that's fine. The point here was describe how I ended up building my device-side driver so that I could easily extend it without needing to modify too many files while still managing to save code space.
 
 I've posted this hoping its useful to someone, even with all its shortcomings. I love doing this kind of stuff and writing a HAL for the USB peripheral is one of my favorite parts of getting started on a new microcontroller. If you have any comments or questions, leave them down below and I'll do my best to respond.
-
-.. rstblog-settings::
-   :title: Bare metal STM32: Writing a USB driver
-   :date: 2018/01/29
-   :url: /2018/01/29/bare-metal-stm32-writing-a-usb-driver

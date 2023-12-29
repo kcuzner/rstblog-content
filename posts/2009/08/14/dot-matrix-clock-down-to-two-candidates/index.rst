@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Dot Matrix Clock: Down to two candidates
+   :date: 2009/08/14
+   :url: /2009/08/14/dot-matrix-clock-down-to-two-candidates
+
 Well, just a short update here. I think I will probably be at home for another month or so, so I am going to go ahead and order the dot matrix clock display board. However, I need to decide between a surface mount crystal or a through hole crystal. I think my post on edaboard.com pretty much sums up my dilemma\:
     I have two possible versions I have been designing for some time now. Since it is looking like I am going to be home long enough to finish it I guess I should get it fabricated. However, one thing needs to be decided before I order it and that is whether or not I should use a Through-Hole or Surface Mount crystal.
 
@@ -9,8 +14,3 @@ Well, just a short update here. I think I will probably be at home for another m
 
     I don't have enough experience with this sort of thing to answer it myself and I really can't afford to buy two versions of this board. Is using a crystal this small really worth it?
 Well, hopefully I will have that problem solved before the end of the month so I can place my order as soon as Olimex comes out of their summer break (for some reason, Europeans take a month long vacation from work in the summer...how odd...).
-
-.. rstblog-settings::
-   :title: Dot Matrix Clock: Down to two candidates
-   :date: 2009/08/14
-   :url: /2009/08/14/dot-matrix-clock-down-to-two-candidates

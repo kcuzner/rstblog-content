@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Privacy Policy
+   :date: 2018/05/25
+   :url: /privacy-policy
+
 
 Who we are
 ----------
@@ -120,9 +125,3 @@ There is no automated decision making or profiling that occurs with data collect
 Industry regulatory disclosure requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
-.. rstblog-settings::
-   :title: Privacy Policy
-   :date: 2018/05/25
-   :url: /privacy-policy

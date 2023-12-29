@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Arranging components in a circle with Kicad
+   :date: 2017/04/28
+   :url: /2017/04/28/arranging-components-in-a-circle-with-kicad
+
 I've been using kicad for just about all of my designs for a little over 5 years now. It took a little bit of a learning curve, but I've really come to love it, especially with the improvements by CERN that came out in version 4. One of the greatest features, in my opinion, is the Python Scripting Console in the PCB editor (pcbnew). It gives (more or less) complete access to the design hierarchy so that things like footprints can be manipulated in a scripted fashion.
 
 In my most recent design, the LED Watch, I used this to script myself a tool for arranging footprints in a circle. What I want to show today was how I did it and how to use it so that you can make your own scripting tools (or just arrange stuff in a circle).
@@ -84,8 +89,3 @@ Now, pcbnew may not recognize that your PCB has changed and enable the save butt
 **Conclusion** 
 
 Hopefully this brief tutorial will either help you to place components in circles in Kicad/pcbnew or will help you to write your own scripts for easing PCB layout. Kicad can be a very capable tool and with its new expanded scripting functionality, the sky seems to be the limit.
-
-.. rstblog-settings::
-   :title: Arranging components in a circle with Kicad
-   :date: 2017/04/28
-   :url: /2017/04/28/arranging-components-in-a-circle-with-kicad

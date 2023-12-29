@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Building a USB bootloader for an STM32
+   :date: 2018/06/28
+   :url: /2018/06/28/building-a-usb-bootloader-for-an-stm32
+
 As my final installment for the posts about my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ I wanted to write about the self-programming bootloader I made for an STM32L052 and describe how it works. So far it has shown itself to be fairly robust and I haven't had to get out my STLink to reprogram the watch for quite some time.
 
 The main object of this bootloader is to facilitate reprogramming of the device without requiring a external programmer. There are two ways that a microcontroller can accomplish this generally\:
@@ -453,8 +458,3 @@ Conclusion
 This is my first bootloader that I've written for one of my projects. There were challenges getting it to work at first, but I hope that I've shown it isn't an incredibly complex thing to write. I actually got better performance flashing over USB than over SWD, so that is an additional win for writing this and if I didn't use the SWD for debugging so much I would probably always use a bootloader like this on my projects.
 
 I hope this has been a useful read and I do encourage actually checking out the source code, since I've been pretty brief about some parts of the bootloader.
-
-.. rstblog-settings::
-   :title: Building a USB bootloader for an STM32
-   :date: 2018/06/28
-   :url: /2018/06/28/building-a-usb-bootloader-for-an-stm32

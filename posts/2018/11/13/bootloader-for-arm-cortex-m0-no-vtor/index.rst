@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Bootloader for ARM Cortex-M0: No VTOR
+   :date: 2018/11/13
+   :url: /2018/11/13/bootloader-for-arm-cortex-m0-no-vtor
+
 In my most recent project I selected an ARM Cortex-M0 microcontroller (the STM32F042). I soon realized that there is a key architectural piece missing from the Cortex-M0 which the M0+ does not have\: The vector table offset register (VTOR).
 
 I want to talk about how I overcame the lack of a VTOR to write a USB bootloader which supports a semi-safe fallback mode.
@@ -703,8 +708,3 @@ Conclusion
 
 
 Here we've seen how the VTOR works, why it's useful to bootloaders, and one way to overcome the issue of not having a VTOR in certain architectures like the Cortex-M0. If you have any questions or comments, feel free to leave a comment on this post. This isn't the most robust way of fixing the problem, but for my hacking around it works just fine. I only hope that this post is useful and maybe sparks some idea with someone who is trying to overcome a similar problem.
-
-.. rstblog-settings::
-   :title: Bootloader for ARM Cortex-M0: No VTOR
-   :date: 2018/11/13
-   :url: /2018/11/13/bootloader-for-arm-cortex-m0-no-vtor

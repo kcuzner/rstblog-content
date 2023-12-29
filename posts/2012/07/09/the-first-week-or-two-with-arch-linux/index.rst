@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: The first week or two with Arch Linux
+   :date: 2012/07/09
+   :url: /2012/07/09/the-first-week-or-two-with-arch-linux
+
 After some frustrating times involving Ubuntu 12.04, hibernation, suspending, and random freezing I decided I needed to try something different. Being a Sandy Bridge desktop, my computer naturally seems to have a slight problem with Linux support in general. Don't get me wrong, I really like my computer and my processor...however, the hardware drivers at times frustrate me. So, at my wits end I decided to do something crazy and take the plunge to a bleeding edge rolling release linux\: Arch Linux.
 
 Arch Linux is interesting for me since its the first time I have not been using an operating system with the "version" paradigm. Since its a rolling release it is prone to more problems, but it also gives the advantage of always being up to date. Since my computer's hardware is relatively new (it has been superseded by Ivy Bridge, but even so its driver support still seems to be being built), I felt that I had more to gain from doing a rolling release where new updates and such would come out (think kernel 3.0 to 3-2...Sandy Bridge processors suddenly got much better power management) almost immediately. So, without further adieu, here are my plusses and minuses (note that this will end up comparing Ubuntu to Arch alot since that's all I know at the moment)\:
@@ -35,9 +40,3 @@ Overall, this experience with Arch has allowed me to become much more familiar w
 
 Here is my desktop as it stands\:
 
-
-
-.. rstblog-settings::
-   :title: The first week or two with Arch Linux
-   :date: 2012/07/09
-   :url: /2012/07/09/the-first-week-or-two-with-arch-linux

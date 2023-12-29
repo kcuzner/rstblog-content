@@ -1,3 +1,8 @@
+.. rstblog-settings::
+   :title: Writing a preemptive task scheduler for AVR
+   :date: 2015/12/31
+   :url: /2015/12/31/writing-a-preemptive-task-scheduler-for-avr
+
 Wow it has been a while. Between school, work, and another project that I've been working on since last October (which, if ultimately successful, I will post here) I haven't had a lot of time to write about anything cool.
 
 I wanted to share today something cool I wrote for my AVRs. Many of my recent AVR projects have become rather complex in that they usually are split into multiple parts in the software which interact with each other. One project in particular had the following components\:
@@ -842,8 +847,3 @@ So, now that I've told you some of what's wrong with the above, here are two RTO
 
 
 Anyway, I hope that this article is useful and as usual, any suggestions and such can be left in the comments. As mentioned before, the code for this article can be found on github here\: `https\://github.com/kcuzner/kos-avr <https://github.com/kcuzner/kos-avr>`__
-
-.. rstblog-settings::
-   :title: Writing a preemptive task scheduler for AVR
-   :date: 2015/12/31
-   :url: /2015/12/31/writing-a-preemptive-task-scheduler-for-avr

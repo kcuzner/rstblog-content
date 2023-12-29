@@ -10,6 +10,7 @@ The Problem
 
 I am working on a project that involves a Li-Ion battery charger. I've never built one of these circuits before and I wanted to test the battery over its entire charge-discharge cycle to make sure it wasn't going to burst into flame because I set some resistor wrong. The battery itself is very tiny (100mAH, 2.5mm thick) and is going to be powering an extremely low-power circuit, hopefully over the course of many weeks between charges.
 
+
 .. image:: Battery-Charger.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger.jpg
    :width: 640
@@ -226,6 +227,7 @@ This process highlights an issue with using standard resistors. Unless the resis
 
 Conclusion
 ==========
+
 
 
 .. image:: Battery-Charger-with-EZDAQ.jpg

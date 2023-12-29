@@ -12,6 +12,7 @@ Recently, I got my hands on a Raspberry Pi and one of the first things I wanted 
 
 As my addition to avrdude, I created a new programmer type called "linuxspi" which uses the userspace SPI drivers available since around Linux ~2.6 or so to talk to a programmer. It also requires an additional GPIO to operate as the reset. My initial thought was to use the chip select as the reset output, but sadly, the documentation for the SPI functions mentioned that the chip enable line is only held low so long as the transaction is going. While I guess I could compress all the transactions avrdude makes into one giant burst of data, this would be very error prone and isn't compatible with avrdude's program structure. So, the GPIO route was chosen. It just uses the sysfs endpoints found in /sys/class/gpio to manipulate a GPIO chosen in avrdude.conf into either being in a hi-z input state or an output low state. This way, the reset can be connected via a resistor to Vcc and then the Raspberry Pi just holds reset down when it needs to program the device. Another consequence which I will mention here of choosing to use the Linux SPI drivers is that this should actually be compatible with any Linux-based device that exposes its SPI or has an AVR connected to the SPI; not just the Raspberry Pi.
 
+
 .. image:: photo2-sm.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/05/photo2-sm.jpg
    :width: 512

@@ -5,6 +5,7 @@
 
 For once, I did something simple. I have always wanted to know how fast my potato gun shoots and I have also known how to find out, but I had never gotten around to actually building something to measure the speed of a moving object. I built this almost completely out of parts that are available at your local radio shack and hardware stores. The device consists of a 2" PVC pipe with two sets of infrared diodes/detectors placed in holes spaced a foot apart which are connected to a PIC microcontroller that I have programmed to act as a "stopwatch" measuring in microseconds. Once a time is captured, the value is written to EEPROM for later gathering at the computer.
 
+
 .. figure:: SDC101961.jpg
    :width: 614
    :align: right
@@ -75,6 +76,7 @@ These instructions assume enough knowledge to construct a circuit on a breadboar
 
 
 #. Heatshrink or tape each lead coming off of the emitters and detectors individually and then per device. This is so that no short circuits happen and so that the device is easier to insert and remove from the PVC.
+
 
    .. figure:: chronometer.png
       :width: 614

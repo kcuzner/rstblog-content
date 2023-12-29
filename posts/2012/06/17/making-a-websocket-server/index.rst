@@ -7,6 +7,7 @@ For the past few weeks I have been experimenting a bit with HTML5 WebSockets. I 
 
 The server I have runs on a port which is considered a dedicated port for WebSocket-based services. The server is written in `python <http://www.python.org/>`__ and defines a few base classes for implementing a service. The basic structure is as follows\:
 
+
 .. image:: WebSocketServer_diagram.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/05/WebSocketServer_diagram.png
    :width: 300

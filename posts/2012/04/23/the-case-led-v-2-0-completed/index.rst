@@ -55,6 +55,7 @@ Pursuant to the V-USB licence, I am releasing my hardware schematics and the sof
 
 The schematic is as follows\:
 
+
 .. figure:: schematic.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/schematic.png
    :width: 300
@@ -134,6 +135,7 @@ So, here are pictures of the finished product\:
 
 
 
+
 .. figure:: HPIM1968.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968.jpg
    :width: 300
@@ -143,12 +145,14 @@ So, here are pictures of the finished product\:
 
 
 
+
 .. figure:: HPIM1966.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966.jpg
    :width: 300
    :align: left
 
    The mounting viewed from the outside
+
 
 
 

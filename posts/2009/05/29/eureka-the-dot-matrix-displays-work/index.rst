@@ -3,6 +3,7 @@
    :date: 2009/05/29
    :url: /2009/05/29/eureka-the-dot-matrix-displays-work
 
+
 .. figure:: sdc10183.jpg
    :width: 462
    :align: right

@@ -7,6 +7,7 @@ After looking at my design of a few days back I decided it definately needed ano
 
  
 
+
 .. figure:: dotmatrix_8x8_v2.png
    :width: 610
    :align: right

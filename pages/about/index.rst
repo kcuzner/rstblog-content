@@ -3,6 +3,7 @@
    :date: 2009/02/13
    :url: /about
 
+
 .. image:: me.jpg
    :width: 206
    :align: right

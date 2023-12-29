@@ -51,6 +51,7 @@ AVR PSX Bus Emulation\: The Saga of the Software
 
 PSX controllers communicate using a bus that has a clock, acknowledge, slave select, psx->controller (command) line, and controller->psx (data) line. Yes, this looks a lot like an SPI bus. In fact, it is more or less identical to a SPI Mode 3 bus with the master-in slave-out line driven open collector. I failed to notice this fact until later, much to my chagrin. Communication is accomplished using packets that have a start signal followed by a command and waiting for a response from the controller. During the transaction, the controller declares its type, the number of words that it is going to send, and the actual controller state. I was emulating a standard digital controller, so I had to tell it that my controller type was 0x41, which is digital with 1 word data. Then, I had to send a 0x5A (start data response byte) and two bytes of button data. My initial approach involved `writing a routine in C <https://github.com/kcuzner/pop-n-music-controller/commit/7a4fef3a08cff20d1e7809010f511c3e9ed235e1>`__ that would handle pin changes on INT0 and INT1 which would be connected to the command and clock lines. However, I failed to anticipate that the bus would be somewhere in the neighborhood of 250Khz-500Khz and this caused some serious performance problems and I was unable to complete a transaction with the controller host. So, I decided to try writing `the same routine in assembly <https://github.com/kcuzner/pop-n-music-controller/commit/51bb37af031981c1c2d462e4d710d83551b1e87e>`__ to see if I could squeeze every drop of performance out of it possible. I managed to actually get it to complete a transaction this way, but *without* sending button data. To make matters worse, every once in a while it would miss a transaction and this was quite noticeable when I made an LED change state with every packet received. It was very inconsistent and that was without even sending button data. I eventually realized the problem was with the fact that making the controller do so much between cycles of the clock line actually caused it to miss bits. So, I looked at the problem again. I noticed that the ATMega48A had an SPI module and that the PSX bus looked similar, but not exactly like, an SPI bus. However, running the bus in mode 3 with the `data order reversed <https://github.com/kcuzner/pop-n-music-controller/commit/023e6b78edc25c215b9ef025fbc60befbddc391e>`__ and the MISO driving the base of a transistor operating in an open-collector fashion actually got me to be able to communicate to the PSX bus on `almost the first try <https://github.com/kcuzner/pop-n-music-controller/commit/4d09663f24c7d2d3c95c2f8aff17db237f88ee8d>`__. Even better, the only software change that had to be made was inverting the data byte so that the signal hitting the base of the transistor would cause the correct changes on the MISO line. So, I hooked up everything as follows\:
 
+
 .. image:: popnmusic1.png
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/popnmusic1.png
    :width: 512
@@ -65,6 +66,7 @@ On to the hardware!
 
 I next began assembly. I went the route of perfboard with individual copper pads around each hole because that's what I have. Here are photos of the assembly, sadly taken on my cell phone because my camera is broken. Sorry for the bad quality...
 
+
 .. image:: 0810131701.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131701.jpg
    :width: 200
@@ -72,9 +74,11 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 
+
 .. image:: 0810131746.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131746.jpg
    :width: 200
+
 
 
 
@@ -85,10 +89,12 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 
+
 .. image:: 0810131809.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131809.jpg
    :width: 200
    :align: left
+
 
 
 
@@ -99,10 +105,12 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 
+
 .. image:: 0811131258a.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2013/08/0811131258.jpg
    :width: 480
    :align: left
+
 
 
 

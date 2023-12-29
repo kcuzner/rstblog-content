@@ -26,11 +26,13 @@ In this post I'm going to go over my general design, some things I was happy wit
 `https\://github.com/kcuzner/led-watch <https://github.com/kcuzner/led-watch>`__
 
 
+
 .. image:: IMG_20170409_222521.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170409_222521.jpg
    :width: 3264
 
-  .. image:: IMG_20170415_194157.jpg
+  
+.. image:: IMG_20170415_194157.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
    :width: 2448
 
@@ -58,6 +60,7 @@ The Power Supply & Battery Charger
 ----------------------------------
 
 
+
 .. image:: WristwatchPowersupply.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/WristwatchPowersupply.png
    :width: 320
@@ -72,6 +75,7 @@ Now, if you were to look at the schematic you would see that I have several diod
 
 The Microcontroller & Accelerometer
 -----------------------------------
+
 
 
 .. image:: WristwatchMicrocontroller.png
@@ -94,6 +98,7 @@ The LEDs
 --------
 
 
+
 .. image:: Wristwatch-LEDs.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LEDs.png
    :width: 320
@@ -101,6 +106,7 @@ The LEDs
 As the main part of the watch that people see, the LEDs needed to be bright enough and work well while still maintaining my target PCB form factor. This part of the design presented some unexpected challenges, some realized while I was still designing, and some realized after I had assembled everything and was scratching my head wondering why things didn't work as planned.
 
 The LEDs I chose are all 0603 form factor, including the central RGB LED which is 0606. This allowed me to create a board about 32mm in diameter, if I went to four layers and sacrificed the edges of the internal layers for some additional routing. Considering how tiny the board was going to be, paying twice as much per square inch of the board wasn't a huge deal.
+
 
 .. image:: Wristwatch-LED-Wiring.png
    :target: http://kevincuzner.com/wp-content/uploads/2017/04/Wristwatch-LED-Wiring.png

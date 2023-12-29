@@ -23,6 +23,7 @@ I have learned some interesting things about multiprocessing with Python\:
 
 So the new model for operation is as follows\:
 
+
 .. image:: WebSocketServer_diagram2.png
    :target: http://kevincuzner.com/wp-content/uploads/2012/06/WebSocketServer_diagram2.png
    :width: 300

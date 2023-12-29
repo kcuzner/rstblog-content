@@ -13,6 +13,7 @@ Introduction
 ------------
 
 
+
 .. image:: IMG_20160521_213623.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213623.jpg
    :width: 320
@@ -132,6 +133,7 @@ Step 2\: Figure out where to solder and do it
 =============================================
 
 
+
 .. image:: STM32F103Pins-1.png
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/STM32F103Pins-1.png
    :width: 241
@@ -156,6 +158,7 @@ On the pin diagram posted here you will find the highlighted pins of interest f
 
 Below you will find a picture of my breakout board. I soldered a couple extra pins since I want to experiment with USB.
 
+
 .. image:: IMG_20160521_211614.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211614.jpg
    :width: 480
@@ -167,6 +170,7 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
 
 Step 3\: Connect the breadboard and programmer
 ==============================================
+
 
 
 .. image:: IMG_20160521_213137.jpg
@@ -216,6 +220,7 @@ Next, we need to connect the following pins on the breadboard\:
 
 
 Here is my breadboard setup\:
+
 
 .. image:: IMG_20160521_211048-1.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211048-1.jpg
@@ -538,6 +543,7 @@ In the makefile earlier, I actually made this the "install" target, so running "
 
 
 After doing that I saw the following awesomeness\:
+
 
 .. image:: IMG_20160521_212615.jpg
    :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_212615.jpg

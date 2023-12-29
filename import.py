@@ -167,7 +167,6 @@ class TextBody:
     def declarations(self):
         yield from self._declarations
 
-
     def add_declaration(self, declaration):
         self._declarations.append(declaration)
 
@@ -388,7 +387,9 @@ class ImgTag(TagHandler):
             lines.append(f"   :align: {align}")
         if caption:
             lines.extend(["", f"   {caption}"])
-        return "\n".join(lines) + "\n\n"
+        # NOTE: Inline images are not a thing in ReST. Prepend a newline to
+        # avoid errors.
+        return "\n" + "\n".join(lines) + "\n\n"
 
 
 @TagHandler.register_tag("h1")

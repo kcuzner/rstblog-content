@@ -11,6 +11,7 @@ On the mission, my two most interesting things I built were a small coilgun (als
 
 **The Coilgun** 
 
+
 .. figure:: HPIM1787.jpg
    :width: 300
    :align: left
@@ -21,6 +22,7 @@ On the mission, my two most interesting things I built were a small coilgun (als
 
 The coilgun is constructed of a relatively simple circuit which draws power for a camera flash charger from a AA battery (housed in what was the magazine for the airsoft gun) connected to two photo flash capacitors. There is an SCR connected in series with the coil (the green thing) which use the capacitors as a power source. The trigger uses very tiny snap action limit switch (it was the smallest I could find at a reasonable price) to trigger the SCR (through a 20K resistor). The total cost for parts was $10 since the case was free and the camera flashes were free. The working voltage is about 330V or so which is normal for photo chargers, but when building it I managed only to shock myself once.
 
+
 .. figure:: HPIM1788.jpg
    :width: 150
    :align: right
@@ -30,6 +32,7 @@ The coilgun is constructed of a relatively simple circuit which draws power for 
 
 
 It shoots nails or anything else magnetic cut to a specific length so they are just a little inside the coil. The gun doesn't have much power (I would more call it a "nail tosser" than a gun), but it is fun to use because of the high pitched charging sound makes the gun sound bigger than it actually is (more bark than bite you could say).
+
 
 .. figure:: HPIM1785.jpg
    :width: 150
@@ -43,6 +46,7 @@ There is a 1000V diode in reverse across the coil to prevent damage to the SCR a
 
 **The Headphones** 
 
+
 .. figure:: HPIM1738.jpg
    :width: 300
    :align: right
@@ -52,6 +56,7 @@ There is a 1000V diode in reverse across the coil to prevent damage to the SCR a
 
 
 In one of the apartments I lived in I was with some other missionaries who served a deaf congregation. Their ASL teacher was mostly deaf (she had 1% hearing in one of  her ears) and so she could listen to music occasionally. She was using some high quality DJ headphones to do this since she had to turn the music up really really loud for her to be able to hear it. Sadly, she let a friend borrow them and they got broken. So, one of the other missionaries who also enjoyed building things volunteered him and myself to construct new headphones for her. He built the case and I did the electronics. Electronically, it was a simple project since it was just taking a cheap iPod stereo and extending the wires out to fit into the case in the shape of headphones.
+
 
 .. figure:: HPIM1766.jpg
    :width: 150

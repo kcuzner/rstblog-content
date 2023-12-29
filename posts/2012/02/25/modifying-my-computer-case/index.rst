@@ -3,6 +3,7 @@
    :date: 2012/02/25
    :url: /2012/02/25/modifying-my-computer-case
 
+
 .. figure:: HPIM1939.jpg
    :width: 150
    :align: left
@@ -13,6 +14,7 @@
 
 In November I purchased the parts for a new computer since mine was getting very old (I got it in 2006 and even then it wasn't exactly top of the line). I put it together and it has been performing admirably for a couple months now. I was researching graphics cards and it occurred to me that I would have to move my hard drive up a slot to fit a large graphics card in my case.
 
+
 .. figure:: HPIM1944.jpg
    :width: 240
    :align: right
@@ -22,6 +24,7 @@ In November I purchased the parts for a new computer since mine was getting very
 
 
 So, I opened the case and started moving stuff around. I also decided to re-organize the cables so that they wouldn't be dangling precariously above the CPU fan by stuffing them behind the HDD cage. During that process I took some strain off the SATA cables (they are kind of stiff and I think they were putting undue stress on the sockets on the motherboard, so I moved them around so that they wouldn't be so convoluted). After finishing all this it occurred to me that my case would look sweet if I were to add some LEDs to it. I then set out to install some LEDs.
+
 
 .. figure:: HPIM1945.jpg
    :width: 216
@@ -57,6 +60,7 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 
+
 .. figure:: HPIM1946.jpg
    :width: 150
    :align: right
@@ -69,6 +73,7 @@ I decided that this grille could look awesome if it had some backlighting. I had
 
 
 I started out by soldering the header to some wires to take the 5V and GND line off of the small .1" power connector in my computer. I then put the resistor on the positive rail and then split everything off into 4 wires (8 in total\: 4 power, 4 ground). The result looked rather like a spider in my opinion. After that it was a relatively simple job of soldering the long lead of the LEDs to the positive rail and the other side to the negative rail. Thus, the LED assembly was completed.
+
 
 
 

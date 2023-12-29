@@ -96,6 +96,7 @@ This should be easy to find information on, but it really isn't for some reason.
 
 
 
+
 .. image:: avr_isp_pinout.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/avr_isp_pinout.png
    :width: 250
@@ -103,6 +104,7 @@ This should be easy to find information on, but it really isn't for some reason.
 That's it really. However, some details would probably be useful. The pinout of the standard usbasp ISP headers are shown on the right (note\: VTG = VCC at Target, so it's the programmer-supplied voltage).
 
 I used an ATTiny20 in my design, so I have mine wired up like this (note that I tend to leave pins 4 and 6 disconnected since on some programmers they are disconnected)\:
+
 
 .. image:: ATTiny-TPI-ISP-Connections.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny-TPI-ISP-Connections.png
@@ -148,6 +150,7 @@ So, you need to program at 5V, but your circuit uses different voltages. Here ar
 
 If you've got everything wired up properly and the voltage levels are correct, you can run avrdude and get the following beautiful greeting message\:
 
+
 .. image:: ATTiny20-Signature-Success.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny20-Signature-Success.png
    :width: 459
@@ -155,6 +158,7 @@ If you've got everything wired up properly and the voltage levels are correct, y
 
 
 And if you're even more lucky, reflashing will work too!
+
 
 .. image:: ATTiny20-Reprogramming.png
    :target: http://kevincuzner.com/wp-content/uploads/2020/11/ATTiny20-Reprogramming.png

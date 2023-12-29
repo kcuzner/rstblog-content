@@ -3,6 +3,7 @@
    :date: 2009/07/05
    :url: /2009/07/05/weekend-project-smoke-bombs
 
+
 .. figure:: saltpeter.jpg
    :width: 192
    :align: right
@@ -28,11 +29,13 @@ Materials
 
 * 
 
+
   .. figure:: sugar.jpg
      :width: 192
      :align: right
 
      Sugar
+
 
 
 
@@ -60,6 +63,7 @@ Materials
 
 * 
 
+
   .. figure:: jarpestle.jpg
      :width: 192
      :align: right
@@ -86,11 +90,13 @@ Instructions
 
 #. 
 
+
    .. figure:: measured.jpg
       :width: 192
       :align: right
 
       All the measured ingredients
+
 
 
 
@@ -115,6 +121,7 @@ Instructions
 
 #. 
 
+
    .. figure:: packed.jpg
       :width: 192
       :align: right
@@ -134,11 +141,13 @@ Video and Pictures
 ==================
 
 
+
 .. figure:: before.jpg
    :width: 640
    :align: center
 
    Before lighting it
+
 
 
 

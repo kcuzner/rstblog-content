@@ -88,6 +88,13 @@ I started out by soldering the header to some wires to take the 5V and GND line 
 The more difficult part was attaching the matte board to the metal part of the case and then aiming the LEDs. The matte board was necessary because without it the LEDs reflected a little too well off the metal of the case and they could be clearly seen through the grille. I cut the matte board into two pieces large enough to cover the metal on either side of the grille and used tape to hold it in place. One hitch came up with the wires going to the front of the case\: the hole for the wires was right beneath one of the grilles and was not easily covered by the cardstock. I ended up just basically laying the cardstock over the hole and wires and moving them around so as to not be visible through the grille. The next bit of matte board I used was to create a shroud of sorts around the HDD and power lights since the LEDs were bright enough that they shined through the bezels for those lights as well. I then spent a while aiming the lights until I was satisfied and then I put the computer back together so I could enjoy my new lights.
 
 
+.. figure:: HPIM1953-e1330212718601.jpg
+   :width: 225
+   :align: right
+
+   The Final Effect
+
+
 
 All in all my specs are as follows\:
 

@@ -9,7 +9,7 @@ The server I have runs on a port which is considered a dedicated port for WebSoc
 
 
 .. image:: WebSocketServer_diagram.png
-   :target: http://kevincuzner.com/wp-content/uploads/2012/05/WebSocketServer_diagram.png
+   :target: WebSocketServer_diagram.png
    :width: 300
    :align: center
 

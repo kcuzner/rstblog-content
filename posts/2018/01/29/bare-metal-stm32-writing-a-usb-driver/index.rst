@@ -7,7 +7,7 @@ A couple years ago I wrote `a post <http://kevincuzner.com/2014/12/12/teensy-3-1
 
 
 .. image:: IMG_20170415_194157.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2017/04/IMG_20170415_194157.jpg
+   :target: IMG_20170415_194157.jpg
    :width: 320
    :align: right
 

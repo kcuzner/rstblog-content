@@ -148,6 +148,23 @@ class Attachment(Item):
         return name
 
 
+class AttachmentRef:
+    def __init__(self, url):
+        self.src = url
+
+    @property
+    def src(self):
+        return self._src
+
+    @src.setter
+    def src(self, value):
+        if value is not None:
+            _, _, path, _, _, _ = urllib.parse.urlparse(value)
+            self._src = path
+        else:
+            self._src = None
+
+
 class TextBody:
     def __init__(self, text, pos):
         self.text = text
@@ -285,6 +302,12 @@ class LinkTag(TagHandler):
         self.content = []
 
     def append(self, tag):
+        if self.name is None and self.href is not None and isinstance(tag, ImgTag):
+            # This is most likely a link to an image. Our target is therefore
+            # an attachment and needs to be renamed to a local path once
+            # rendered.
+            self.target = AttachmentRef(self.href)
+            self.add_attachment(self.target)
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
@@ -312,7 +335,6 @@ class LinkTag(TagHandler):
             # Strip leading #'s, local page links are easy
             ref = self.href.lstrip("#")
             # We support text or images, nothing else, and content can't be mixed
-            types = [ImgTag, TextBody, BoldTag, ItalicsTag]
             text = []
             images = []
             for c in self.content:
@@ -328,7 +350,7 @@ class LinkTag(TagHandler):
                 if len(images) > 1:
                     raise ValueError("Multiple images cannot be in a link")
                 return images[0].to_rst(
-                    *args, target=ref, parent_caption=self.caption, **kwargs
+                    *args, target=self.target, parent_caption=self.caption, **kwargs
                 )
             content = "".join([c.to_rst(*args, **kwargs) for c in text]).strip()
             if not content:
@@ -343,7 +365,8 @@ class ImgTag(TagHandler):
         super().__init__(*args, **kwargs)
         self.src = self.attrs.get("src")
         self.caption = kwargs.get("caption", {})
-        self.add_attachment(self)
+        self.image = AttachmentRef(self.attrs.get("src"))
+        self.add_attachment(self.image)
 
     def _from_bb_caption(self, attr, parent_caption):
         if (v := self.caption.get(attr, None)) is not None:
@@ -357,20 +380,8 @@ class ImgTag(TagHandler):
             return v
         return None
 
-    @property
-    def src(self):
-        return self._src
-
-    @src.setter
-    def src(self, value):
-        if value is not None:
-            _, _, path, _, _, _ = urllib.parse.urlparse(value)
-            self._src = path
-        else:
-            self._src = None
-
     def to_rst(self, *args, target=None, parent_caption={}, **kwargs):
-        if self.src is None:
+        if self.image.src is None:
             # Silently drop empty images that couldn't be downloaded
             return ""
         caption = self._from_bb_caption("caption", parent_caption)
@@ -378,9 +389,9 @@ class ImgTag(TagHandler):
         align_raw = self._from_bb_caption("align", parent_caption) or ""
         align = next((a for a in ["left", "center", "right"] if a in align_raw), None)
         directive = "figure" if caption else "image"
-        lines = [f".. {directive}:: {self.src}"]
+        lines = [f".. {directive}:: {self.image.src}"]
         if target:
-            lines.append(f"   :target: {target}")
+            lines.append(f"   :target: {target.src}")
         if width:
             lines.append(f"   :width: {width}")
         if align:
@@ -997,7 +1008,7 @@ class AttachmentRegistry:
         # The link may be a resized version. Strip off any resizing information
         # from the end.
         _, _, path, _, _, _ = urllib.parse.urlparse(link)
-        if (m := re.search(r"/\w+(-\d+x\d+)\.\w+$", path)) and (
+        if (m := re.search(r"/.+(-\d+x\d+)\.\w+$", path)) and (
             r := self.registry.get(link.replace(m.group(1), ""), None)
         ):
             return r

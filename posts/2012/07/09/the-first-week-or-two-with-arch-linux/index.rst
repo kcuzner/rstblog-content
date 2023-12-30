@@ -40,3 +40,9 @@ Overall, this experience with Arch has allowed me to become much more familiar w
 
 Here is my desktop as it stands\:
 
+
+.. image:: Screenshot-from-2012-07-09-085931.png
+   :target: Screenshot-from-2012-07-09-085931.png
+   :width: 1024
+   :align: center
+

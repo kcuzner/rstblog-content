@@ -55,7 +55,7 @@ Now for the schematic. Here you go\:
 
 
 .. figure:: DotMatrix_v3_5.png
-   :target: http://kevincuzner.com/wp-content/uploads/2009/09/DotMatrix_v3_5.png
+   :target: DotMatrix_v3_5.png
    :width: 800
    :align: center
 

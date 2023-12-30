@@ -14,7 +14,7 @@ As my addition to avrdude, I created a new programmer type called "linuxspi" whi
 
 
 .. image:: photo2-sm.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/05/photo2-sm.jpg
+   :target: photo2-sm.jpg
    :width: 512
 
 

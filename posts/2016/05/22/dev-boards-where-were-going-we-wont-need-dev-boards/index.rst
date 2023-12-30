@@ -15,7 +15,7 @@ Introduction
 
 
 .. image:: IMG_20160521_213623.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213623.jpg
+   :target: IMG_20160521_213623.jpg
    :width: 320
    :align: right
 
@@ -135,7 +135,7 @@ Step 2\: Figure out where to solder and do it
 
 
 .. image:: STM32F103Pins-1.png
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/STM32F103Pins-1.png
+   :target: STM32F103Pins-1.png
    :width: 241
    :align: right
 
@@ -160,7 +160,7 @@ Below you will find a picture of my breakout board. I soldered a couple extra pi
 
 
 .. image:: IMG_20160521_211614.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211614.jpg
+   :target: IMG_20160521_211614.jpg
    :width: 480
    :align: center
 
@@ -174,7 +174,7 @@ Step 3\: Connect the breadboard and programmer
 
 
 .. image:: IMG_20160521_213137.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_213137.jpg
+   :target: IMG_20160521_213137.jpg
    :width: 320
    :align: right
 
@@ -223,7 +223,7 @@ Here is my breadboard setup\:
 
 
 .. image:: IMG_20160521_211048-1.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_211048-1.jpg
+   :target: IMG_20160521_211048-1.jpg
    :width: 480
    :align: center
 
@@ -546,7 +546,7 @@ After doing that I saw the following awesomeness\:
 
 
 .. image:: IMG_20160521_212615.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/05/IMG_20160521_212615.jpg
+   :target: IMG_20160521_212615.jpg
    :width: 480
    :align: center
 

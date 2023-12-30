@@ -25,7 +25,7 @@ So the new model for operation is as follows\:
 
 
 .. image:: WebSocketServer_diagram2.png
-   :target: http://kevincuzner.com/wp-content/uploads/2012/06/WebSocketServer_diagram2.png
+   :target: WebSocketServer_diagram2.png
    :width: 300
    :align: center
 

@@ -12,7 +12,7 @@ I am working on a project that involves a Li-Ion battery charger. I've never bui
 
 
 .. image:: Battery-Charger.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger.jpg
+   :target: Battery-Charger.jpg
    :width: 640
    :align: center
 
@@ -231,7 +231,7 @@ Conclusion
 
 
 .. image:: Battery-Charger-with-EZDAQ.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2016/07/Battery-Charger-with-EZDAQ.jpg
+   :target: Battery-Charger-with-EZDAQ.jpg
    :width: 640
    :align: center
 

@@ -53,7 +53,7 @@ PSX controllers communicate using a bus that has a clock, acknowledge, slave sel
 
 
 .. image:: popnmusic1.png
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/popnmusic1.png
+   :target: popnmusic1.png
    :width: 512
 
 
@@ -68,7 +68,7 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0810131701.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131701.jpg
+   :target: 0810131701.jpg
    :width: 200
    :align: left
 
@@ -76,14 +76,14 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0810131746.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131746.jpg
+   :target: 0810131746.jpg
    :width: 200
 
 
 
 
 .. image:: 0810131753.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131753.jpg
+   :target: 0810131753.jpg
    :width: 200
    :align: left
 
@@ -91,7 +91,7 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0810131809.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131809.jpg
+   :target: 0810131809.jpg
    :width: 200
    :align: left
 
@@ -99,7 +99,7 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0810131954.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0810131954.jpg
+   :target: 0810131954.jpg
    :width: 200
    :align: left
 
@@ -107,7 +107,7 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0811131258a.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0811131258.jpg
+   :target: 0811131258.jpg
    :width: 480
    :align: left
 
@@ -115,7 +115,7 @@ I next began assembly. I went the route of perfboard with individual copper pads
 
 
 .. image:: 0812132143.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2013/08/0812132143.jpg
+   :target: 0812132143.jpg
    :width: 480
 
 

@@ -57,7 +57,7 @@ The schematic is as follows\:
 
 
 .. figure:: schematic.png
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/schematic.png
+   :target: schematic.png
    :width: 300
    :align: center
 
@@ -130,14 +130,38 @@ Although I already have a link above, the software can be found here\: `Case LED
 So, here are pictures of the finished product\:
 
 
+.. figure:: HPIM1973-e1335235943256.jpg
+   :target: HPIM1973-e1335235943256.jpg
+   :width: 225
+   :align: left
+
+   LEDs shining magenta
 
 
+
+
+.. figure:: HPIM1972-e1335235909822.jpg
+   :target: HPIM1972-e1335235909822.jpg
+   :width: 225
+   :align: left
+
+   LEDs shining orange
+
+
+
+
+.. figure:: HPIM1971-e1335235790482.jpg
+   :target: HPIM1971-e1335235790482.jpg
+   :width: 225
+   :align: left
+
+   LEDs shining green
 
 
 
 
 .. figure:: HPIM1968.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1968.jpg
+   :target: HPIM1968.jpg
    :width: 300
    :align: left
 
@@ -147,7 +171,7 @@ So, here are pictures of the finished product\:
 
 
 .. figure:: HPIM1966.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1966.jpg
+   :target: HPIM1966.jpg
    :width: 300
    :align: left
 
@@ -157,7 +181,7 @@ So, here are pictures of the finished product\:
 
 
 .. figure:: HPIM1967.jpg
-   :target: http://kevincuzner.com/wp-content/uploads/2012/04/HPIM1967.jpg
+   :target: HPIM1967.jpg
    :width: 300
    :align: left
 

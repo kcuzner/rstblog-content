@@ -11,6 +11,28 @@ python-dateutil = "^2.8.2"
 [tool.poetry.dev-dependencies]
 pytest = "^3.4"
 
+[tool.rstblog]
+# General configuration for rstblog
+paginate = 10
+
+[tool.rstblog.templates]
+# Template configuration for rstblog
+index = "./index.j2"
+tags = "./tags.j2"
+post = "./post.j2"
+page = "./page.j2"
+
+[tool.rstblog.paths]
+# Path configuration for rstblog
+static = ["./css", "./js"]
+pages = "./pages"
+posts = "./posts"
+
+[tool.rstblog.pygments]
+# Settings for pygments used in the rstblog for syntax highlighting
+style = "friendly"
+csspath = "/css/pygments.css"
+
 [build-system]
 reqires = ["poetry>=1.0"]
 build.backend = "poetry.masonry.api"

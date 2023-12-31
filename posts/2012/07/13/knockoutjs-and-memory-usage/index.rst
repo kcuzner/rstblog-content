@@ -13,9 +13,7 @@ Example
 
 Javascript (note that this assumes usage of jQuery for things like AJAX)\:
 
-::
-
-
+.. code-block:: 
 
    function ItemModel(id, name) {
        var self = this;
@@ -75,9 +73,7 @@ Javascript (note that this assumes usage of jQuery for things like AJAX)\:
 
 Now for a really simple view (sorry for lack of styling or the edit capability, but hopefully the point will be clear)\:
 
-::
-
-
+.. code-block:: 
 
    <a data-bind="click: add" href="#">Add container</a>
    <ul data-bind="foreach: containers">
@@ -115,9 +111,7 @@ When an event binding like 'click' is called, the binding will pass an argument 
 
 First, we must remove all functions from the models that will be duplicated often. This means that the add, remove, and save functions in the ItemContainer and the save function in the Item models have to go. Next, we create back references so that each contained object outside the viewmodel and its direct children knows who its daddy is. Here is an example\:
 
-::
-
-
+.. code-block:: 
 
    function ItemModel(id, name, container) {
        //note the addition of the container argument
@@ -162,9 +156,7 @@ First, we must remove all functions from the models that will be duplicated ofte
 
 The view will now look like so (note that the bindings to functions now reference $root\: the main ViewModel)\:
 
-::
-
-
+.. code-block:: 
 
    <a data-bind="click: add" href="#">Add container</a>
    <ul data-bind="foreach: containers">

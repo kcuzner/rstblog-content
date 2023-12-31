@@ -126,8 +126,7 @@ When an interrupt occurs, the NVIC will examine this table, read the handler add
 For any program meant to run on an ARM Cortex processor there'll be some assembly (or maybe C) that looks like this (this one was provided by ST's CMSIS implementation for the STM32F042)\:
 
 .. code-block:: asm
-
-
+   :height-limit:
 
       .section .isr_vector,"a",%progbits
      .type g_pfnVectors, %object
@@ -162,8 +161,7 @@ For any program meant to run on an ARM Cortex processor there'll be some assembl
 Then in my linker script I have the "SECTIONS" portion start out like this\:
 
 .. code-block:: c
-
-
+   :height-limit:
 
    SECTIONS
    {
@@ -199,8 +197,7 @@ Then in my linker script I have the "SECTIONS" portion start out like this\:
 The assembly snippet creates the table for the NVIC (g_pfnVectors in this example) and assigns it to the ".isr_vector" section. The linker script then locates this section right at the beginning of the flash (the "KEEP(\*(.isr_vector))" right at the beginning after some variable declarations). When the program is compiled what I end up with it something that looks like this (this is an assembly dump of the beginning of one of my binaries)\:
 
 .. code-block:: asm
-
-
+   :height-limit:
 
    Disassembly of section .text:
 
@@ -323,8 +320,6 @@ There is one step that the user program has to do, however. It needs to properly
 
 .. code-block:: c
 
-
-
    _flash_origin = 0x08002000;
    _flash_length = 24K;
 
@@ -338,8 +333,7 @@ There is one step that the user program has to do, however. It needs to properly
 The user program is now tricked into thinking that flash starts at 0x08002000 and is only 24K. We can see that this was successful if we take a look at the beginning of the disassembly of a compiled program\:
 
 .. code-block:: asm
-
-
+   :height-limit:
 
    Disassembly of section .text:
 
@@ -431,8 +425,6 @@ I implemented this with these linker script memory modifications\:
 
 .. code-block:: c
 
-
-
    _flash_origin = 0x08000000;
    _flash_length = 32K;
 
@@ -452,8 +444,6 @@ I implemented this with these linker script memory modifications\:
 **Device linker script\:** 
 
 .. code-block:: c
-
-
 
    _flash_origin = 0x08002000;
    _flash_length = 24K;
@@ -476,8 +466,6 @@ And this section addition in the bootloader linker script\:
 
 .. code-block:: c
 
-
-
    ...
        .boot_data :
        {
@@ -489,8 +477,6 @@ And this section addition in the bootloader linker script\:
 Now I have some reserved memory that the user program won't touch. I use this area to store a psuedo-VTOR\:
 
 .. code-block:: c
-
-
 
    /**
     * Places a symbol into the reserved RAM section. This RAM is not
@@ -512,9 +498,7 @@ When the bootloader starts it will set this "bootloader_vtor" variable to the lo
 
 Then, if the bootloader determines that the user program exists it overwrites bootloader_vtor with the following\:
 
-::
-
-
+.. code-block:: text
 
    void bootloader_init(void)
    {
@@ -546,8 +530,6 @@ Ok, so that solves the issue of "where do the user's interrupts live". The next 
 
 .. code-block:: c
 
-
-
    /**
     * Entry point for all exceptions which passes off execution to the appropriate
     * handler. This adds some non-trivial overhead, but it does tail-call the
@@ -575,8 +557,7 @@ What this does is determine which interrupt number is executing, multiply that n
 The bootloader also gets a rather non-trivial change to its interrupt vector table\:
 
 .. code-block:: asm
-
-
+   :height-limit:
 
    /******************************************************************************
    *
@@ -640,8 +621,6 @@ All the interrupts point to this new Bootloader_IRQHandler except Reset. We now 
 
 .. code-block:: asm
 
-
-
    /**
     * Default vector table local to the bootloader. This is used by the
     * emulated VTOR functionality to actually dispatch interrupts. It must
@@ -693,8 +672,6 @@ With my other bootloader which relied on the VTOR, the presence of the bootloade
 While I didn't overcome this issue completely and stack traces can be a little awkward if they are interrupted at just the right time, I did manage to massage gdb enough to make it somewhat usable\:
 
 .. code-block:: sh
-
-
 
    gdb -ex "target remote localhost:3333" -ex "add-symbol-file ./path/to/my/bootloader.elf 0x08000000" ./path/to/my/user/program.elf
 

@@ -154,8 +154,6 @@ In my LED watch with its API, I just have a read-only table of descriptors that 
 
 .. code-block:: c
 
-
-
    const USBDescriptorEntry usb_descriptors[] = {
        { 0x0100, 0x0000, sizeof(dev_descriptor), dev_descriptor },
        { 0x0200, 0x0000, sizeof(cfg_descriptor), cfg_descriptor },
@@ -179,8 +177,6 @@ Now, in addition to extending GET_DESCRIPTOR, the HID specification requires one
 In my LED Watch, the USB setup request handler will call hook_usb_handle_setup_request when it receives a request that the base driver can't handle. Here is my implementation\:
 
 .. code-block:: c
-
-
 
    /**
     * Implementation of hook_usb_handle_setup_request which implements HID class
@@ -325,8 +321,7 @@ If you want to implement multiple separate HID devices in the same device (makin
 Here is an example of a completed configuration descriptor that declares a single HID interface with both IN and OUT endpoints\:
 
 .. code-block:: c
-
-
+   :height-limit:
 
    /**
     * Configuration descriptor
@@ -414,8 +409,6 @@ The most difficult part about writing report descriptors is that they are not ea
 The first thing I'm going to describe are my helper macros, actually\:
 
 .. code-block:: c
-
-
 
    /**
     * HID Descriptor Helpers
@@ -510,8 +503,6 @@ Since the easiest way to get started with these is with some examples, let's sta
 
 .. code-block:: c
 
-
-
    static const uint8_t hid_report_descriptor[] = {
        HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
        HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
@@ -585,8 +576,6 @@ When a REPORT_ID token appears in a report descriptor, it changes how reports ar
 Here's an example descriptor that declares *three* reports\:
 
 .. code-block:: c
-
-
 
    static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
        HID_SHORT(0x04, 0x01), //USAGE_PAGE (Generic Desktop)

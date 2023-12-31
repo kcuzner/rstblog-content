@@ -87,8 +87,6 @@ First, there's a few #defines and global variables that it would be good to know
 
 .. code-block:: c
 
-
-
    #define EEPROM_SECTION ".eeprom,\"aw\",%nobits//" //a bit of a hack to prevent .eeprom from being programmed
    #define _EEPROM __attribute__((section (EEPROM_SECTION)))
 
@@ -135,8 +133,6 @@ The first thing that the bootloader does is ask the following question to determ
 
 .. code-block:: c
 
-
-
    void bootloader_init(void)
    {
        //if the prog_start field is set and there are no entry bits set in the CSR (or the magic code is programmed appropriate), start the user program
@@ -154,8 +150,6 @@ The next thing to explain here is probably the purpose of this magic_code value.
 After the bootloader determines that it needs to run the user's program, it will execute the following\:
 
 .. code-block:: c
-
-
 
            if (bootloader_persistent_state.magic_code)
                nvm_eeprom_write_w(&bootloader_persistent_state.magic_code, 0);
@@ -198,8 +192,6 @@ One main goal I had with this bootloader is that it should be driverless and cro
 
 .. code-block:: c
 
-
-
    static const USB_DATA_ALIGN uint8_t hid_report_descriptor[] = {
        HID_SHORT(0x04, 0x00, 0xFF), //USAGE_PAGE (Vendor Defined)
        HID_SHORT(0x08, 0x01), //USAGE (Vendor 1)
@@ -219,9 +211,7 @@ One main goal I had with this bootloader is that it should be driverless and cro
 
 Our reports are very simple\: We have a 64-byte IN report and a 64-byte OUT report. Although the report descriptor only describes these as simple arrays, the bootloader will actually type-pun them into something a little more structured as follows\:
 
-::
-
-
+.. code-block:: text
 
    static union {
        uint32_t buffer[16];
@@ -272,8 +262,6 @@ A more detailed description of this protocol can be found at `https\://github.c
 I'll cover briefly the process for writing the flash on the STM32. On my particular model, flash pages are 128 bytes and writes are always done in 64-byte groups. This is fairly standard for NOR flash that is seen in microcontrollers. When self-programming, one of the main issues I ran into was that the processor is not allowed to access the flash memory while a flash write is occurring. This is a problem since the flash write process requires the program to poll registers and wait for events to finish. Since this code by default resides in the flash memory, that will cause the write to fail. The solution to this is fairly straightforward\: We have to ensure that the code that actually performs flash writes lives in RAM. Since RAM is executable on the STM32, this is just as simple as requesting the linker to locate the functions in RAM. Here's my code that does flash erases and writes\:
 
 .. code-block:: c
-
-
 
    /**
     * Certain functions, such as flash write, are easier to do if the code is
@@ -347,8 +335,6 @@ The other thing to discuss about self-programming is the way the STM32 protects 
 
 .. code-block:: c
 
-
-
    /**
     * Unlocks the PECR and the flash
     */
@@ -416,8 +402,6 @@ One big thing we haven't yet covered is how exactly the user application needs t
 
 .. code-block:: c
 
-
-
    MEMORY
    {
        FLASH (RX) : ORIGIN = 0x08002000, LENGTH = 56K
@@ -430,8 +414,6 @@ The flash segment has been shorted from 64K to 56K and the ORIGIN has been moved
 When the user program wishes to enter bootloader mode, it just needs to issue a soft reset. The LED watch has a command for this that is issued over USB and just executes the following when it receives that command\:
 
 .. code-block:: c
-
-
 
    //entering bootloader mode with a simple soft reset
    NVIC_SystemReset();

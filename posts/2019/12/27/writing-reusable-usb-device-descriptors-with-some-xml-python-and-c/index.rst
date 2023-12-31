@@ -11,9 +11,8 @@ In this post I will present a script that turns this madness, which lives in a s
 
 
 
-::
-
-
+.. code-block:: text
+   :height-limit:
 
    /**
     * Device descriptor
@@ -159,8 +158,7 @@ Into these comment blocks which can live anywhere in the source and are somewhat
 
 
 .. code-block:: c
-
-
+   :height-limit:
 
    /**
     * <descriptor id="device" type="0x01">
@@ -391,8 +389,6 @@ For example, here is the "main.c" file of my `midi-fader device <https://github.
 
 .. code-block:: c
 
-
-
    /**
     * USB Midi-Fader
     *
@@ -525,8 +521,6 @@ The C file that this generates is placed in the obj folder during compilation an
 
 .. code-block:: sh
 
-
-
    # These are spread out among several files, but are concatenated here for easy
    # reading
 
@@ -636,8 +630,6 @@ As the python script is run, it searches the source files for XML which describe
 
 
 .. code-block:: xhtml
-
-
 
    <descriptor id="device" type="0x01">
      <length name="bLength" size="1" />
@@ -820,8 +812,6 @@ These are usually defined like this in the calling module\:
 
 .. code-block:: c
 
-
-
    USBControlResult __attribute__ ((weak)) hook_usb_handle_setup_request(USBSetupPacket const *setup, USBTransferData *nextTransfer)
    {
        return USB_CTL_STALL; //default: Stall on an unhandled request
@@ -840,8 +830,6 @@ Application code can then interface to these hooks like so (example from my HID 
 
 
 .. code-block:: c
-
-
 
    void hook_usb_endpoint_sent(uint8_t endpoint, void *buf, uint16_t len)
    {
@@ -869,8 +857,6 @@ To remedy this, I created a "usb_app" layer which implements these **hook_**  fu
 
 
 .. code-block:: c
-
-
 
    /**
     * Structure instantiated by each interface
@@ -950,8 +936,6 @@ Every module that has a USB descriptor and some interface can then declare an **
 
 .. code-block:: c
 
-
-
    /**
     * USB interface object for the app
     */
@@ -962,8 +946,6 @@ And then in my main.c, I link it (along with any other interfaces) into the rest
 
 
 .. code-block:: c
-
-
 
    static const USBInterfaceListNode midi_interface_node = {
        .interface = &midi_interface,
@@ -986,8 +968,6 @@ Meanwhile, in my usb_hid.c I have defined **hid_interface**  to look like this (
 
 
 .. code-block:: c
-
-
 
    const USBInterface hid_interface = {
        .hook_usb_handle_setup_request = &hid_usb_handle_setup_request,

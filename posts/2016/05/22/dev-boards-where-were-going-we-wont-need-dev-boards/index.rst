@@ -309,8 +309,6 @@ Here is my super-simple main program that does all of the above\:
 
 .. code-block:: c
 
-
-
    /**
     * STM32F103C8 Blink Demonstration
     *
@@ -351,9 +349,8 @@ It's not a complicated program. Half the battle is knowing where all the pieces 
 
 So, the next step is to compile the program. See the `makefile <https://github.com/kcuzner/stm32f103c8-blink/blob/master/Makefile>`__ in the repository. Basically what we are going to do is first compile the main source file, the assembly file we pulled in from the STM32Cube library, and the C file we pulled in from the STM32Cube library. We will then link them using the linker script from the STM32Cube and then dump the output into a binary file.
 
-::
-
-
+.. code-block:: text
+   :height-limit:
 
    # Makefile for the STM32F103C8 blink program
    #
@@ -468,9 +465,7 @@ Source for this step\: `https\://github.com/rogerclarkmelbourne/Arduino_STM32/w
 
 This is the very last step. We get to do some openocd configuration. Firstly, we need to write a small configuration script that will tell openocd how to flash our program. Here it is\:
 
-::
-
-
+.. code-block:: text
 
    # Configuration for flashing the blink program
    init
@@ -484,9 +479,7 @@ Firstly, we init and halt the processor (reset halt). When the processor is firs
 
 Now, openocd requires knowledge of a few things. It first needs to know what programmer to use. Next, it needs to know what device is attached to the programmer. Both of these requirements must be satisfied before we can run our script above. We know that we have an stlinkv2 for a programmer and an stm32f1xx attached on the other end. It turns out that openocd actually comes with configuration files for these. On my installation these are located at "/usr/share/openocd/scripts/interface/stlink-v2.cfg" and "/usr/share/openocd/scripts/target/stm32f1x.cfg", respectively. We can execute all three files (stlink, stm32f1, and our flashing routine (which I have named "openocd.cfg")) with openocd as follows\:
 
-::
-
-
+.. code-block:: text
 
    openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
    		   -f /usr/share/openocd/scripts/target/stm32f1x.cfg \
@@ -497,9 +490,7 @@ So, small sidenote\: If we left off the "shutdown" command, openocd would actual
 
 In the makefile earlier, I actually made this the "install" target, so running "sudo make install" will actually flash the microcontroller. Here is my output from that command for your reference\:
 
-::
-
-
+.. code-block:: text
 
    kcuzner@kcuzner-laptop:~/Projects/ARM/stm32f103-blink$ sudo make install
    arm-none-eabi-gcc -Wall -fno-common -mthumb -mcpu=cortex-m3 -DSTM32F103xB --specs=nosys.specs -g -Wa,-ahlms=obj/system_stm32f1xx.lst -Iinclude -Icmsis -c src/system_stm32f1xx.c -o obj/system_stm32f1xx.o

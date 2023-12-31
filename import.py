@@ -586,16 +586,33 @@ class CodeTag(TagHandler):
 
     def to_rst(self, *args, **kwargs):
         kwargs["escape"] = ""  # All chars allowed without escaping
+        # In certain cases, there is a code tag embedded in a pre tag. For
+        # these cases, we defer to the inner tag. None of these had syntax
+        # highlighting as far as I could tell, so this is pretty safe.
+        if len(self.content) == 1 and (tag := next(iter(self.content))) and isinstance(tag, CodeTag):
+            return tag.to_rst(*args, **kwargs)
+        # The code highlighting plugin I used encoded information in the class
+        # attribute of the pre tag.
         cls = self.attrs.get("class", "")
         lang_match = re.search(r"(?:^|\s)lang:(\S+)(?:$|\s)", cls)
         lang = lang_match.group(1) if lang_match else ""
         if not lang:
             _log.warning(f'Can\'t find code-block language in "{cls}"')
         if lang in ("default",):
-            lang = ""
-        decl = f".. code-block:: {lang}\n\n" if lang else "::\n\n"
+            lang = "text"
+        height_match = re.search(r"(?:^|\s)height-set:(\S+)(?:$|\s)", cls)
+        limit_height = (
+            height_match.group(1).lower() == "true" if height_match else False
+        )
+        # Create the declaration
+        decl = [f".. code-block:: {lang}"]
+        if limit_height:
+            decl.append("   :height-limit:")
+        decl.append("")
         return (
-            f"\n{decl}\n\n"
+            "\n"
+            + "\n".join(decl)
+            + "\n"
             + textwrap.indent(
                 "".join([c.to_rst(*args, **kwargs) for c in self.content]), " " * 3
             )

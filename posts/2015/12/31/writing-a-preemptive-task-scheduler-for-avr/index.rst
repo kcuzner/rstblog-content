@@ -160,8 +160,6 @@ First, let's take a look at the structure which represents a task\:
 
 .. code-block:: c
 
-
-
    typedef enum { TASK_READY, TASK_SEMAPHORE, TASK_QUEUE } KOS_TaskStatus;
 
    typedef struct KOS_Task {
@@ -182,8 +180,6 @@ Finally, we have the \*status_pointer. This is used by our functions which can u
 Ok, so for the basic task scheduling and dispatching functionality we are going to implement some functions (these are declared in a header)\:
 
 .. code-block:: c
-
-
 
    typedef void (*KOS_TaskFn)(void);
 
@@ -238,8 +234,6 @@ Implementation\: kos_init and kos_new_task
 Firstly, we have the kos_init and kos_new_task functions, which come with some baggage\:
 
 .. code-block:: c
-
-
 
    static KOS_Task tasks[KOS_MAX_TASKS + 1];
    static uint8_t next_task = 0;
@@ -305,8 +299,6 @@ Next we have the kos_run function\:
 
 .. code-block:: c
 
-
-
    void kos_run(void)
    {
        kos_schedule();
@@ -314,9 +306,7 @@ Next we have the kos_run function\:
 
 Well that's simple\: it just calls the scheduler. So, let's look at kos_schedule\:
 
-::
-
-
+.. code-block:: text
 
    void kos_schedule(void)
    {
@@ -404,8 +394,6 @@ Because of the inconsistency and the fact that the ISR "priority" when viewed by
 
 .. code-block:: c
 
-
-
    static uint8_t kos_isr_level = 0;
    void kos_isr_enter(void)
    {
@@ -431,8 +419,7 @@ Implementation\: kos_dispatch
 The dispatcher is written basically entirely in inline assembly because it does the actual stack manipulation\:
 
 .. code-block:: c
-
-
+   :height-limit:
 
    void kos_dispatch(KOS_Task *task)
    {
@@ -569,9 +556,7 @@ Implementation\: Results by code size
 
 So, at this point we have implemented a task scheduler and dispatcher. Here is how it weighs in with avr-size when compiled for an ATMega48A running just the idle task\:
 
-::
-
-
+.. code-block:: text
 
    avr-size -C --mcu=atmega48a bin/kos.elf
    AVR Memory Usage
@@ -601,8 +586,6 @@ Header contents\:
 
 .. code-block:: c
 
-
-
    typedef struct {
        int8_t value;
    } KOS_Semaphore;
@@ -625,8 +608,7 @@ Header contents\:
 Source contents\:
 
 .. code-block:: c
-
-
+   :height-limit:
 
    static KOS_Semaphore semaphores[KOS_MAX_SEMAPHORES + 1];
    static uint8_t next_semaphore = 0;
@@ -704,8 +686,6 @@ Here's a program that does just this\:
 
 .. code-block:: c
 
-
-
    /**
     * Main file for OS demo
     */
@@ -759,9 +739,7 @@ Here's a program that does just this\:
 
 Running this with avr-gdb and simavr we can see this in action. I placed breakpoints at the val++ line and the kos_semaphore_post line. Here's the output with me pressing Ctrl-C at the end once it got into and stayed in the infinite loop in the idle task\:
 
-::
-
-
+.. code-block:: text
 
    (gdb) break main.c:27
    Breakpoint 1 at 0x35a: file src/main.c, line 27.

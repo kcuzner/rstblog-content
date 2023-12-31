@@ -48,8 +48,6 @@ For my example I will use a "extendible" letter formatting program that adds som
 
 .. code-block:: c#
 
-
-
    interface ILetterFormatter
    {
        string FormatLetter(string content);
@@ -58,8 +56,6 @@ For my example I will use a "extendible" letter formatting program that adds som
 This interface is for something that can "format" a letter in some way. For starters, I will define two implementations\:
 
 .. code-block:: c#
-
-
 
    class ImpersonalLetterFormatter : ILetterFormatter
    {
@@ -80,8 +76,6 @@ This interface is for something that can "format" a letter in some way. For star
 Now, here is a simple program that will use these formatters\:
 
 .. code-block:: c#
-
-
 
    class MainClass
    {
@@ -126,8 +120,6 @@ We define another class\:
 
 .. code-block:: c#
 
-
-
    [MetadataAttribute]
    sealed class LetterFormatterAttribute : Attribute
    {
@@ -145,8 +137,6 @@ We mark the classes as follows\:
 
 .. code-block:: c#
 
-
-
    [LetterFormatter("Impersonal")]
    class ImpersonalLetterFormatter : ILetterFormatter
    ...
@@ -161,8 +151,6 @@ And then we change the builder to take into account the metadata by asking it to
 
 .. code-block:: c#
 
-
-
    var builder = new ContainerBuilder();
 
    builder.RegisterModule<AttributedMetadataModule>();
@@ -175,8 +163,6 @@ Now, when we resolve the ILetterFormatter classes, we can either use Autofac.Fea
 
 .. code-block:: c#
 
-
-
    class LetterMetadata
    {
        public string Name { get; set; }
@@ -187,8 +173,6 @@ It would worthwhile to note that the individual properties must have a value in 
 So, we now have the following inside our using statement that controls our scope in the main method\:
 
 .. code-block:: c#
-
-
 
    //resolve all formatters
    IEnumerable<Meta<ILetterFormatter, LetterMetadata>> formatters = scope.Resolve<IEnumerable<Meta<ILetterFormatter, LetterMetadata>>>();
@@ -230,8 +214,6 @@ To get an idea of what this would look like, here is a metadata attribute which 
 
 .. code-block:: c#
 
-
-
    [MetadataAttribute]
    class LetterFormatterAttribute : Attribute, IMetadataProvider
    {
@@ -264,8 +246,6 @@ IMetadataProvider\: Making a set of objects
 Perhaps the simplest application of this new IMetadataProvider is having the metadata contain a list of objects. Building on our last example, we saw that the "personal" letter formatter just said "Dear Individual" every time. What if we could change that so that there was some way to pass in some "properties" or "options" provided by the caller of the formatting function? We can do this using an IMetadataProvider. We make the following changes\:
 
 .. code-block:: c#
-
-
 
    class FormatOptionValue
    {
@@ -358,8 +338,6 @@ Perhaps the simplest application of this new IMetadataProvider is having the met
 Ok, so this is just a little bit more complicated. There are two changes to pay attention to\: Firstly, the FormatLetter function now takes a list of FormatOptionValues. The second change is what enables the caller of FormatLetter to know which options to pass in. The LetterFormatterAttribute now scans the type in order to construct its metadata dictionary by looking for attributes that describe what options it needs. I feel like the usage of this is best illustrated by decorating our PersonalLetterFormatter for it to have some metadata describing the options that it requires\:
 
 .. code-block:: c#
-
-
 
    [LetterFormatter("Personal")]
    [StringOption(ToOptionName, "Name of the individual to address the letter to")]

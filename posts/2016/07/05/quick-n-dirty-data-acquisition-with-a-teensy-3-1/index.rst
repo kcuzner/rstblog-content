@@ -32,8 +32,6 @@ The ADC on the Teensy 3.1 (or the Kinetis MK20DX256) is capable of doing 16-bit 
 
 .. code-block:: c
 
-
-
    //Enable ADC0 module
    SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
 
@@ -71,8 +69,6 @@ Quick and dirty USB device-side driver
 For this project I used my device-side USB driver software that I wrote in `this project <http://kevincuzner.com/2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver/>`__. Since we are gathering data quite slowly, I figured that a simple control transfer should be enough to handle the requisite bandwidth.
 
 .. code-block:: c
-
-
 
    static uint8_t tx_buffer[256];
 
@@ -119,8 +115,6 @@ Host software
 Since libusb is easy to use with Python, via PyUSB, I decided to write out the whole thing in Python. Originally I planned on some sort of fancy gui until I realized that it would far simpler just to output a CSV and use MATLAB or Excel to process the data. The software is simple enough that I can just put the entire thing here\:
 
 .. code-block:: python
-
-
 
    #!/usr/bin/env python3
 
@@ -189,38 +183,22 @@ In addition to simply displaying the data, the program also processes the raw AD
 
 For example, if I plugged my 50%-ish resistor divider on channel A0 into 3.3V, I would run the following command\:
 
-::
+.. code-block:: 
 
-
-
-
-   ::
-
-
-
-      $ ./ezdaq 0
-      Time,Channel 0
-      1467771464.9665403,1.7990478515625
-      ...
-
+   $ ./ezdaq 0
+   Time,Channel 0
+   1467771464.9665403,1.7990478515625
+   ...
 
 
 We now have 1.799 for the "voltage" seen at the pin with an attenuation factor of 1. If we divide 1.799 by 3.3 we get 0.545 for our attenuation value. Now we run the following to get our newly calibrated value\:
 
-::
+.. code-block:: 
 
-
-
-
-   ::
-
-
-
-      $ ./ezdaq -a 0 0.545 0
-      Time,Channel 0
-      1467771571.2447994,3.301005232
-      ...
-
+   $ ./ezdaq -a 0 0.545 0
+   Time,Channel 0
+   1467771571.2447994,3.301005232
+   ...
 
 
 This process highlights an issue with using standard resistors. Unless the resistors are precision resistors, the values will not ever really match up very well. I used 4 1meg resistors to make two voltage dividers. One of them had about a 46% division and the other was close to 48%. Sure, those seem close, but in this circuit I needed to be accurate to at least 50mV. The difference between 46% and 48% is enough to throw this off. So, when doing something like this with trying to derive an input voltage after using an imprecise voltage divider, some form of calibration is definitely needed.
@@ -239,9 +217,7 @@ Conclusion
 
 After hooking everything up and getting everything to run, it was fairly simple for me to take some two-channel measurements\:
 
-::
-
-
+.. code-block:: text
 
    $ ./ezdaq -t 5 -a 0 0.465 -a 1 0.477 0 1 > ~/Projects/AVR/the-project/test/charge.csv 
 

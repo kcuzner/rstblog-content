@@ -633,7 +633,7 @@ class StrikethroughTag(TagHandler):
         return (
             r"\ :strike:`"
             + "".join([c.to_rst(*args, **kwargs) for c in self.content])
-            + "`\ "
+            + r"`\ "
         )
 
 

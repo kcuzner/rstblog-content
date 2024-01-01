@@ -2,6 +2,7 @@
    :title: The first week or two with Arch Linux
    :date: 2012/07/09
    :url: /2012/07/09/the-first-week-or-two-with-arch-linux
+   :tags: linux
 
 After some frustrating times involving Ubuntu 12.04, hibernation, suspending, and random freezing I decided I needed to try something different. Being a Sandy Bridge desktop, my computer naturally seems to have a slight problem with Linux support in general. Don't get me wrong, I really like my computer and my processor...however, the hardware drivers at times frustrate me. So, at my wits end I decided to do something crazy and take the plunge to a bleeding edge rolling release linux\: Arch Linux.
 

@@ -2,6 +2,7 @@
    :title: Modifying my computer case
    :date: 2012/02/25
    :url: /2012/02/25/modifying-my-computer-case
+   :tags: hardware, linux
 
 
 .. figure:: HPIM1939.jpg

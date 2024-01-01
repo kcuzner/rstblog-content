@@ -2,6 +2,7 @@
    :title: Simulink clone...now in C++
    :date: 2012/10/21
    :url: /2012/10/21/simulink-clone-now-in-c
+   :tags: hardware, linux, programming
 
 I took the plunge and decided to re-implement what I had in Python using C++. I had to change up my structure a bit, but I made the switch because of the following reasons\:
 

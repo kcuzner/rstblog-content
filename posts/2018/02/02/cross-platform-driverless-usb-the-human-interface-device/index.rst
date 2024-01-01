@@ -5,6 +5,7 @@
    :title: Cross-platform driverless USB: The Human Interface Device
    :date: 2018/02/02
    :url: /2018/02/02/cross-platform-driverless-usb-the-human-interface-device
+   :tags: arm-programming, bare-metal, hardware, hid, human-interface-device, microcontroller, programming, tutorial, usb
 
 During my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__, I decided early on that I wanted to do something different with the way my USB stuff was implemented. In the past, I have almost exclusively used libusb to talk to my devices in terms of raw bulk packets or raw setup requests. While this is ok, it isn't quite as easy to do once you cross out of the fruited plains of Linux-land into the barren desert of Windows. This project instead made the watch identify itself (enumerate) as a USB Human Interface Device (HID).
 

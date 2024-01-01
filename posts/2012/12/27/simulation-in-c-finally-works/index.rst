@@ -2,6 +2,7 @@
    :title: Simulation in C++ finally works
    :date: 2012/12/27
    :url: /2012/12/27/simulation-in-c-finally-works
+   :tags: programming
 
 After redoing this project several times, I have finally managed to get it working in C++. I gave up for the moment on the GUI since I figured it would be best to get the back end model working first before tackling the GUI. The biggest change I made from my previous paradigm is that I decided to split this into several Qt projects. The model is held in a project called Engine and doesn't actually depend on Qt. Instead I decided to use Boost so that if I one day decide to ditch Qt I won't have to throw out my model.
 

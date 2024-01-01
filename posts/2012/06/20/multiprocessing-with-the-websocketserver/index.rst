@@ -2,6 +2,7 @@
    :title: Multiprocessing with the WebSocketServer
    :date: 2012/06/20
    :url: /2012/06/20/multiprocessing-with-the-websocketserver
+   :tags: programming, server, websites, websocketserver
 
 After spending way to much time thinking about exactly how to do it, I have got multiprocessing working with the WebSocketServer.
 

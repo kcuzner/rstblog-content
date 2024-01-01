@@ -2,6 +2,7 @@
    :title: KnockoutJS and Memory Usage
    :date: 2012/07/13
    :url: /2012/07/13/knockoutjs-and-memory-usage
+   :tags: knockoutjs, programming
 
 Recently at work I have been using `KnockoutJS <http://www.knockoutjs.com>`__ for structuring my Javascript. To be honest, it is probably the best thing since jQuery in my opinion in terms of cutting down quantity of code that one must write for an interface. The only problem is, however, that it is really really easy to make a page use a ridiculous amount of memory. After thinking and thinking and trying different things I have realized the proper way to do things with more complex pages.
 

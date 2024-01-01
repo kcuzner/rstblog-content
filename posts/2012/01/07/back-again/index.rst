@@ -2,6 +2,7 @@
    :title: Back again
    :date: 2012/01/07
    :url: /2012/01/07/back-again
+   :tags: hardware, life
 
  
 

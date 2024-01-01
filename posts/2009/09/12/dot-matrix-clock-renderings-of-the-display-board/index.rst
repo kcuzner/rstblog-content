@@ -2,6 +2,7 @@
    :title: Dot Matrix Clock: Renderings of the display board
    :date: 2009/09/12
    :url: /2009/09/12/dot-matrix-clock-renderings-of-the-display-board
+   :tags: dot-matrix-clock, hardware
 
 I finished modeling the entire board in blender today, so here are a few different views of the clock\:
 

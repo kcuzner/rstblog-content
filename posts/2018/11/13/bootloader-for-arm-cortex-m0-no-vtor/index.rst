@@ -2,6 +2,7 @@
    :title: Bootloader for ARM Cortex-M0: No VTOR
    :date: 2018/11/13
    :url: /2018/11/13/bootloader-for-arm-cortex-m0-no-vtor
+   :tags: arm-programming, arm-cortex, bootloader, hardware, nvic, programming, stm32, vtor
 
 In my most recent project I selected an ARM Cortex-M0 microcontroller (the STM32F042). I soon realized that there is a key architectural piece missing from the Cortex-M0 which the M0+ does not have\: The vector table offset register (VTOR).
 

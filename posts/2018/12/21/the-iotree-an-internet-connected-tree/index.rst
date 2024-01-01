@@ -2,6 +2,7 @@
    :title: The IoTree: An internet-connected tree
    :date: 2018/12/21
    :url: /2018/12/21/the-iotree-an-internet-connected-tree
+   :tags: arm-programming, hardware, linux, programming, raspberry-pi, raspberry-pi-programming
 
 For this Christmas I decided to do something fun with my Christmas tree\: Hook it up to the internet.
 **Visit the IoTree here (available through the 1st week of January 2019)\:** 

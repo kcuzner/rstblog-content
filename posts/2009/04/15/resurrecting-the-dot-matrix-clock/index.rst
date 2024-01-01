@@ -2,6 +2,7 @@
    :title: Resurrecting the Dot Matrix Clock
    :date: 2009/04/15
    :url: /2009/04/15/resurrecting-the-dot-matrix-clock
+   :tags: dot-matrix-clock, programming
 
 Man, I have been working on this project since probably 2006.  This is by far my longest lived project with about 4 different breadboarded prototypes, 2 or 3 different control schemes, 2 differnt types of displays, and 3 different microcontrollers designed for. I think I have settled on a final design and I do have to say that this clock is more like a computer than an actual clock.
 

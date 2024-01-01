@@ -2,6 +2,7 @@
    :title: Weekend Project: Smoke Bombs
    :date: 2009/07/05
    :url: /2009/07/05/weekend-project-smoke-bombs
+   :tags: fireworks
 
 
 .. figure:: saltpeter.jpg

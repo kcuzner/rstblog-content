@@ -2,6 +2,7 @@
    :title: Making a WebSocket server
    :date: 2012/06/17
    :url: /2012/06/17/making-a-websocket-server
+   :tags: programming, server, websites, websocketserver
 
 For the past few weeks I have been experimenting a bit with HTML5 WebSockets. I don't normally focus only on software when building something, but this has been an interesting project and has allowed me to learn a lot more about the nitty gritty of sockets and such. I have created a github repository for it (it's my first time using git and I'm loving it) which is here\: `https\://github.com/kcuzner/python-websocket-server <https://github.com/kcuzner/python-websocket-server>`__
 

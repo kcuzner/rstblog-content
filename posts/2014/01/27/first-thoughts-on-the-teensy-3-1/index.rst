@@ -2,6 +2,7 @@
    :title: First thoughts on the Teensy 3.1
    :date: 2014/01/27
    :url: /2014/01/27/first-thoughts-on-the-teensy-3-1
+   :tags: hardware, linux, programming
 
 Wow it has been a while; I have not written since August.
 

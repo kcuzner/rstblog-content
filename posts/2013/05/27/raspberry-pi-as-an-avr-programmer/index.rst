@@ -2,6 +2,7 @@
    :title: Raspberry Pi as an AVR Programmer
    :date: 2013/05/27
    :url: /2013/05/27/raspberry-pi-as-an-avr-programmer
+   :tags: avr, avr-programming, avrdude, hardware, linux, linux-2, programming, raspberry-pi, raspberry-pi-programming, raspberry-pi-2, spi
 
 
 Introduction

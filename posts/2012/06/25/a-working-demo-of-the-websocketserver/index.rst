@@ -2,6 +2,7 @@
    :title: A Working Demo of the WebSocketServer
    :date: 2012/06/25
    :url: /2012/06/25/a-working-demo-of-the-websocketserver
+   :tags: programming, server, websocketserver
 
 I have finally given in and purchased some hosting at rackspace so I could put the websocketserver somewhere. The demo is live and working, so just visit the following URL to try a very super simple chatroom\:
 

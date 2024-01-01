@@ -2,6 +2,7 @@
    :title: Pop 'n Music controller...AVR style
    :date: 2013/08/17
    :url: /2013/08/17/pop-n-music-controller-avr-style
+   :tags: avr, bus-emulation, controller-mod, custom-playstation-controller, hardware, microcontroller, playstation, pop-n-music, programming
 
 Every time I do one of these bus emulation projects, I tell myself that the next time I do it I will use an oscilloscope or DLA. However, I never actually break down and just buy one. Once more, I have done a bus emulation project flying blind. This is the harrowing tale\:
 

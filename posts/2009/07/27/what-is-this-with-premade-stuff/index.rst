@@ -2,6 +2,7 @@
    :title: What is this with premade stuff??
    :date: 2009/07/27
    :url: /2009/07/27/what-is-this-with-premade-stuff
+   :tags: hardware, programming
 
 I was recently talking to a friend online after conferring with him about my dot matrix clock circuit board layout (now to rev. 3.4) when he mentioned that all people have to do nowadays to become a hardware "hacker" is to go buy an premade Arduino kit, attach it to some other premade piece of hardware, and load a premade program into it. More and more I have noticed this to be true. People no longer design and program their own stuff; they just buy something and say they hacked it together. Although I think having a standardized hardware to work with for embedded stuff like what I mainly do would be nice, I don't see the fun in assembling and programming somebody else's code into somebody else's device. What is the novelty in that? Where is the learning?
 

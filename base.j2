@@ -27,7 +27,13 @@
                 </div>
                 <div class="col">
                     <h4>Recent posts</h4>
+                    {% for post, _ in zip(range(5), posts) %}
+                        {{ post }}
+                    {% endfor %}
                     <h4>Tags</h4>
+                    {% for tag, path, _ in posts_by_tag %}
+                        <a href="/{{ path }}">{{ tag }}</a>
+                    {% endfor %}
                     <h4>Date</h4>
                     {% for date, path, _ in posts_by_month %}
                         <a href="/{{ path }}">{{ date.strftime("%b %Y") }}</a>

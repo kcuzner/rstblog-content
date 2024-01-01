@@ -2,6 +2,7 @@
    :title: Extreme Attributed Metadata with Autofac
    :date: 2014/05/19
    :url: /2014/05/19/extreme-attributed-metadata-autofac
+   :tags: attributed-metadata, autofac, c, ioc, linux, metadata, programming, reflection, server, websites
 
 
 Introduction

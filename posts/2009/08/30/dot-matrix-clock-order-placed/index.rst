@@ -2,6 +2,7 @@
    :title: Dot Matrix Clock: Order placed
    :date: 2009/08/30
    :url: /2009/08/30/dot-matrix-clock-order-placed
+   :tags: dot-matrix-clock
 
 I have finally placed my order for the dot matrix clock. I chose revision 3.5 which had a surface mount crystal instead of the through hole version.
 

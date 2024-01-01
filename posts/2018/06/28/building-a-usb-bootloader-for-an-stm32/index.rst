@@ -2,6 +2,7 @@
    :title: Building a USB bootloader for an STM32
    :date: 2018/06/28
    :url: /2018/06/28/building-a-usb-bootloader-for-an-stm32
+   :tags: arm-cortex, bare-metal, bootloader, hardware, hid, linux, programming, self-programming, stm32, usb
 
 As my final installment for the posts about my `LED Wristwatch project <http://kevincuzner.com/2017/04/18/the-led-wristwatch-a-more-or-less-completed-project/>`__ I wanted to write about the self-programming bootloader I made for an STM32L052 and describe how it works. So far it has shown itself to be fairly robust and I haven't had to get out my STLink to reprogram the watch for quite some time.
 

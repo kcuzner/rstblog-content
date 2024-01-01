@@ -2,6 +2,7 @@
    :title: Writing reusable USB device descriptors with some XML, Python, and C
    :date: 2019/12/27
    :url: /2019/12/27/writing-reusable-usb-device-descriptors-with-some-xml-python-and-c
+   :tags: arm-programming, c, hardware, python, stm32, usb, usb-descriptor
 
 
 A recent project required me to reuse (once again) my USB HID device driver. This is my third or fourth project using this and I had started to find it annoying to need to hand-modify a heavily-commented, self-referencing array of uint8_t's. I figured there must be a better way, so I decided to try something different.

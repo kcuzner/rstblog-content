@@ -2,6 +2,7 @@
    :title: 256Mb doesn't do what it used to...
    :date: 2013/02/26
    :url: /2013/02/26/256mb-doesnt-do-what-it-used-to
+   :tags: linux, ram, server, server, websites
 
 So, this last week I got an email from rackspace saying that my server was thrashing the hard drives and lowering performance of everyone else on that same machine. In consequence, they had rebooted my server for me.
 

@@ -2,6 +2,7 @@
    :title: Database Abstraction in Python
    :date: 2013/03/26
    :url: /2013/03/26/database-abstraction-in-python
+   :tags: database, programming, programming-2, python, sql, uncategorized, websites
 
 As I was recently working on trying out the `Flask <http://flask.pocoo.org/>`__ web framework for Python, I ended up wanting to access my MySQL database. Recently at work I have been using entity framework and I have gotten quite used to having a good database abstraction that allows programmatic creation of SQL. While such frameworks exist in Python, I thought it would interesting to try writing one. This is one great example of getting carried away with a seemingly simple task.
 

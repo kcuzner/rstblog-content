@@ -2,6 +2,7 @@
    :title: Dev boards? Where we're going we won't need dev boards...
    :date: 2016/05/22
    :url: /2016/05/22/dev-boards-where-were-going-we-wont-need-dev-boards
+   :tags: arm, arm-cortex, bare-metal, hardware, linux, programming, programming-2, stlink, stm32
 
 
 A complete tutorial for using an STM32 without a dev board

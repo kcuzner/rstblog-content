@@ -2,6 +2,7 @@
    :title: Cloning Simulink...in Python
    :date: 2012/09/24
    :url: /2012/09/24/cloning-simulink-in-python
+   :tags: hardware, linux, programming
 
 For a while now I have been working on a bench supply. As part of this I have been trying to get a PID controller to work. At first it was simple, but after asking my Dad about it (he does power electronics), he suggested that I use a cascaded PID loop for controlling the voltage and current using the voltage alone. I have sort of a bench model going, but I don't really want to start construction until I have everything finalized since blowing things up and making mistakes is kind of expensive for my meager college student budget. Tweaking that without a working bench model that I am willing to blow up is kind of hard, so I started trying to figure out how to simulate it. Being partial to simulink (I've used it before with some nice pre-built blocks), I wanted to be able to lay it out graphically like control system diagrams usually show and I also wanted to be able to view plots over time. So thus was born my latest project\: SimuPy.
 

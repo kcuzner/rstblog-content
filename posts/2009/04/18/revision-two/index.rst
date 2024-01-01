@@ -2,6 +2,7 @@
    :title: Revision two
    :date: 2009/04/18
    :url: /2009/04/18/revision-two
+   :tags: dot-matrix-clock, programming
 
 After looking at my design of a few days back I decided it definately needed another revision. For one thing, I switced out the serial->parallel chips to a more common chip that I can get off of digikey (497-5746-1-ND) for $3.30 apiece which isn't too bad (it's not the best though...but it will save on shipping). I also got rid of most of that empty space that I was not using and managed to compress the entire thing so that it is as small as it can get unless I drastically change my design.
 

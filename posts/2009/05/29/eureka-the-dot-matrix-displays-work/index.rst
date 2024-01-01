@@ -2,6 +2,7 @@
    :title: Eureka! The Dot Matrix Displays Work!
    :date: 2009/05/29
    :url: /2009/05/29/eureka-the-dot-matrix-displays-work
+   :tags: dot-matrix-clock, programming
 
 
 .. figure:: sdc10183.jpg

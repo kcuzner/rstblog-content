@@ -2,6 +2,7 @@
    :title: The LED Wristwatch: A (more or less) completed project!
    :date: 2017/04/18
    :url: /2017/04/18/the-led-wristwatch-a-more-or-less-completed-project
+   :tags: arm-programming, hardware, programming
 
 About 2009 I saw an article written by Dr. Paul Pounds in which he detailed a pocketwatch he had designed that fit inside a standard pocketwatch case and used LEDs as the dial. While the article has since disappeared, the `youtube video <https://www.youtube.com/watch?v=lex53AY7Fmo>`__ remains. The wayback machine has a `cached version <https://web.archive.org/web/20160322025932/http://www.eng.yale.edu/pep5/pocket_watch.html>`__ of the page. Anyway, the idea has kind of stuck with me for a while and so a year or so ago I decided that I wanted to build a wristwatch inspired by that idea.
 

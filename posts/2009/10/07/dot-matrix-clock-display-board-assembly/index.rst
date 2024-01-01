@@ -2,6 +2,7 @@
    :title: Dot Matrix Clock: Display board assembly
    :date: 2009/10/07
    :url: /2009/10/07/dot-matrix-clock-display-board-assembly
+   :tags: dot-matrix-clock, hardware, programming
 
 Well, here it is. The moment I have been anticipating for a good while\: The boards came in and I assembled them. I made a few videos and took a few pictures. I won't post the videos yet since I am still going through them and making sure that I don't go and make a fool of myself.
 

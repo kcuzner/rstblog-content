@@ -589,7 +589,11 @@ class CodeTag(TagHandler):
         # In certain cases, there is a code tag embedded in a pre tag. For
         # these cases, we defer to the inner tag. None of these had syntax
         # highlighting as far as I could tell, so this is pretty safe.
-        if len(self.content) == 1 and (tag := next(iter(self.content))) and isinstance(tag, CodeTag):
+        if (
+            len(self.content) == 1
+            and (tag := next(iter(self.content)))
+            and isinstance(tag, CodeTag)
+        ):
             return tag.to_rst(*args, **kwargs)
         # The code highlighting plugin I used encoded information in the class
         # attribute of the pre tag.
@@ -927,15 +931,21 @@ class Content(Item):
         return self.date.strftime("%Y/%m/%d")
 
     @property
+    def rst_tags(self):
+        return []
+
+    @property
     def rstblog_directive(self):
-        return "\n".join(
-            [
-                f".. rstblog-settings::",
-                f"   :title: {self.title}",
-                f"   :date: {self.rst_date}",
-                f"   :url: /{self.rst_url}",
-            ]
-        )
+        decl = [
+            f".. rstblog-settings::",
+            f"   :title: {self.title}",
+            f"   :date: {self.rst_date}",
+            f"   :url: /{self.rst_url}",
+        ]
+        tags = self.rst_tags
+        if len(tags):
+            decl.append("   :tags: " + ", ".join(tags))
+        return "\n".join(decl)
 
     def process(self, attachments):
         # small worry here about path traversal...but whatever, this script
@@ -967,10 +977,15 @@ class Post(Content):
         self.date = parser.parse(el.find("wp:post_date", XML_NAMESPACES).text)
         self.name = el.find("wp:post_name", XML_NAMESPACES).text
         self.title = el.find("title", XML_NAMESPACES).text
+        self.tags = [e.attrib["nicename"] for e in el.findall("category")]
 
     @Content.rst_url.getter
     def rst_url(self):
         return f"{self.rst_date}/{self.name}"
+
+    @Content.rst_tags.getter
+    def rst_tags(self):
+        return self.tags
 
     @Content.repo_path.getter
     def repo_path(self):

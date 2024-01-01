@@ -2,6 +2,7 @@
    :title: Case LEDs version 2.0
    :date: 2012/03/19
    :url: /2012/03/19/case-leds-version-2-0
+   :tags: hardware, linux, programming
 
 So, as usual after I completed my `LED case mod <http://cuznersoft.com/wordpress/?p=126>`__ I asked myself, how can I could make it even cooler? Thus was born the idea for Case LEDs v. 2.0.
 

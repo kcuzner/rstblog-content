@@ -2,6 +2,7 @@
    :title: Writing a preemptive task scheduler for AVR
    :date: 2015/12/31
    :url: /2015/12/31/writing-a-preemptive-task-scheduler-for-avr
+   :tags: assembly, avr, dispatcher, hardware, multitasking, preempting, programming, rtos, task
 
 Wow it has been a while. Between school, work, and another project that I've been working on since last October (which, if ultimately successful, I will post here) I haven't had a lot of time to write about anything cool.
 

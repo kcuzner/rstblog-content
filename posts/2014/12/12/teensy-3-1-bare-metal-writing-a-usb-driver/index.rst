@@ -2,6 +2,7 @@
    :title: Teensy 3.1 bare metal: Writing a USB driver
    :date: 2014/12/12
    :url: /2014/12/12/teensy-3-1-bare-metal-writing-a-usb-driver
+   :tags: bare-metal, c, freescale, hardware, kinetis, linux, programming, programming-2, teensy, teensy-3x, usb
 
 One of the things that has intrigued me for the past couple years is making embedded USB devices. It's an industry standard bus that just about any piece of computing hardware can connect with yet is complex enough that doing it yourself is a bit of a chore.
 

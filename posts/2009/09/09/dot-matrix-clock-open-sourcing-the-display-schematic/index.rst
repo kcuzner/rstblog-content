@@ -2,6 +2,7 @@
    :title: Dot Matrix Clock: Open sourcing the display schematic
    :date: 2009/09/09
    :url: /2009/09/09/dot-matrix-clock-open-sourcing-the-display-schematic
+   :tags: dot-matrix-clock, hardware
 
 Following the suggestion of a friend, I am going to open source a portion of the software (when it comes) and the display schematic. After I get the board and finish up the software I plan on releasing this as a kit. So far it is looking like the kit is going to cost somewhere between $110-$140. I would supply the board with the controller already soldered and programmed.
 

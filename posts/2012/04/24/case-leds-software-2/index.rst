@@ -2,6 +2,7 @@
    :title: Case LEDs Software
    :date: 2012/04/24
    :url: /2012/04/24/case-leds-software-2
+   :tags: case-leds, hardware, linux, programming
 
 So, I have just cleaned up, documented a little better, and zipped up the firmware and host side driver for the case LEDs. The file does not contain the hardware schematic because it has some parts in it that I created myself and I don't feel like moving all the symbols around from my gEDA directory and getting all the paths to work correctly.
 

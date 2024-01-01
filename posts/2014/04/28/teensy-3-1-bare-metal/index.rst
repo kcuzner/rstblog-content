@@ -2,6 +2,7 @@
    :title: Teensy 3.1 Bare-Metal
    :date: 2014/04/28
    :url: /2014/04/28/teensy-3-1-bare-metal
+   :tags: hardware, linux
 
 
 Introduction

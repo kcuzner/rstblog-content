@@ -30,7 +30,7 @@ posts = "./posts"
 
 [tool.rstblog.pygments]
 # Settings for pygments used in the rstblog for syntax highlighting
-style = "friendly"
+style = "lightbulb"
 csspath = "./css/pygments.css"
 
 [build-system]

@@ -27,16 +27,16 @@
                 </div>
                 <div class="col">
                     <h4>Recent posts</h4>
-                    {% for post, _ in zip(range(5), posts) %}
-                        {{ post }}
-                    {% endfor %}
-                    <h4>Tags</h4>
-                    {% for tag, path, _ in posts_by_tag %}
-                        <a href="/{{ path }}">{{ tag }}</a>
+                    {% for _, post in zip(range(5), posts) %}
+                        <a href="/{{post.url}}">{{ post.title }}</a><br />
                     {% endfor %}
                     <h4>Date</h4>
                     {% for date, path, _ in posts_by_month %}
-                        <a href="/{{ path }}">{{ date.strftime("%b %Y") }}</a>
+                        <a class="badge rounded-pill text-success bg-dark" href="/{{ path }}">{{ date.strftime("%b %Y") }}</a>
+                    {% endfor %}
+                    <h4>Tags</h4>
+                    {% for tag, _ in posts_by_tag %}
+                        <a class="badge rounded-pill text-success bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             </div>

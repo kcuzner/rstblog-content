@@ -1,7 +1,9 @@
 {% extends "base.j2" %}
-{% block title %}{{ parts['title'] }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
     {{ parts['fragment'] }}
+    <br/>
+    {% for tag in tags %}
+        <a class="badge rounded-pill text-success bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
+    {% endfor %}
 {% endblock %}
-
-

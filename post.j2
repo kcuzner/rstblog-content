@@ -4,6 +4,6 @@
     {{ parts['fragment'] }}
     <br/>
     {% for tag in tags %}
-        <a class="badge rounded-pill text-success bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
+        <a class="badge rounded-pill text-primary bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
     {% endfor %}
 {% endblock %}

@@ -32,11 +32,11 @@
                     {% endfor %}
                     <h4>Date</h4>
                     {% for date, path, _ in posts_by_month %}
-                        <a class="badge rounded-pill text-success bg-dark" href="/{{ path }}">{{ date.strftime("%b %Y") }}</a>
+                        <a class="badge rounded-pill text-primary bg-dark" href="/{{ path }}">{{ date.strftime("%b %Y") }}</a>
                     {% endfor %}
                     <h4>Tags</h4>
                     {% for tag, _ in posts_by_tag %}
-                        <a class="badge rounded-pill text-success bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
+                        <a class="badge rounded-pill text-primary bg-dark" href="/{{ tag.url }}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             </div>

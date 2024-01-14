@@ -321,7 +321,9 @@ Amazon-provided linux distribution I'm using.
 
 I also had the thought of perhaps having each service run as an actual service
 on the machine, so it can automatically start and such. To that end, I've
-declared a very simple wildcard service, ``kevincuzner-com@.service``:
+declared a very simple wildcard `systemd unit
+<https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html>`_,
+``kevincuzner-com@.service``:
 
 .. code-block::
 

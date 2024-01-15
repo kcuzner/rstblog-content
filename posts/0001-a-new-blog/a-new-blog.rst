@@ -21,6 +21,13 @@ using GitHub hooks. The content itself is written with ReStructured Text and I
 think I've created a pretty easy-to-use and low-maintenance blog platform
 (famous last words). Ask me in a decade if I was actually successful lol.
 
+In addition, I've found that there are newer, cheaper AWS instances that would
+suit my needs. I started using this instance over 10 years ago and before I
+shut it down, I had an uptime of almost 2.5 years. It's truly the end of an
+era:
+
+.. image:: old-server-uptime.png
+
 .. rstblog-break::
 
 .. contents::

@@ -1,10 +1,15 @@
 .. rstblog-settings::
-   :title: AVR  TPI Programming With usbasp For Dummies
+   :title: AVR TPI Programming With usbasp For Dummies
    :date: 2020/11/08
    :url: /2020/11/08/avr-tpi-programming-with-usbasp-for-dummies
    :tags: avr, avr-programming, avrdude, hardware, programming, tpi, usbasp
 
-There is an odd famine of information about this particular subject available in text form. If you google "usbasp tpi" and things like it, you'll find posts on the avr forums filled with incorrect information and schematics. This post is an attempt to remedy this.
+There is an odd famine of information about this particular subject available
+in text form. If you google "usbasp tpi" and things like it, you'll find posts
+on the avr forums filled with incorrect information and schematics. This post
+is an attempt to remedy this. The information in this post should enable to you
+program cheap AVR microcontrollers such as the ATTiny4, ATTiny5, ATTiny9,
+ATTiny10, or ATTiny20 using a widely available usbasp AVR programmer.
 
 I intend to show exactly the following, no more and no less\:
 

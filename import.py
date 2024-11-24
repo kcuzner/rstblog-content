@@ -634,9 +634,9 @@ class InlineLiteralTag(TagHandler):
         self.content.append(tag)
 
     def to_rst(self, *args, **kwargs):
-        kwargs[
-            "escape"
-        ] = "`"  # Most chars are allowed, but backticks still need escaping
+        kwargs["escape"] = (
+            "`"  # Most chars are allowed, but backticks still need escaping
+        )
         return "``" + "".join([c.to_rst(*args, **kwargs) for c in self.content]) + "``"
 
 

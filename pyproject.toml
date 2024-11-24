@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rstblog-content"
+name = "rstblog_content"
 version = "0.1.0"
 description = ""
 authors = ["Kevin Cuzner <kevincuzner@gmail.com>"]
@@ -7,9 +7,14 @@ authors = ["Kevin Cuzner <kevincuzner@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.11"
 python-dateutil = "^2.8.2"
+requests = "^2.32.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.4"
+black = "^24.10.0"
+
+[tool.poetry.scripts]
+rstblog-test = "rstblog_content:test"
 
 [tool.rstblog]
 # General configuration for rstblog

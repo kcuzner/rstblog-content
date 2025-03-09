@@ -1,3 +1,7 @@
 .strike {
     text-decoration: line-through;
 }
+
+.admonition-title {
+    font-weight: bold;
+}
